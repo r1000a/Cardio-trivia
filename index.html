@@ -63,6 +63,47 @@
             overflow-y: auto;
         }
         
+        /* Logos institucionales */
+        .institutional-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 16px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo {
+            height: 60px;
+            width: auto;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+            filter: brightness(1.1);
+        }
+        
+        .logo:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        
+        .logo-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+            font-weight: 500;
+        }
+        
         h1 {
             font-size: 2.75rem;
             font-weight: 700;
@@ -706,6 +747,15 @@
                 padding: 16px;
             }
             
+            .institutional-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .logo {
+                height: 50px;
+            }
+            
             .game-header {
                 grid-template-columns: 1fr;
                 gap: 16px;
@@ -733,6 +783,18 @@
 </head>
 <body>
     <div class="container">
+        <!-- Header institucional -->
+        <div class="institutional-header">
+            <div class="logo-container">
+                <img src="logo-ccu.png" alt="Centro Cardiovascular Universitario" class="logo" id="logo-ccu">
+                <div class="logo-text">Centro Cardiovascular<br>Universitario</div>
+            </div>
+            <div class="logo-container">
+                <img src="logo-uac.png" alt="Unidad Académica de Cardiología" class="logo" id="logo-uac">
+                <div class="logo-text">Unidad Académica<br>de Cardiología</div>
+            </div>
+        </div>
+        
         <!-- Navegación -->
         <div class="nav-tabs">
             <div class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</div>
@@ -1114,8 +1176,21 @@
             loadDashboard();
             setupFirebaseListeners();
             updateLivesDisplay();
+            handleMissingLogos();
             console.log('App inicializada con Firebase - Banco de preguntas:', questionBank.length);
         });
+        
+        // Manejar logos faltantes
+        function handleMissingLogos() {
+            const logos = ['logo-ccu', 'logo-uac'];
+            logos.forEach(logoId => {
+                const img = document.getElementById(logoId);
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    this.nextElementSibling.style.display = 'none';
+                };
+            });
+        }
         
         // Funciones de navegación
         function showTab(tabName) {
