@@ -954,7 +954,7 @@
                 
                 <!-- Descripción humorística del nivel -->
                 <div class="horoscope-section">
-                    <h3 class="horoscope-title">🔮 Tu Horóscopo Cardiológico</h3>
+                    <h3 class="horoscope-title">🔍 Diagnóstico de nivel alcanzado</h3>
                     <div class="horoscope-text" id="levelHoroscope"></div>
                 </div>
                 
@@ -1366,10 +1366,15 @@
                     const avgScore = resultsArray.reduce((sum, r) => sum + r.puntaje, 0) / totalPlayers;
                     const maxLevel = Math.max(...resultsArray.map(r => r.nivel));
                     
-                    const today = new Date().toDateString();
-                    const playersToday = resultsArray.filter(r => 
-                        new Date(r.fecha).toDateString() === today
-                    ).length;
+                    // Contar jugadores de hoy usando timestamp
+                    const now = new Date();
+                    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+                    const todayEnd = todayStart + 24 * 60 * 60 * 1000; // 24 horas después
+                    
+                    const playersToday = resultsArray.filter(r => {
+                        const timestamp = r.timestamp || 0;
+                        return timestamp >= todayStart && timestamp < todayEnd;
+                    }).length;
                     
                     await database.ref('estadisticas').set({
                         totalJugadores: totalPlayers,
