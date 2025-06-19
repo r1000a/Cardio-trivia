@@ -1171,8 +1171,30 @@
             30: "Llegaste al olimpo cardiológico uruguayo. Sos el oráculo del Hospital de Clínicas, de punta y al medio. Los residentes te consultan, los adjuntos te respetan, y los pacientes te bendicen."
         };
         
-        // Inicialización
-        window.addEventListener('load', function() {
+        // Cargar preguntas desde archivo JSON externo
+        async function loadExternalQuestions() {
+            try {
+                const response = await fetch('questions-bank.json');
+                if (!response.ok) throw new Error('No se pudo cargar questions-bank.json');
+                const data = await response.json();
+                return data.questions || data; // Soporta ambos formatos
+            } catch (error) {
+                console.warn('Usando banco de preguntas por defecto:', error);
+                return questionBank; // Fallback a preguntas embebidas
+            }
+        }
+
+        // Inicialización mejorada
+        window.addEventListener('load', async function() {
+            // Cargar preguntas externas si están disponibles
+            const externalQuestions = await loadExternalQuestions();
+            if (externalQuestions !== questionBank) {
+                console.log('Preguntas externas cargadas:', externalQuestions.length);
+                // Reemplazar banco de preguntas
+                questionBank.length = 0; // Limpiar array original
+                questionBank.push(...externalQuestions);
+            }
+            
             loadDashboard();
             setupFirebaseListeners();
             updateLivesDisplay();
@@ -1721,16 +1743,17 @@
         }
         
         function nextQuestion() {
+            // Verificar ANTES de incrementar si ya completamos todos los niveles
+            if (currentLevel >= 30) {
+                endGame();
+                return;
+            }
+            
             currentLevel++;
             updateCurrentLevel();
             
             if (currentLevel > maxLevelReached) {
                 maxLevelReached = currentLevel;
-            }
-            
-            if (currentLevel > 30) {
-                endGame();
-                return;
             }
             
             showLevelScreen();
@@ -1764,9 +1787,51 @@
             comodines.change = false;
             document.getElementById('comodinChange').disabled = true;
             
-            answeredQuestions.delete(currentQuestion.question);
+            // Guardar la pregunta actual para no repetirla
+            const currentQuestionText = currentQuestion.question;
+            
+            // Filtrar preguntas disponibles del nivel actual (excluyendo la actual)
+            const levelQuestions = questionBank.filter(q => q.level === currentLevel && q.question !== currentQuestionText);
+            const availableQuestions = levelQuestions.filter(q => !answeredQuestions.has(q.question));
+            
+            if (availableQuestions.length > 0) {
+                // Hay preguntas disponibles diferentes
+                currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+            } else {
+                // No hay más preguntas, usar cualquiera diferente a la actual
+                const differentQuestions = levelQuestions.length > 0 ? levelQuestions : 
+                    questionBank.filter(q => q.level === currentLevel && q.question !== currentQuestionText);
+                if (differentQuestions.length > 0) {
+                    currentQuestion = differentQuestions[Math.floor(Math.random() * differentQuestions.length)];
+                } else {
+                    // Último recurso: mantener la pregunta actual
+                    alert('No hay más preguntas disponibles para este nivel');
+                    comodines.change = true;
+                    document.getElementById('comodinChange').disabled = false;
+                    return;
+                }
+            }
+            
+            answeredQuestions.add(currentQuestion.question);
+            
+            // Recargar la interfaz
+            document.getElementById('questionText').textContent = currentQuestion.question;
+            shuffledOptions = currentQuestion.options.slice().sort(() => Math.random() - 0.5);
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            shuffledOptions.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option.text;
+                optionElement.onclick = () => selectOption(option, optionElement);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Reiniciar timer
             stopTimer();
-            loadQuestion();
+            startTimer();
         }
         
         function updateScore() {
@@ -1795,6 +1860,11 @@
         
         async function endGame() {
             stopTimer();
+            
+            // Asegurar que el nivel máximo nunca exceda 30
+            if (maxLevelReached > 30) {
+                maxLevelReached = 30;
+            }
             
             const result = {
                 nombre: currentPlayer.name,
