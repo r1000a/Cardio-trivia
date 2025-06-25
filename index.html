@@ -1281,7 +1281,7 @@
         let playerAttempts = 0;
         let isAdminAuthenticated = false;
         const ADMIN_PASSWORD = "cardio2025admin";
-        let questionBank = [];
+        let questionBank = []; // IMPORTANTE: Este array se llenará SOLO desde el archivo JSON
         let correctStreak = 0;
         
         // Títulos mejorados por nivel (30 niveles progresivos y graciosos)
@@ -1352,70 +1352,126 @@
             30: "Alcanzaste la deidad cardiológica uruguaya. Tu conocimiento trasciende los libros. Sos el oráculo al que todos consultan, el maestro de maestros. En el Olimpo del Hospital de Clínicas, tu trono está asegurado."
         };
         
+        // IMPORTANTE: No más preguntas hardcodeadas. Solo se cargan desde el archivo JSON
+        
         // Cargar preguntas desde archivo JSON
         async function loadQuestions() {
             try {
-                // Primero intentar cargar desde GitHub
+                console.log('Iniciando carga de preguntas...');
+                
+                // Intentar cargar desde múltiples rutas posibles
                 const possiblePaths = [
                     'questions_bank.json',
                     'questions-bank.json', 
                     'questionsBank.json',
                     './questions_bank.json',
-                    '/questions_bank.json'
+                    '/questions_bank.json',
+                    'assets/questions_bank.json',
+                    'data/questions_bank.json'
                 ];
                 
                 let loaded = false;
+                let lastError = null;
                 
                 for (const path of possiblePaths) {
                     try {
+                        console.log(`Intentando cargar desde: ${path}`);
                         const response = await fetch(path);
                         if (response.ok) {
-                            questionBank = await response.json();
-                            console.log(`Preguntas cargadas exitosamente desde ${path}:`, questionBank.length);
-                            loaded = true;
-                            break;
+                            const data = await response.json();
+                            if (Array.isArray(data) && data.length > 0) {
+                                questionBank = data;
+                                console.log(`✅ Preguntas cargadas exitosamente desde ${path}: ${questionBank.length} preguntas`);
+                                showSuccess(`Preguntas cargadas correctamente: ${questionBank.length} preguntas sobre cardiomiopatías infiltrativas`);
+                                loaded = true;
+                                break;
+                            }
                         }
                     } catch (e) {
-                        console.log(`No se pudo cargar desde ${path}`);
+                        lastError = e;
+                        console.log(`❌ No se pudo cargar desde ${path}:`, e.message);
                     }
                 }
                 
-                // Si no se cargó desde archivo, usar las preguntas del documento
+                // Si no se cargó desde archivo y existe window.fs (en el entorno de Claude)
                 if (!loaded && window.fs && window.fs.readFile) {
                     try {
+                        console.log('Intentando cargar desde window.fs...');
                         const fileContent = await window.fs.readFile('questions_bank.json', { encoding: 'utf8' });
-                        questionBank = JSON.parse(fileContent);
-                        console.log('Preguntas cargadas desde window.fs:', questionBank.length);
-                        loaded = true;
+                        const data = JSON.parse(fileContent);
+                        if (Array.isArray(data) && data.length > 0) {
+                            questionBank = data;
+                            console.log('✅ Preguntas cargadas desde window.fs:', questionBank.length);
+                            showSuccess(`Preguntas cargadas: ${questionBank.length} preguntas sobre cardiomiopatías infiltrativas`);
+                            loaded = true;
+                        }
                     } catch (e) {
-                        console.log('No se pudo cargar desde window.fs');
+                        console.log('❌ No se pudo cargar desde window.fs:', e.message);
                     }
                 }
                 
-                // Si aún no se cargó, mostrar error
+                // Si aún no se cargó, mostrar error detallado
                 if (!loaded || questionBank.length === 0) {
-                    console.error('No se pudieron cargar las preguntas desde archivo');
-                    showError('Error cargando las preguntas. Por favor, verifica que el archivo questions_bank.json esté en el servidor.');
+                    console.error('❌ ERROR: No se pudieron cargar las preguntas');
+                    showError(`
+                        Error: No se pudo cargar el archivo de preguntas.
+                        Por favor, verifica que el archivo "questions_bank.json" esté en el servidor.
+                        Se buscó en: ${possiblePaths.join(', ')}
+                    `);
                     
-                    // Usar preguntas de respaldo mínimas para que el juego funcione
+                    // Usar preguntas de emergencia mínimas
                     questionBank = [
-                        {"id": "demo_001", "level": 1, "question": "¿Cuál es la función principal del corazón?", "options": [{"text": "Bombear sangre", "correct": true}, {"text": "Filtrar toxinas", "correct": false}, {"text": "Producir hormonas", "correct": false}, {"text": "Regular temperatura", "correct": false}]}
+                        {
+                            "id": "emergency_001", 
+                            "level": 1, 
+                            "question": "Error: No se cargaron las preguntas. Esta es una pregunta de emergencia. ¿Cuál es el mecanismo fisiopatológico primario en las miocardiopatías infiltrativas?", 
+                            "options": [
+                                {"text": "Depósito de sustancias anormales en el intersticio miocárdico", "correct": true}, 
+                                {"text": "Daño isquémico recurrente", "correct": false}, 
+                                {"text": "Mutaciones en proteínas sarcoméricas", "correct": false}, 
+                                {"text": "Desregulación autonómica", "correct": false}
+                            ]
+                        }
                     ];
+                    
+                    // Duplicar la pregunta de emergencia para todos los niveles
+                    for (let i = 2; i <= 30; i++) {
+                        questionBank.push({...questionBank[0], id: `emergency_${i.toString().padStart(3, '0')}`, level: i});
+                    }
                 }
                 
             } catch (error) {
-                console.error('Error general cargando preguntas:', error);
-                showError('Error cargando las preguntas: ' + error.message);
+                console.error('❌ Error general cargando preguntas:', error);
+                showError('Error crítico cargando las preguntas: ' + error.message);
             }
         }
         
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
+            if (errorDiv) {
+                errorDiv.innerHTML = message.replace(/\n/g, '<br>');
+                errorDiv.style.display = 'block';
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 10000); // Mostrar por 10 segundos
+            }
+            console.error(message);
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'achievement-popup show';
+            successDiv.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+            successDiv.innerHTML = `
+                <div class="achievement-title">✅ Éxito</div>
+                <div class="achievement-desc">${message}</div>
+            `;
+            document.body.appendChild(successDiv);
+            
             setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
+                successDiv.classList.remove('show');
+                setTimeout(() => successDiv.remove(), 500);
+            }, 3000);
         }
         
         // Mejoras de jugabilidad
