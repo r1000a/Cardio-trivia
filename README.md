@@ -1,6 +1,6 @@
 # 🩺 ¿Quién quiere ser cardiólogo?
 
-### *Episodio 1: Insuficiencia Cardíaca*
+### *Episodio 2: Cardiopatías infiltrativas*
 
 Un juego educativo interactivo que desafía tus conocimientos de cardiología. ¿Creés que sabés de insuficiencia cardíaca? ¡Demostralo!
 
@@ -15,7 +15,7 @@ Inspirado en "¿Quién quiere ser millonario?", este juego te lleva desde ser "E
 ### 🎯 Características:
 
 - **30 niveles progresivos** con dificultad creciente
-- **90+ preguntas clínicas** sobre insuficiencia cardíaca
+- **120+ preguntas clínicas** sobre insuficiencia cardíaca
 - **3 vidas** para demostrar tu conocimiento
 - **Comodines** - 50/50 y cambio de pregunta
 - **30 segundos** por pregunta
