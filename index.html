@@ -1067,6 +1067,33 @@
                 </div>
             </div>
             
+            <!-- Sistema de Puntaje -->
+            <div class="dashboard-section">
+                <h2>🎯 Sistema de Puntaje</h2>
+                <div style="background: rgba(15, 23, 42, 0.6); border-radius: 12px; padding: 20px; font-size: 0.9rem; line-height: 1.6;">
+                    <h3 style="color: #60a5fa; margin-bottom: 16px; font-size: 1.1rem;">📊 Puntaje Individual:</h3>
+                    <ul style="color: #e2e8f0; margin: 0; padding-left: 20px;">
+                        <li><strong style="color: #22c55e;">+1 punto base</strong> por cada respuesta correcta</li>
+                        <li><strong style="color: #3b82f6;">+1 punto bonus</strong> por respuesta rápida (≥20 segundos restantes)</li>
+                        <li><strong style="color: #f59e0b;">+1 punto bonus</strong> por nivel difícil (niveles 20-30)</li>
+                        <li><strong style="color: #8b5cf6;">+3 puntos bonus</strong> por racha de 5 respuestas correctas</li>
+                        <li><strong style="color: #ec4899;">+5 puntos bonus</strong> por racha de 10 respuestas correctas</li>
+                        <li><strong style="color: #fbbf24;">+10 puntos bonus</strong> por completar los 30 niveles</li>
+                    </ul>
+                    
+                    <h3 style="color: #60a5fa; margin: 16px 0; font-size: 1.1rem;">👥 Puntaje Grupal:</h3>
+                    <p style="color: #94a3b8; margin: 0;">
+                        Se calcula como el <strong>promedio de los mejores puntajes</strong> de cada participante del grupo.
+                        Solo se considera el mejor intento de cada jugador.
+                    </p>
+                    
+                    <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 12px; margin-top: 16px;">
+                        <strong style="color: #60a5fa;">🏆 Puntaje Máximo Teórico:</strong>
+                        <span style="color: #e2e8f0;">~100 puntos (30 niveles perfectos + todos los bonuses)</span>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Ranking por Equipos -->
             <div class="dashboard-section">
                 <h2>🥇 Ranking de Equipos</h2>
@@ -1149,6 +1176,11 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="playerNickname">Pseudónimo (se mostrará en los rankings):</label>
+                    <input type="text" id="playerNickname" placeholder="CardioMaster2025" required maxlength="20">
+                </div>
+                
+                <div class="form-group">
                     <label for="playerId">Cédula de identidad (sin dígito verificador):</label>
                     <input type="text" id="playerId" placeholder="1234567" required>
                 </div>
@@ -1164,7 +1196,7 @@
                 </div>
                 
                 <div class="privacy-note">
-                    🏆 <strong>Competencia:</strong> Participás tanto en el ranking individual como en el de tu equipo. Tus datos personales son privados, solo se muestra tu nombre en los rankings.
+                    🏆 <strong>Competencia:</strong> Participás tanto en el ranking individual como en el de tu equipo. Tu nombre real es privado (solo lo ve el administrador), en los rankings públicos aparece tu pseudónimo. Tu cédula es solo para validar participación.
                 </div>
                 
                 <div id="intentosMessage" style="display: none; color: #f59e0b; margin: 20px 0; font-weight: bold;"></div>
@@ -1266,7 +1298,7 @@
         const database = firebase.database();
         
         // Variables globales
-        let currentPlayer = { name: '', id: '', team: '' };
+        let currentPlayer = { name: '', nickname: '', id: '', team: '' };
         let currentLevel = 1;
         let score = 0;
         let lives = 3;
@@ -1283,6 +1315,19 @@
         const ADMIN_PASSWORD = "cardio2025admin";
         let questionBank = []; // IMPORTANTE: Este array se llenará SOLO desde el archivo JSON
         let correctStreak = 0;
+        
+        // Sistema de puntaje mejorado y balanceado
+        const SCORING_SYSTEM = {
+            BASE_POINTS: 1,                    // Punto base por respuesta correcta
+            TIME_BONUS_THRESHOLD: 20,          // Segundos para bonus de tiempo
+            TIME_BONUS_POINTS: 1,              // Bonus por respuesta rápida
+            HARD_LEVEL_THRESHOLD: 20,          // A partir de qué nivel se considera difícil
+            HARD_LEVEL_BONUS: 1,               // Bonus por nivel difícil
+            STREAK_BONUS_5: 3,                 // Bonus por racha de 5 (reducido)
+            STREAK_BONUS_10: 5,                // Bonus por racha de 10 (reducido)
+            PERFECT_GAME_BONUS: 10,            // Bonus por completar los 30 niveles
+            MAX_THEORETICAL_SCORE: 100         // Puntaje máximo teórico para referencia
+        };
         
         // Títulos mejorados por nivel (30 niveles progresivos y graciosos)
         const levelTitles = {
@@ -1483,15 +1528,6 @@
                 comboText.textContent = `¡Racha de ${streak}!`;
                 indicator.classList.add('show');
                 
-                // Bonus de puntos por racha
-                if (streak === 5) {
-                    score += 2;
-                    showAchievement("¡Racha de 5!", "Bonus: +2 puntos");
-                } else if (streak === 10) {
-                    score += 5;
-                    showAchievement("¡Racha perfecta!", "Bonus: +5 puntos");
-                }
-                
                 setTimeout(() => {
                     indicator.classList.remove('show');
                 }, 2000);
@@ -1588,7 +1624,8 @@
                             <thead>
                                 <tr style="background: rgba(59, 130, 246, 0.2);">
                                     <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Fecha/Hora</th>
-                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Nombre Completo</th>
+                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Nombre Real</th>
+                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Pseudónimo</th>
                                     <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Cédula</th>
                                     <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Grupo</th>
                                     <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Puntaje</th>
@@ -1604,6 +1641,7 @@
                             <tr>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.fecha}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.nombre}</td>
+                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.pseudonimo || 'Sin pseudónimo'}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.cedula}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.grupo}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.puntaje}</td>
@@ -1632,10 +1670,10 @@
                 if (results) {
                     const resultsArray = Object.values(results);
                     
-                    let csv = 'Fecha/Hora,Nombre Completo,Cédula,Grupo,Puntaje,Nivel Máximo,Título,Intento\n';
+                    let csv = 'Fecha/Hora,Nombre Real,Pseudónimo,Cédula,Grupo,Puntaje,Nivel Máximo,Título,Intento\n';
                     
                     resultsArray.forEach(result => {
-                        csv += `"${result.fecha}","${result.nombre}","${result.cedula}","${result.grupo}",${result.puntaje},${result.nivel},"${result.titulo}",${result.intento}\n`;
+                        csv += `"${result.fecha}","${result.nombre}","${result.pseudonimo || 'Sin pseudónimo'}","${result.cedula}","${result.grupo}",${result.puntaje},${result.nivel},"${result.titulo}",${result.intento}\n`;
                     });
                     
                     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1848,10 +1886,13 @@
                         else if (index === 1) playerRank.classList.add('podium-2');
                         else if (index === 2) playerRank.classList.add('podium-3');
                         
+                        // Usar pseudónimo si existe, sino el nombre real
+                        const displayName = result.pseudonimo || result.nombre;
+                        
                         playerRank.innerHTML = `
                             <div class="rank-number">${index + 1}</div>
                             <div>
-                                <div class="rank-name">${result.nombre}</div>
+                                <div class="rank-name">${displayName}</div>
                                 <div class="rank-title">${levelTitles[result.nivel] || 'Estudiante de primer año con estetoscopio al revés'}</div>
                             </div>
                             <div class="rank-team team-${result.grupo?.toLowerCase() || 'a'}">Grupo ${result.grupo || 'A'}</div>
@@ -1910,9 +1951,11 @@
                         
                         let playersHTML = '';
                         players.slice(0, 10).forEach((player, index) => {
+                            // Usar pseudónimo si existe, sino el nombre real
+                            const displayName = player.pseudonimo || player.nombre;
                             playersHTML += `
                                 <div class="team-player">
-                                    <span>${index + 1}. ${player.nombre}</span>
+                                    <span>${index + 1}. ${displayName}</span>
                                     <span>${player.puntaje} pts - Nv.${player.nivel}</span>
                                 </div>
                             `;
@@ -1957,10 +2000,12 @@
                         feedItem.className = 'feed-item';
                         
                         const timeAgo = getTimeAgo(result.timestamp);
+                        // Usar pseudónimo si existe, sino el nombre real
+                        const displayName = result.pseudonimo || result.nombre;
                         
                         feedItem.innerHTML = `
                             <div>
-                                <div class="feed-player">${result.nombre}</div>
+                                <div class="feed-player">${displayName}</div>
                                 <div class="feed-team team-${result.grupo?.toLowerCase() || 'a'}">Grupo ${result.grupo || 'A'}</div>
                             </div>
                             <div class="feed-score">${result.puntaje} pts - Nv.${result.nivel}</div>
@@ -1991,10 +2036,11 @@
         // Funciones del juego
         async function startGame() {
             const name = document.getElementById('playerName').value.trim();
+            const nickname = document.getElementById('playerNickname').value.trim();
             const id = document.getElementById('playerId').value.trim();
             const team = document.getElementById('playerTeam').value;
             
-            if (!name || !id || !team) {
+            if (!name || !nickname || !id || !team) {
                 alert('Por favor, completá todos los campos');
                 return;
             }
@@ -2002,6 +2048,12 @@
             // Validar formato de cédula (solo números, sin dígito verificador)
             if (!/^\d{6,8}$/.test(id)) {
                 alert('La cédula debe tener entre 6 y 8 dígitos, sin dígito verificador');
+                return;
+            }
+            
+            // Validar pseudónimo (alfanumérico, sin espacios especiales)
+            if (!/^[a-zA-Z0-9_áéíóúüñÁÉÍÓÚÜÑ]{3,20}$/.test(nickname)) {
+                alert('El pseudónimo debe tener entre 3 y 20 caracteres (letras, números y _ solamente)');
                 return;
             }
             
@@ -2035,8 +2087,8 @@
                 return;
             }
             
-            currentPlayer = { name, id, team };
-            document.getElementById('displayName').textContent = name;
+            currentPlayer = { name, nickname, id, team };
+            document.getElementById('displayName').textContent = nickname; // Mostrar pseudónimo
             
             // Mostrar equipo con estilo
             const teamDisplay = document.getElementById('displayTeam');
@@ -2192,23 +2244,38 @@
                 opt.onclick = null;
             });
             
-            // Sistema de puntuación con bonus por tiempo
+            // Sistema de puntuación mejorado y balanceado
             if (option.correct) {
                 element.classList.add('correct');
                 correctStreak++;
                 
-                // Puntos base + bonus por tiempo
-                let points = 1;
-                if (timeLeft >= 20) points += 1; // Respuesta rápida
-                if (currentLevel >= 20) points += 1; // Niveles difíciles
+                // Calcular puntos de manera controlada
+                let points = SCORING_SYSTEM.BASE_POINTS; // 1 punto base
+                
+                // Bonus por tiempo (respuesta rápida)
+                if (timeLeft >= SCORING_SYSTEM.TIME_BONUS_THRESHOLD) {
+                    points += SCORING_SYSTEM.TIME_BONUS_POINTS; // +1 punto
+                }
+                
+                // Bonus por nivel difícil (niveles 20+)
+                if (currentLevel >= SCORING_SYSTEM.HARD_LEVEL_THRESHOLD) {
+                    points += SCORING_SYSTEM.HARD_LEVEL_BONUS; // +1 punto
+                }
                 
                 score += points;
                 showCombo(correctStreak);
                 
-                // Logros especiales
-                if (correctStreak === 3) {
+                // Logros por rachas (controlados - solo una vez por racha)
+                if (correctStreak === 5) {
+                    score += SCORING_SYSTEM.STREAK_BONUS_5; // +3 puntos (solo una vez)
+                    showAchievement("¡Racha de 5!", `Bonus: +${SCORING_SYSTEM.STREAK_BONUS_5} puntos`);
+                } else if (correctStreak === 10) {
+                    score += SCORING_SYSTEM.STREAK_BONUS_10; // +5 puntos (solo una vez)
+                    showAchievement("¡Racha perfecta de 10!", `Bonus: +${SCORING_SYSTEM.STREAK_BONUS_10} puntos`);
+                } else if (correctStreak === 3) {
                     showAchievement("¡En racha!", "3 respuestas correctas seguidas");
                 }
+                
             } else {
                 element.classList.add('incorrect');
                 correctStreak = 0;
@@ -2359,6 +2426,12 @@
                 maxLevelReached = 30;
             }
             
+            // Bonus por juego perfecto (completar los 30 niveles)
+            if (maxLevelReached === 30 && lives > 0) {
+                score += SCORING_SYSTEM.PERFECT_GAME_BONUS;
+                showAchievement("¡JUEGO PERFECTO!", `¡Completaste los 30 niveles! Bonus: +${SCORING_SYSTEM.PERFECT_GAME_BONUS} puntos`);
+            }
+            
             // Logros finales
             if (maxLevelReached >= 25) {
                 showAchievement("¡Maestro cardiólogo!", "Alcanzaste un nivel élite");
@@ -2369,7 +2442,8 @@
             }
             
             const result = {
-                nombre: currentPlayer.name,
+                nombre: currentPlayer.name,        // Nombre real (solo para admin)
+                pseudonimo: currentPlayer.nickname, // Pseudónimo (para rankings públicos)
                 cedula: currentPlayer.id,
                 grupo: currentPlayer.team,
                 puntaje: score,
@@ -2424,6 +2498,7 @@
             document.getElementById('resultsScreen').style.display = 'none';
             document.getElementById('startScreen').style.display = 'block';
             document.getElementById('playerName').value = '';
+            document.getElementById('playerNickname').value = '';
             document.getElementById('playerId').value = '';
             document.getElementById('playerTeam').value = '';
             document.getElementById('intentosMessage').style.display = 'none';
