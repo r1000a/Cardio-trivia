@@ -1,0 +1,1322 @@
+[
+  {
+    "id": "ci_001",
+    "level": 1,
+    "question": "¿Cuál es el mecanismo fisiopatológico primario en las miocardiopatías infiltrativas?",
+    "options": [
+      {"text": "Depósito de sustancias anormales en el intersticio miocárdico", "correct": true},
+      {"text": "Daño isquémico recurrente", "correct": false},
+      {"text": "Mutaciones en proteínas sarcoméricas", "correct": false},
+      {"text": "Desregulación autonómica", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_002",
+    "level": 1,
+    "question": "¿Qué hallazgo ecocardiográfico es característico en la amiloidosis cardíaca?",
+    "options": [
+      {"text": "Engrosamiento biventricular con granulación brillante del miocardio", "correct": true},
+      {"text": "Dilatación severa del ventrículo izquierdo", "correct": false},
+      {"text": "Aneurismas apicales", "correct": false},
+      {"text": "Movimiento paradójico del septo", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_003",
+    "level": 1,
+    "question": "¿Cuál es la presentación clínica más frecuente de la amiloidosis ATTR wild-type?",
+    "options": [
+      {"text": "Insuficiencia cardíaca con fracción de eyección preservada en varones mayores", "correct": true},
+      {"text": "Miocardiopatía dilatada en adultos jóvenes", "correct": false},
+      {"text": "Síncope arrítmico en niños", "correct": false},
+      {"text": "Dolor torácico anginoso", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_004",
+    "level": 1,
+    "question": "¿Qué técnica diagnóstica permite confirmar amiloidosis ATTR sin biopsia cardíaca?",
+    "options": [
+      {"text": "Gammagrafía ósea con Tc-99m-DPD/PYP/HMDP", "correct": true},
+      {"text": "Resonancia magnética con realce tardío", "correct": false},
+      {"text": "Tomografía por emisión de positrones", "correct": false},
+      {"text": "Ecocardiografía 3D", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_005",
+    "level": 2,
+    "question": "¿Por qué la disfunción diastólica precede a la sistólica en amiloidosis?",
+    "options": [
+      {"text": "El depósito intersticial causa rigidez ventricular antes de afectar miocitos", "correct": true},
+      {"text": "Isquemia microvascular temprana", "correct": false},
+      {"text": "Disfunción endotelial primaria", "correct": false},
+      {"text": "Activación neurohormonal acelerada", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_006",
+    "level": 2,
+    "question": "¿Qué factor identifica mayor riesgo de mortalidad en amiloidosis AL?",
+    "options": [
+      {"text": "Tiempo de relajación T2 >55 ms en resonancia", "correct": true},
+      {"text": "Fracción de eyección <40%", "correct": false},
+      {"text": "Presión arterial sistólica <100 mmHg", "correct": false},
+      {"text": "Disfunción renal moderada", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_007",
+    "level": 2,
+    "question": "¿Cuál es el mecanismo de acción de tafamidis en ATTR?",
+    "options": [
+      {"text": "Estabilización del tetrámero de transtiretina", "correct": true},
+      {"text": "Degradación de fibrillas amiloides", "correct": false},
+      {"text": "Supresión hepática de síntesis de TTR", "correct": false},
+      {"text": "Inmunomodulación", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_008",
+    "level": 2,
+    "question": "Según reportes uruguayos, ¿qué caracteriza el uso de tafamidis en ATTR?",
+    "options": [
+      {"text": "Primera opción farmacológica modificadora de enfermedad", "correct": true},
+      {"text": "Uso exclusivo en estadio terminal", "correct": false},
+      {"text": "Asociación obligatoria con quimioterapia", "correct": false},
+      {"text": "Efectividad solo en variantes hereditarias", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_009",
+    "level": 3,
+    "question": "¿Qué patrón de strain ecocardiográfico es altamente específico para amiloidosis?",
+    "options": [
+      {"text": "Reducción basal con preservación apical (patrón de ahorro apical)", "correct": true},
+      {"text": "Disminución global homogénea", "correct": false},
+      {"text": "Alteración aislada del segmento medio", "correct": false},
+      {"text": "Hipercontractilidad apical", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_010",
+    "level": 3,
+    "question": "¿Qué variante genética de ATTR es más prevalente en Uruguay?",
+    "options": [
+      {"text": "Val50Met", "correct": true},
+      {"text": "Thr60Ala", "correct": false},
+      {"text": "Val122Ile", "correct": false},
+      {"text": "Leu111Met", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_011",
+    "level": 3,
+    "question": "¿Cuándo está indicado el trasplante hepático en ATTR?",
+    "options": [
+      {"text": "En ATTRv con mutación Val50Met en estadios tempranos", "correct": true},
+      {"text": "En ATTRwt sintomática", "correct": false},
+      {"text": "En fallo cardíaco terminal sin afectación sistémica", "correct": false},
+      {"text": "Como primera línea en todas las variantes", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_012",
+    "level": 3,
+    "question": "¿Cuál es el principal dilema ético en amiloidosis avanzada?",
+    "options": [
+      {"text": "Acceso a terapias de alto costo vs. equidad", "correct": true},
+      {"text": "Indicación de marcapasos en ancianos", "correct": false},
+      {"text": "Uso de diuréticos en fallo renal", "correct": false},
+      {"text": "Limitación de actividad física", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_013",
+    "level": 4,
+    "question": "¿Qué factor define peor pronóstico en ATTR?",
+    "options": [
+      {"text": "Niveles de NT-proBNP >3000 pg/mL", "correct": true},
+      {"text": "Edad >80 años", "correct": false},
+      {"text": "FEVI <50%", "correct": false},
+      {"text": "Presencia de neuropatía periférica", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_014",
+    "level": 4,
+    "question": "¿Qué hallazgo en resonancia magnética diferencia AL de ATTR?",
+    "options": [
+      {"text": "Edema miocárdico (T2 prolongado) en AL", "correct": true},
+      {"text": "Realce tardío subendocárdico exclusivo en ATTR", "correct": false},
+      {"text": "Realce tardío transmural solo en AL", "correct": false},
+      {"text": "Dilatación ventricular en ATTR", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_015",
+    "level": 4,
+    "question": "¿Qué fármaco está aprobado para suprimir síntesis de TTR?",
+    "options": [
+      {"text": "Patisirán (ARN de interferencia)", "correct": true},
+      {"text": "Carvedilol", "correct": false},
+      {"text": "Bortezomib", "correct": false},
+      {"text": "Daratumumab", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_016",
+    "level": 4,
+    "question": "Según casos uruguayos, ¿qué reto diagnóstico es frecuente en ATTR?",
+    "options": [
+      {"text": "Confusión con HTA en ancianos con engrosamiento ventricular", "correct": true},
+      {"text": "Diagnóstico erróneo de miocarditis", "correct": false},
+      {"text": "Sospecha de cardiopatía isquémica sin obstrucción", "correct": false},
+      {"text": "Falsa miocardiopatía hipertrófica", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_017",
+    "level": 5,
+    "question": "¿Por qué la amiloidosis AL tiene peor pronóstico que ATTR?",
+    "options": [
+      {"text": "Toxicidad directa de cadenas ligeras sobre miocitos", "correct": true},
+      {"text": "Mayor depósito intersticial", "correct": false},
+      {"text": "Ausencia de tratamientos modificadores", "correct": false},
+      {"text": "Afectación exclusivamente cardíaca", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_018",
+    "level": 5,
+    "question": "¿Qué enfermedad NO infiltrativa puede simular amiloidosis en ecocardiografía?",
+    "options": [
+      {"text": "Miocardiopatía hipertrófica sarcomérica", "correct": true},
+      {"text": "Hemocromatosis", "correct": false},
+      {"text": "Enfermedad de Fabry", "correct": false},
+      {"text": "Sarcoidosis", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_019",
+    "level": 5,
+    "question": "¿Qué medicamento está contraindicado en amiloidosis con disautonomía?",
+    "options": [
+      {"text": "Bloqueadores de canales de calcio", "correct": true},
+      {"text": "Antagonistas de receptores de angiotensina II", "correct": false},
+      {"text": "Diuréticos de asa", "correct": false},
+      {"text": "Beta-bloqueantes", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_020",
+    "level": 5,
+    "question": "En ATTR avanzada, ¿qué principio ético prioriza el tratamiento paliativo sobre terapias modificadoras?",
+    "options": [
+      {"text": "Beneficencia al evitar tratamientos fútiles", "correct": true},
+      {"text": "Autonomía del paciente", "correct": false},
+      {"text": "Justicia distributiva", "correct": false},
+      {"text": "No maleficencia", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_021",
+    "level": 6,
+    "question": "¿Qué parámetro de resonancia predice mortalidad en AL pero no en ATTR?",
+    "options": [
+      {"text": "Tiempo de relajación T2", "correct": true},
+      {"text": "Volumen extracelular", "correct": false},
+      {"text": "Fracción de eyección", "correct": false},
+      {"text": "Masa ventricular izquierda", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_022",
+    "level": 6,
+    "question": "¿Qué técnica cuantifica mejor la carga amiloidea cardíaca?",
+    "options": [
+      {"text": "PET con florbetapir marcado", "correct": true},
+      {"text": "Ecocardiografía con strain", "correct": false},
+      {"text": "Gammagrafía con PYP", "correct": false},
+      {"text": "Biopsia endomiocárdica", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_023",
+    "level": 6,
+    "question": "¿Qué terapia experimental elimina depósitos de amiloide?",
+    "options": [
+      {"text": "Anticuerpos monoclonales anti-amiloide (e.g., birtamimab)", "correct": true},
+      {"text": "Inhibidores de tirosina quinasa", "correct": false},
+      {"text": "Inmunoterapia con células CAR-T", "correct": false},
+      {"text": "Terapia génica con CRISPR", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_024",
+    "level": 6,
+    "question": "En Uruguay, ¿qué desafío enfrenta el diagnóstico de ATTRv?",
+    "options": [
+      {"text": "Subregistro por falta de screening genético familiar", "correct": true},
+      {"text": "Confusión con enfermedad de Chagas", "correct": false},
+      {"text": "Falta de acceso a gammagrafía ósea", "correct": false},
+      {"text": "Sobrediagnóstico de AL", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_025",
+    "level": 7,
+    "question": "¿Qué mecanismo explica la disautonomía en amiloidosis hereditaria?",
+    "options": [
+      {"text": "Depósito amiloide en ganglios autonómicos", "correct": true},
+      {"text": "Isquemia del tronco encefálico", "correct": false},
+      {"text": "Neuropatía diabética concomitante", "correct": false},
+      {"text": "Disfunción tiroidea", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_026",
+    "level": 7,
+    "question": "¿Qué biomarcador sérico es más específico para amiloidosis cardíaca?",
+    "options": [
+      {"text": "Cadenas ligeras libres kappa/lambda", "correct": true},
+      {"text": "Troponina ultrasensible", "correct": false},
+      {"text": "Creatinquinasa", "correct": false},
+      {"text": "Procalcitonina", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_027",
+    "level": 7,
+    "question": "¿Cuál es el principal objetivo del tratamiento con diflunisal en amiloidosis ATTR?",
+    "options": [
+      {"text": "Estabilizar la transtiretina para prevenir su desestabilización", "correct": true},
+      {"text": "Eliminar depósitos de amiloide existentes", "correct": false},
+      {"text": "Suprimir la síntesis hepática de transtiretina", "correct": false},
+      {"text": "Mejorar la contractilidad miocárdica", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_028",
+    "level": 7,
+    "question": "En un paciente uruguayo con amiloidosis AL, ¿qué complicación sistémica es frecuente y debe monitorizarse estrechamente?",
+    "options": [
+      {"text": "Nefropatía por depósito de cadenas ligeras", "correct": true},
+      {"text": "Hipertensión arterial esencial", "correct": false},
+      {"text": "Diabetes mellitus tipo 2", "correct": false},
+      {"text": "Enfermedad pulmonar obstructiva crónica", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_029",
+    "level": 8,
+    "question": "¿Cómo afecta la amiloidosis la función microvascular cardíaca?",
+    "options": [
+      {"text": "Produce disfunción microvascular por infiltración y compresión de vasos", "correct": true},
+      {"text": "Mejora la perfusión coronaria", "correct": false},
+      {"text": "No afecta la microcirculación", "correct": false},
+      {"text": "Solo afecta arterias epicárdicas", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_030",
+    "level": 8,
+    "question": "¿Qué hallazgo en biopsia endomiocárdica confirma el diagnóstico de amiloidosis cardíaca?",
+    "options": [
+      {"text": "Depósitos amorfos que tiñen con rojo Congo y muestran birrefringencia verde manzana", "correct": true},
+      {"text": "Fibrosis intersticial sin depósitos", "correct": false},
+      {"text": "Inflamación linfocitaria", "correct": false},
+      {"text": "Necrosis miocárdica focal", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_031",
+    "level": 8,
+    "question": "¿Cuál es la indicación principal para el uso de bortezomib en amiloidosis AL?",
+    "options": [
+      {"text": "Inhibir la proliferación de células plasmáticas productoras de cadenas ligeras", "correct": true},
+      {"text": "Estabilizar la transtiretina", "correct": false},
+      {"text": "Reducir la inflamación sistémica", "correct": false},
+      {"text": "Mejorar la función renal", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_032",
+    "level": 8,
+    "question": "En un paciente con amiloidosis ATTR y bloqueo AV de segundo grado, ¿qué tratamiento es el más adecuado?",
+    "options": [
+      {"text": "Implantación de marcapasos definitivo", "correct": true},
+      {"text": "Observación sin intervención", "correct": false},
+      {"text": "Inicio de betabloqueantes", "correct": false},
+      {"text": "Tratamiento con digoxina", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_033",
+    "level": 9,
+    "question": "¿Qué efecto tiene la infiltración amiloide sobre la función auricular izquierda?",
+    "options": [
+      {"text": "Disminuye la contractilidad y contribuye a la disfunción diastólica", "correct": true},
+      {"text": "Aumenta la contractilidad auricular", "correct": false},
+      {"text": "No afecta la aurícula", "correct": false},
+      {"text": "Produce hipertrofia auricular compensatoria", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_034",
+    "level": 9,
+    "question": "¿Cuál es el valor diagnóstico del NT-proBNP en amiloidosis cardíaca?",
+    "options": [
+      {"text": "Elevado en la mayoría de los casos y correlaciona con gravedad", "correct": true},
+      {"text": "Normal incluso en etapas avanzadas", "correct": false},
+      {"text": "Solo útil en amiloidosis AL", "correct": false},
+      {"text": "No es útil en cardiopatías infiltrativas", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_035",
+    "level": 9,
+    "question": "¿Cuál es la contraindicación principal para el uso de digoxina en amiloidosis cardíaca?",
+    "options": [
+      {"text": "Riesgo aumentado de toxicidad por depósito en miocitos infiltrados", "correct": true},
+      {"text": "Hipotensión arterial", "correct": false},
+      {"text": "Bradicardia leve", "correct": false},
+      {"text": "Disfunción renal leve", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_036",
+    "level": 9,
+    "question": "Paciente uruguayo con amiloidosis AL y insuficiencia renal, ¿qué consideración terapéutica es clave?",
+    "options": [
+      {"text": "Ajustar dosis de quimioterapia para evitar toxicidad renal", "correct": true},
+      {"text": "Suspender diuréticos", "correct": false},
+      {"text": "Evitar anticoagulación", "correct": false},
+      {"text": "No modificar tratamiento", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_037",
+    "level": 10,
+    "question": "¿Cómo contribuye la fibrosis intersticial en cardiomiopatías restrictivas a la disfunción ventricular?",
+    "options": [
+      {"text": "Aumenta la rigidez ventricular y disminuye la distensibilidad", "correct": true},
+      {"text": "Mejora la contractilidad", "correct": false},
+      {"text": "No afecta la función ventricular", "correct": false},
+      {"text": "Reduce la presión de llenado", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_038",
+    "level": 10,
+    "question": "¿Qué hallazgo en la resonancia magnética sugiere cardiomiopatía restrictiva infiltrativa?",
+    "options": [
+      {"text": "Realce tardío difuso subendocárdico y aumento del volumen extracelular", "correct": true},
+      {"text": "Realce focal transmural", "correct": false},
+      {"text": "Ausencia de realce", "correct": false},
+      {"text": "Realce pericárdico", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_039",
+    "level": 10,
+    "question": "¿Cuál es el tratamiento de elección para la insuficiencia cardíaca en cardiomiopatías restrictivas infiltrativas?",
+    "options": [
+      {"text": "Diuréticos para control de congestión", "correct": true},
+      {"text": "Betabloqueantes en dosis altas", "correct": false},
+      {"text": "IECA como primera línea", "correct": false},
+      {"text": "Calcioantagonistas dihidropiridínicos", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_040",
+    "level": 10,
+    "question": "En un paciente con amiloidosis y fibrilación auricular, ¿qué estrategia es preferible para el control del ritmo o frecuencia?",
+    "options": [
+      {"text": "Control de frecuencia con digoxina y betabloqueantes con precaución", "correct": true},
+      {"text": "Control de ritmo con amiodarona en todos los casos", "correct": false},
+      {"text": "No tratar la arritmia", "correct": false},
+      {"text": "Uso exclusivo de calcioantagonistas", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_041",
+    "level": 11,
+    "question": "¿Cuál es el efecto de la infiltración amiloide en la conducción eléctrica cardíaca?",
+    "options": [
+      {"text": "Depósito en el sistema de conducción que causa bloqueos AV y arritmias", "correct": true},
+      {"text": "Estimulación del nodo sinoauricular", "correct": false},
+      {"text": "Aumento de la velocidad de conducción", "correct": false},
+      {"text": "No afecta la conducción eléctrica", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_042",
+    "level": 11,
+    "question": "¿Cuál es la utilidad del estudio genético en pacientes con amiloidosis ATTR?",
+    "options": [
+      {"text": "Identificar mutaciones para diferenciar entre formas hereditarias y wild-type", "correct": true},
+      {"text": "Predecir respuesta a diuréticos", "correct": false},
+      {"text": "Determinar la función renal", "correct": false},
+      {"text": "No tiene utilidad clínica", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_043",
+    "level": 11,
+    "question": "¿Qué consideraciones se deben tener al administrar betabloqueantes en pacientes con cardiomiopatía restrictiva por amiloidosis?",
+    "options": [
+      {"text": "Deben usarse con precaución debido a la dependencia de la frecuencia cardíaca para mantener el gasto", "correct": true},
+      {"text": "Deben evitarse siempre", "correct": false},
+      {"text": "Dosis altas son necesarias para el control de la insuficiencia cardíaca", "correct": false},
+      {"text": "No tienen impacto en estos pacientes", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_044",
+    "level": 11,
+    "question": "En un paciente uruguayo con amiloidosis AL, ¿qué terapia combinada es estándar para reducir la producción de cadenas ligeras?",
+    "options": [
+      {"text": "Bortezomib, ciclofosfamida y dexametasona", "correct": true},
+      {"text": "Tafamidis y diuréticos", "correct": false},
+      {"text": "Carvedilol y IECA", "correct": false},
+      {"text": "Quimioterapia sola sin corticosteroides", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_045",
+    "level": 12,
+    "question": "¿Qué rol tiene la inflamación en la progresión de la amiloidosis AL cardíaca?",
+    "options": [
+      {"text": "Contribuye a daño miocárdico directo y fibrosis", "correct": true},
+      {"text": "No tiene rol significativo", "correct": false},
+      {"text": "Solo afecta órganos extracardíacos", "correct": false},
+      {"text": "Reduce la toxicidad de cadenas ligeras", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_046",
+    "level": 12,
+    "question": "¿Cuál es el valor pronóstico del volumen extracelular medido por resonancia magnética en amiloidosis cardíaca?",
+    "options": [
+      {"text": "Mayor volumen extracelular se asocia a peor pronóstico", "correct": true},
+      {"text": "No tiene valor pronóstico", "correct": false},
+      {"text": "Volumen extracelular bajo indica peor pronóstico", "correct": false},
+      {"text": "Solo es útil en diagnóstico, no en pronóstico", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_047",
+    "level": 12,
+    "question": "¿Qué precauciones se deben tomar con los diuréticos en pacientes con amiloidosis y disfunción renal?",
+    "options": [
+      {"text": "Uso cuidadoso para evitar hipovolemia y daño renal adicional", "correct": true},
+      {"text": "Dosis altas para eliminar líquidos rápidamente", "correct": false},
+      {"text": "Evitar diuréticos siempre", "correct": false},
+      {"text": "No se requiere ajuste de dosis", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_048",
+    "level": 12,
+    "question": "En un paciente uruguayo con amiloidosis ATTR y neuropatía, ¿qué tratamiento específico está disponible para modificar la enfermedad?",
+    "options": [
+      {"text": "Patisirán y vutrisiran (ARN de interferencia)", "correct": true},
+      {"text": "Bortezomib", "correct": false},
+      {"text": "Tafamidis solo", "correct": false},
+      {"text": "Quimioterapia convencional", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_049",
+    "level": 13,
+    "question": "¿Qué diferencia molecular existe entre amiloidosis AL y ATTR en cuanto a la formación de fibrillas amiloides?",
+    "options": [
+      {"text": "AL está formada por cadenas ligeras monoclonales, ATTR por transtiretina mal plegada", "correct": true},
+      {"text": "Ambas están formadas por transtiretina", "correct": false},
+      {"text": "AL es causada por transtiretina mutada, ATTR por cadenas ligeras", "correct": false},
+      {"text": "No hay diferencia molecular", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_050",
+    "level": 13,
+    "question": "¿Qué papel tiene la biopsia de grasa abdominal en el diagnóstico de amiloidosis cardíaca?",
+    "options": [
+      {"text": "Permite diagnóstico menos invasivo con buena sensibilidad en AL", "correct": true},
+      {"text": "No tiene utilidad diagnóstica", "correct": false},
+      {"text": "Solo útil en ATTR", "correct": false},
+      {"text": "Reemplaza la biopsia endomiocárdica en todos los casos", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_051",
+    "level": 13,
+    "question": "¿Cuál es el mecanismo de acción de daratumumab en amiloidosis AL?",
+    "options": [
+      {"text": "Anticuerpo monoclonal anti-CD38 que elimina células plasmáticas", "correct": true},
+      {"text": "Inhibidor de proteasoma", "correct": false},
+      {"text": "Estabilizador de transtiretina", "correct": false},
+      {"text": "ARN interferente", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_052",
+    "level": 13,
+    "question": "En Uruguay, ¿qué barreras existen para el acceso a terapias modificadoras en amiloidosis?",
+    "options": [
+      {"text": "Costo elevado y limitaciones en cobertura pública", "correct": true},
+      {"text": "Falta de diagnóstico oportuno", "correct": false},
+      {"text": "Ausencia de especialistas", "correct": false},
+      {"text": "No existen barreras significativas", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_053",
+    "level": 14,
+    "question": "¿Cómo afecta la amiloidosis a la función mitocondrial en cardiomiocitos?",
+    "options": [
+      {"text": "Cadenas ligeras libres inducen estrés oxidativo y disfunción mitocondrial", "correct": true},
+      {"text": "Mejora la producción de ATP", "correct": false},
+      {"text": "No afecta la mitocondria", "correct": false},
+      {"text": "Aumenta la biogénesis mitocondrial", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_054",
+    "level": 14,
+    "question": "¿Qué hallazgo electrocardiográfico es típico pero no específico de amiloidosis cardíaca?",
+    "options": [
+      {"text": "Bajo voltaje en derivaciones de extremidades", "correct": true},
+      {"text": "Elevación del segmento ST", "correct": false},
+      {"text": "Bloqueo de rama derecha", "correct": false},
+      {"text": "Taquicardia ventricular", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_055",
+    "level": 14,
+    "question": "¿Cuál es la indicación de trasplante cardíaco en amiloidosis?",
+    "options": [
+      {"text": "Fallo cardíaco avanzado refractario a tratamiento médico en AL o ATTR seleccionados", "correct": true},
+      {"text": "En todos los pacientes con amiloidosis", "correct": false},
+      {"text": "Solo en ATTR wild-type", "correct": false},
+      {"text": "Nunca está indicado", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_056",
+    "level": 14,
+    "question": "En un paciente uruguayo con amiloidosis y fibrilación auricular, ¿qué anticoagulante es preferido?",
+    "options": [
+      {"text": "Anticoagulantes orales directos (DOACs)", "correct": true},
+      {"text": "Warfarina", "correct": false},
+      {"text": "Aspirina", "correct": false},
+      {"text": "No anticoagulación", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_057",
+    "level": 15,
+    "question": "¿Qué papel juega la activación neurohormonal en la insuficiencia cardíaca por amiloidosis?",
+    "options": [
+      {"text": "Contribuye a la progresión de la disfunción y remodelado ventricular", "correct": true},
+      {"text": "No está activada en amiloidosis", "correct": false},
+      {"text": "Es protectora para el miocardio", "correct": false},
+      {"text": "Solo afecta el sistema nervioso central", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_058",
+    "level": 15,
+    "question": "¿Cuál es el valor de la biopsia endomiocárdica en el diagnóstico diferencial de cardiomiopatías restrictivas?",
+    "options": [
+      {"text": "Permite confirmar infiltración y tipificar el depósito", "correct": true},
+      {"text": "No aporta información relevante", "correct": false},
+      {"text": "Solo se usa para descartar infecciones", "correct": false},
+      {"text": "Se reemplaza por ecocardiografía", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_059",
+    "level": 15,
+    "question": "¿Qué fármaco ha demostrado reducir mortalidad en amiloidosis ATTR con compromiso cardíaco?",
+    "options": [
+      {"text": "Tafamidis", "correct": true},
+      {"text": "Digoxina", "correct": false},
+      {"text": "Carvedilol", "correct": false},
+      {"text": "Furosemida", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_060",
+    "level": 15,
+    "question": "¿Qué desafío ético surge en el uso de terapias costosas para amiloidosis en sistemas públicos de salud como Uruguay?",
+    "options": [
+      {"text": "Equilibrar acceso equitativo con sostenibilidad financiera", "correct": true},
+      {"text": "Negar tratamiento a todos los pacientes", "correct": false},
+      {"text": "Priorizar solo pacientes jóvenes", "correct": false},
+      {"text": "No existen desafíos éticos", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_061",
+    "level": 16,
+    "question": "¿Cuál es el mecanismo de acción de vutrisirán en el tratamiento de amiloidosis ATTR?",
+    "options": [
+      {"text": "ARN de interferencia que reduce la síntesis hepática de transtiretina", "correct": true},
+      {"text": "Anticuerpo monoclonal que elimina fibrillas amiloides", "correct": false},
+      {"text": "Estabilizador de la proteína transtiretina", "correct": false},
+      {"text": "Inhibidor de la agregación de cadenas ligeras", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_062",
+    "level": 16,
+    "question": "¿Qué importancia tiene la exclusión de discrasias plasmáticas en el diagnóstico de amiloidosis ATTR?",
+    "options": [
+      {"text": "Es fundamental para diferenciar ATTR de AL, ya que la presencia de cadenas monoclonales sugiere AL", "correct": true},
+      {"text": "No es relevante, ya que ambas condiciones se tratan igual", "correct": false},
+      {"text": "Solo es necesaria en pacientes con insuficiencia renal", "correct": false},
+      {"text": "Se realiza solo en casos con sospecha de mieloma múltiple", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_063",
+    "level": 16,
+    "question": "En Uruguay, ¿qué barreras limitan el diagnóstico temprano de amiloidosis cardíaca?",
+    "options": [
+      {"text": "Baja sospecha clínica y acceso limitado a gammagrafía ósea", "correct": true},
+      {"text": "Falta de tratamientos disponibles", "correct": false},
+      {"text": "Alta prevalencia de enfermedades infecciosas", "correct": false},
+      {"text": "Sobrediagnóstico por ecocardiografía", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_064",
+    "level": 17,
+    "question": "¿Cómo contribuye la amiloidosis a la insuficiencia cardíaca derecha?",
+    "options": [
+      {"text": "Infiltración y rigidez del ventrículo derecho que dificulta el llenado", "correct": true},
+      {"text": "Aumento del gasto cardíaco", "correct": false},
+      {"text": "Disfunción valvular exclusivamente", "correct": false},
+      {"text": "No afecta el ventrículo derecho", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_065",
+    "level": 17,
+    "question": "¿Qué hallazgo en ecocardiografía Doppler tisular es característico de amiloidosis cardíaca?",
+    "options": [
+      {"text": "Velocidad e' reducida en anillo mitral", "correct": true},
+      {"text": "Velocidad e' aumentada", "correct": false},
+      {"text": "Velocidad s' normal", "correct": false},
+      {"text": "Ausencia de patrón restrictivo", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_066",
+    "level": 17,
+    "question": "¿Cuál es la principal complicación del tratamiento con quimioterapia en amiloidosis AL?",
+    "options": [
+      {"text": "Toxicidad renal y mielosupresión", "correct": true},
+      {"text": "Hipotensión arterial", "correct": false},
+      {"text": "Arritmias ventriculares", "correct": false},
+      {"text": "Hipoglucemia", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_067",
+    "level": 18,
+    "question": "Paciente uruguayo con amiloidosis ATTR y neuropatía, ¿qué tratamiento modificador es más apropiado?",
+    "options": [
+      {"text": "Patisirán o vutrisirán", "correct": true},
+      {"text": "Bortezomib", "correct": false},
+      {"text": "Tafamidis", "correct": false},
+      {"text": "Diuréticos", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_068",
+    "level": 18,
+    "question": "¿Qué papel juega la microangiopatía en la disfunción cardíaca en amiloidosis AL?",
+    "options": [
+      {"text": "Compromete la perfusión miocárdica y contribuye a isquemia", "correct": true},
+      {"text": "No tiene impacto clínico", "correct": false},
+      {"text": "Mejora la perfusión", "correct": false},
+      {"text": "Solo afecta órganos no cardíacos", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_069",
+    "level": 18,
+    "question": "¿Qué hallazgo en la gammagrafía con Tc-99m-PYP es indicativo de amiloidosis ATTR?",
+    "options": [
+      {"text": "Captación grado 2 o 3 en el miocardio", "correct": true},
+      {"text": "Ausencia de captación", "correct": false},
+      {"text": "Captación leve (grado 1)", "correct": false},
+      {"text": "Captación exclusiva en huesos", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_070",
+    "level": 18,
+    "question": "¿Cuál es la estrategia terapéutica para pacientes con amiloidosis AL refractaria a quimioterapia convencional?",
+    "options": [
+      {"text": "Uso de anticuerpos monoclonales como daratumumab", "correct": true},
+      {"text": "Aumentar dosis de diuréticos", "correct": false},
+      {"text": "Iniciar betabloqueantes", "correct": false},
+      {"text": "Suspender tratamiento", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_071",
+    "level": 19,
+    "question": "En Uruguay, ¿qué factor limita la implementación de terapias avanzadas para amiloidosis cardíaca?",
+    "options": [
+      {"text": "Costo elevado y acceso limitado a medicamentos", "correct": true},
+      {"text": "Falta de diagnóstico", "correct": false},
+      {"text": "Baja prevalencia de la enfermedad", "correct": false},
+      {"text": "Falta de especialistas", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_072",
+    "level": 19,
+    "question": "¿Cómo afecta la amiloidosis la función valvular cardíaca?",
+    "options": [
+      {"text": "Depósito amiloide en válvulas puede causar engrosamiento y disfunción", "correct": true},
+      {"text": "No afecta las válvulas", "correct": false},
+      {"text": "Produce regurgitación severa en todos los casos", "correct": false},
+      {"text": "Solo afecta válvula aórtica", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_073",
+    "level": 19,
+    "question": "¿Qué utilidad tiene la resonancia magnética con T1 nativo en amiloidosis cardíaca?",
+    "options": [
+      {"text": "Detecta infiltración miocárdica y cuantifica volumen extracelular", "correct": true},
+      {"text": "Solo evalúa función ventricular", "correct": false},
+      {"text": "No es útil en amiloidosis", "correct": false},
+      {"text": "Detecta isquemia coronaria", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_074",
+    "level": 19,
+    "question": "¿Qué consideraciones éticas son relevantes en el manejo de pacientes con amiloidosis avanzada en Uruguay?",
+    "options": [
+      {"text": "Garantizar acceso equitativo a tratamientos costosos y cuidados paliativos", "correct": true},
+      {"text": "Priorizar solo pacientes jóvenes", "correct": false},
+      {"text": "Negar tratamientos por costo", "correct": false},
+      {"text": "No existen consideraciones éticas especiales", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_075",
+    "level": 20,
+    "question": "Paciente con amiloidosis ATTR y insuficiencia cardíaca avanzada, ¿qué enfoque terapéutico es el más adecuado?",
+    "options": [
+      {"text": "Terapia modificadora si está en estadios iniciales, cuidados paliativos si avanzado", "correct": true},
+      {"text": "Solo diuréticos en todos los casos", "correct": false},
+      {"text": "Trasplante cardíaco en todos los pacientes", "correct": false},
+      {"text": "No tratamiento necesario", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_076",
+    "level": 21,
+    "question": "¿Qué papel juega la apoptosis en la progresión de la amiloidosis AL cardíaca?",
+    "options": [
+      {"text": "Las cadenas ligeras inducen apoptosis miocárdica acelerando la disfunción", "correct": true},
+      {"text": "La apoptosis está inhibida", "correct": false},
+      {"text": "No tiene papel en la enfermedad", "correct": false},
+      {"text": "Solo afecta células endoteliales", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_077",
+    "level": 21,
+    "question": "¿Cuál es el valor pronóstico del NT-proBNP en amiloidosis cardíaca AL tras inicio de tratamiento?",
+    "options": [
+      {"text": "Una disminución significativa se asocia a mejor pronóstico", "correct": true},
+      {"text": "No tiene valor pronóstico", "correct": false},
+      {"text": "Un aumento indica mejoría", "correct": false},
+      {"text": "Solo es útil en ATTR", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_078",
+    "level": 21,
+    "question": "¿Qué fármaco ha mostrado eficacia en retrasar la progresión de neuropatía en amiloidosis ATTR hereditaria?",
+    "options": [
+      {"text": "Patisirán", "correct": true},
+      {"text": "Tafamidis", "correct": false},
+      {"text": "Daratumumab", "correct": false},
+      {"text": "Bortezomib", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_079",
+    "level": 22,
+    "question": "Paciente con amiloidosis AL refractaria a quimioterapia, ¿qué opción terapéutica avanzada se considera?",
+    "options": [
+      {"text": "Trasplante autólogo de células madre hematopoyéticas", "correct": true},
+      {"text": "Aumento de dosis de diuréticos", "correct": false},
+      {"text": "Tafamidis", "correct": false},
+      {"text": "Reposo absoluto", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_080",
+    "level": 22,
+    "question": "¿Qué efecto tiene la amiloidosis en la función sistólica ventricular en fases avanzadas?",
+    "options": [
+      {"text": "Disminución progresiva de la fracción de eyección", "correct": true},
+      {"text": "Mejora de la contractilidad", "correct": false},
+      {"text": "No afecta la función sistólica", "correct": false},
+      {"text": "Incremento del volumen sistólico", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_081",
+    "level": 22,
+    "question": "¿Cuál es la utilidad del electrocardiograma en el seguimiento de pacientes con amiloidosis cardíaca?",
+    "options": [
+      {"text": "Detectar progresión de bajo voltaje y arritmias", "correct": true},
+      {"text": "No tiene utilidad", "correct": false},
+      {"text": "Solo sirve para diagnóstico inicial", "correct": false},
+      {"text": "Detecta hipertrofia ventricular", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_082",
+    "level": 23,
+    "question": "¿Qué consideraciones se deben tener al usar anticoagulantes en pacientes con amiloidosis y fibrilación auricular?",
+    "options": [
+      {"text": "Riesgo aumentado de hemorragia por fragilidad vascular", "correct": true},
+      {"text": "No se recomienda anticoagulación", "correct": false},
+      {"text": "Solo usar aspirina", "correct": false},
+      {"text": "No hay consideraciones especiales", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_083",
+    "level": 23,
+    "question": "Paciente uruguayo con amiloidosis avanzada y deterioro renal, ¿qué ajuste terapéutico es necesario?",
+    "options": [
+      {"text": "Reducir dosis de quimioterapia y diuréticos", "correct": true},
+      {"text": "Mantener dosis estándar", "correct": false},
+      {"text": "Suspender todo tratamiento", "correct": false},
+      {"text": "Aumentar dosis para compensar", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_084",
+    "level": 24,
+    "question": "¿Cómo afecta la amiloidosis a la función del sistema nervioso autónomo?",
+    "options": [
+      {"text": "Depósito amiloide en ganglios nerviosos produce disautonomía", "correct": true},
+      {"text": "No afecta el sistema nervioso autónomo", "correct": false},
+      {"text": "Solo afecta nervios periféricos motores", "correct": false},
+      {"text": "Produce hipertensión arterial", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_085",
+    "level": 24,
+    "question": "¿Qué técnica no invasiva es más sensible para detectar infiltración amiloide en etapas tempranas?",
+    "options": [
+      {"text": "Resonancia magnética con mapeo T1 y volumen extracelular", "correct": true},
+      {"text": "Ecocardiografía convencional", "correct": false},
+      {"text": "Electrocardiograma", "correct": false},
+      {"text": "Radiografía de tórax", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_086",
+    "level": 24,
+    "question": "¿Cuál es la indicación para iniciar terapia específica en amiloidosis ATTR wild-type?",
+    "options": [
+      {"text": "Pacientes sintomáticos con evidencia de compromiso cardíaco", "correct": true},
+      {"text": "Solo en pacientes con neuropatía", "correct": false},
+      {"text": "En todos los pacientes con diagnóstico", "correct": false},
+      {"text": "No está indicada en wild-type", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_087",
+    "level": 25,
+    "question": "Paciente con amiloidosis AL y cardiomiopatía restrictiva, ¿qué estrategia terapéutica es prioritaria?",
+    "options": [
+      {"text": "Controlar la producción de cadenas ligeras con quimioterapia", "correct": true},
+      {"text": "Solo manejo sintomático con diuréticos", "correct": false},
+      {"text": "Trasplante cardíaco inmediato", "correct": false},
+      {"text": "No tratamiento específico", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_088",
+    "level": 25,
+    "question": "¿Qué papel juega la fibrosis en la evolución de la amiloidosis cardíaca?",
+    "options": [
+      {"text": "Contribuye a la rigidez y disfunción ventricular irreversible", "correct": true},
+      {"text": "Es reversible con tratamiento", "correct": false},
+      {"text": "No tiene impacto clínico", "correct": false},
+      {"text": "Solo afecta la función auricular", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_089",
+    "level": 25,
+    "question": "¿Qué marcador bioquímico se utiliza para monitorizar la respuesta al tratamiento en amiloidosis AL?",
+    "options": [
+      {"text": "Niveles séricos de cadenas ligeras libres", "correct": true},
+      {"text": "Troponina I", "correct": false},
+      {"text": "BNP", "correct": false},
+      {"text": "Creatinina", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_090",
+    "level": 25,
+    "question": "¿Cuál es la recomendación para el manejo de la hipotensión ortostática en amiloidosis con disautonomía?",
+    "options": [
+      {"text": "Uso de midodrina y medidas no farmacológicas", "correct": true},
+      {"text": "Evitar toda medicación", "correct": false},
+      {"text": "Incrementar dosis de diuréticos", "correct": false},
+      {"text": "Uso de betabloqueantes", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_091",
+    "level": 26,
+    "question": "¿Cuál es el papel del trasplante autólogo de células madre hematopoyéticas en amiloidosis AL?",
+    "options": [
+      {"text": "Eliminar la célula plasmática clonada para reducir producción de cadenas ligeras", "correct": true},
+      {"text": "Estabilizar la proteína transtiretina", "correct": false},
+      {"text": "Eliminar depósitos amiloides en el corazón", "correct": false},
+      {"text": "Mejorar la función renal directamente", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_092",
+    "level": 26,
+    "question": "¿Qué hallazgo en resonancia magnética cardíaca es típico de amiloidosis avanzada?",
+    "options": [
+      {"text": "Realce tardío difuso subendocárdico y aumento del volumen extracelular", "correct": true},
+      {"text": "Realce focal transmural", "correct": false},
+      {"text": "Ausencia de realce", "correct": false},
+      {"text": "Realce pericárdico", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_093",
+    "level": 26,
+    "question": "¿Cómo contribuye la toxicidad directa de cadenas ligeras en la amiloidosis AL a la disfunción miocárdica?",
+    "options": [
+      {"text": "Induce estrés oxidativo y apoptosis en cardiomiocitos", "correct": true},
+      {"text": "Mejora la contractilidad miocárdica", "correct": false},
+      {"text": "No tiene efecto directo", "correct": false},
+      {"text": "Solo afecta el sistema nervioso", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_094",
+    "level": 27,
+    "question": "¿Qué fármaco estabilizador de transtiretina es aprobado para el tratamiento de amiloidosis ATTR y mejora la supervivencia?",
+    "options": [
+      {"text": "Tafamidis", "correct": true},
+      {"text": "Diflunisal", "correct": false},
+      {"text": "Daratumumab", "correct": false},
+      {"text": "Patisirán", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_095",
+    "level": 27,
+    "question": "¿Qué técnica no invasiva es considerada estándar para el diagnóstico diferencial entre amiloidosis AL y ATTR?",
+    "options": [
+      {"text": "Gammagrafía ósea con Tc-99m-PYP o DPD", "correct": true},
+      {"text": "Biopsia endomiocárdica", "correct": false},
+      {"text": "Ecocardiografía convencional", "correct": false},
+      {"text": "Resonancia magnética sin contraste", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_096",
+    "level": 27,
+    "question": "En Uruguay, ¿qué factor limita el acceso a terapias modificadoras en amiloidosis cardíaca?",
+    "options": [
+      {"text": "Costo elevado y cobertura limitada en sistema público", "correct": true},
+      {"text": "Falta de diagnóstico", "correct": false},
+      {"text": "Baja prevalencia", "correct": false},
+      {"text": "Ausencia de especialistas", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_097",
+    "level": 28,
+    "question": "¿Cómo afecta la infiltración amiloide al sistema de conducción cardíaco en etapas avanzadas?",
+    "options": [
+      {"text": "Produce bloqueos auriculoventriculares y arritmias", "correct": true},
+      {"text": "No afecta la conducción", "correct": false},
+      {"text": "Aumenta la velocidad de conducción", "correct": false},
+      {"text": "Solo produce taquicardia sinusal", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_098",
+    "level": 28,
+    "question": "¿Qué fármaco está contraindicado en amiloidosis cardíaca debido a riesgo de toxicidad y empeoramiento hemodinámico?",
+    "options": [
+      {"text": "Digoxina", "correct": true},
+      {"text": "Diuréticos de asa", "correct": false},
+      {"text": "IECA", "correct": false},
+      {"text": "Betabloqueantes", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_099",
+    "level": 29,
+    "question": "¿Qué marcador sérico es clave para el diagnóstico y seguimiento de amiloidosis AL?",
+    "options": [
+      {"text": "Cadenas ligeras libres kappa y lambda", "correct": true},
+      {"text": "Troponina T", "correct": false},
+      {"text": "BNP", "correct": false},
+      {"text": "Creatinina", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_100",
+    "level": 29,
+    "question": "Paciente uruguayo con amiloidosis avanzada y disfunción renal, ¿qué ajuste terapéutico es prioritario?",
+    "options": [
+      {"text": "Reducir dosis de quimioterapia y diuréticos para evitar toxicidad", "correct": true},
+      {"text": "Mantener dosis estándar", "correct": false},
+      {"text": "Suspender tratamiento", "correct": false},
+      {"text": "Aumentar dosis para compensar", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_101",
+    "level": 30,
+    "question": "¿Cuál es la recomendación para el manejo de la hipotensión ortostática en amiloidosis con disautonomía?",
+    "options": [
+      {"text": "Uso de midodrina y medidas no farmacológicas como elevación de la cabeza", "correct": true},
+      {"text": "Evitar toda medicación", "correct": false},
+      {"text": "Incrementar dosis de diuréticos", "correct": false},
+      {"text": "Uso de betabloqueantes", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_102",
+    "level": 30,
+    "question": "¿Qué hallazgo en biopsia de grasa abdominal es diagnóstico para amiloidosis AL?",
+    "options": [
+      {"text": "Depósitos amiloides que tiñen con rojo Congo y birrefringencia verde manzana", "correct": true},
+      {"text": "Fibrosis sin depósitos", "correct": false},
+      {"text": "Inflamación linfocitaria", "correct": false},
+      {"text": "Necrosis focal", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_103",
+    "level": 30,
+    "question": "¿Cómo afecta la amiloidosis a la función mitocondrial en cardiomiocitos?",
+    "options": [
+      {"text": "Induce estrés oxidativo y disfunción mitocondrial", "correct": true},
+      {"text": "Mejora la producción de ATP", "correct": false},
+      {"text": "No afecta la mitocondria", "correct": false},
+      {"text": "Aumenta la biogénesis mitocondrial", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_104",
+    "level": 30,
+    "question": "En un paciente con amiloidosis avanzada y contraindicación para terapias modificadoras, ¿qué enfoque es éticamente adecuado?",
+    "options": [
+      {"text": "Priorizar cuidados paliativos y calidad de vida", "correct": true},
+      {"text": "Continuar terapias experimentales sin beneficio claro", "correct": false},
+      {"text": "Negar cualquier tratamiento", "correct": false},
+      {"text": "Solo tratamiento sintomático sin cuidados paliativos", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_105",
+    "level": 30,
+    "question": "¿Cuál es la indicación principal para el uso de anticoagulación en pacientes con amiloidosis y fibrilación auricular?",
+    "options": [
+      {"text": "Prevención del accidente cerebrovascular independientemente de la función ventricular", "correct": true},
+      {"text": "Solo si hay antecedentes de tromboembolismo", "correct": false},
+      {"text": "No se recomienda anticoagulación en amiloidosis", "correct": false},
+      {"text": "Solo si la fracción de eyección es menor a 30%", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_106",
+    "level": 30,
+    "question": "¿Qué papel tiene la biopsia endomiocárdica en la confirmación diagnóstica de amiloidosis en casos dudosos?",
+    "options": [
+      {"text": "Es el estándar de oro para confirmar infiltración y tipificar amiloide", "correct": true},
+      {"text": "No se recomienda por su alta morbilidad", "correct": false},
+      {"text": "Solo se usa para descartar infecciones", "correct": false},
+      {"text": "Se reemplaza completamente por técnicas no invasivas", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_107",
+    "level": 30,
+    "question": "¿Cómo contribuye la acumulación extracelular de fibrillas amiloides a la disfunción diastólica ventricular?",
+    "options": [
+      {"text": "Aumenta la rigidez y disminuye la distensibilidad ventricular", "correct": true},
+      {"text": "Mejora la relajación ventricular", "correct": false},
+      {"text": "No afecta la función diastólica", "correct": false},
+      {"text": "Disminuye la presión de llenado", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_108",
+    "level": 30,
+    "question": "En un paciente con amiloidosis avanzada y compromiso renal severo, ¿qué consideraciones terapéuticas son prioritarias?",
+    "options": [
+      {"text": "Ajuste de dosis de quimioterapia y manejo multidisciplinario", "correct": true},
+      {"text": "Suspensión de todos los tratamientos", "correct": false},
+      {"text": "Solo manejo diurético", "correct": false},
+      {"text": "Trasplante renal inmediato", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_109",
+    "level": 30,
+    "question": "¿Qué principio ético es fundamental al decidir suspender terapias modificadoras en amiloidosis terminal?",
+    "options": [
+      {"text": "No maleficencia, evitando tratamientos fútiles que aumentan sufrimiento", "correct": true},
+      {"text": "Autonomía sin considerar consecuencias", "correct": false},
+      {"text": "Justicia distributiva sin individualizar", "correct": false},
+      {"text": "Beneficencia sin límites", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_110",
+    "level": 30,
+    "question": "¿Cuál es el papel de la terapia génica emergente en el tratamiento de amiloidosis ATTR?",
+    "options": [
+      {"text": "Silenciar la expresión de transtiretina para prevenir formación de fibrillas", "correct": true},
+      {"text": "Eliminar depósitos amiloides existentes", "correct": false},
+      {"text": "Estimular la producción de transtiretina normal", "correct": false},
+      {"text": "No tiene aplicación clínica actual", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_111",
+    "level": 30,
+    "question": "¿Qué técnica emergente permite cuantificar la carga amiloidea cardíaca de forma no invasiva y precisa?",
+    "options": [
+      {"text": "PET con trazadores específicos para amiloide (e.g., florbetapir)", "correct": true},
+      {"text": "Ecocardiografía Doppler", "correct": false},
+      {"text": "Resonancia magnética sin contraste", "correct": false},
+      {"text": "Biopsia de grasa abdominal", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_112",
+    "level": 30,
+    "question": "¿Qué impacto tiene la inflamación local en la progresión de la amiloidosis AL cardíaca?",
+    "options": [
+      {"text": "Promueve daño miocárdico y fibrosis acelerando la disfunción", "correct": true},
+      {"text": "No tiene impacto significativo", "correct": false},
+      {"text": "Reduce la toxicidad de cadenas ligeras", "correct": false},
+      {"text": "Solo afecta órganos extracardíacos", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_113",
+    "level": 30,
+    "question": "En un paciente con amiloidosis ATTR y polineuropatía, ¿qué combinación terapéutica ha mostrado mejoría clínica significativa?",
+    "options": [
+      {"text": "ARN interferente (patisirán) y estabilizadores de transtiretina (tafamidis)", "correct": true},
+      {"text": "Quimioterapia convencional", "correct": false},
+      {"text": "Diuréticos y betabloqueantes", "correct": false},
+      {"text": "Solo cuidados paliativos", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_114",
+    "level": 30,
+    "question": "¿Cómo se debe abordar el consentimiento informado en pacientes con amiloidosis avanzada para terapias experimentales?",
+    "options": [
+      {"text": "Explicar claramente riesgos, beneficios y alternativas, respetando autonomía", "correct": true},
+      {"text": "Imponer tratamiento para maximizar resultados", "correct": false},
+      {"text": "Omitir riesgos para no generar ansiedad", "correct": false},
+      {"text": "No es necesario en enfermedad terminal", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_115",
+    "level": 30,
+    "question": "¿Qué papel tiene el manejo multidisciplinario en el tratamiento de la amiloidosis cardíaca avanzada?",
+    "options": [
+      {"text": "Optimiza resultados integrando cardiología, hematología, nefrología y cuidados paliativos", "correct": true},
+      {"text": "No es necesario, cardiología sola es suficiente", "correct": false},
+      {"text": "Solo se requiere hematología", "correct": false},
+      {"text": "No mejora resultados clínicos", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_116",
+    "level": 30,
+    "question": "¿Qué biomarcador emergente muestra potencial para diagnóstico precoz de amiloidosis cardíaca?",
+    "options": [
+      {"text": "MicroARNs específicos relacionados con estrés miocárdico", "correct": true},
+      {"text": "Troponina convencional", "correct": false},
+      {"text": "Creatinina", "correct": false},
+      {"text": "PCR", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_117",
+    "level": 30,
+    "question": "¿Qué alteración metabólica celular se observa en miocardiocitos infiltrados por amiloide?",
+    "options": [
+      {"text": "Disfunción mitocondrial y estrés oxidativo", "correct": true},
+      {"text": "Aumento de síntesis proteica", "correct": false},
+      {"text": "Hipoxia tisular reducida", "correct": false},
+      {"text": "Incremento en producción de ATP", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_118",
+    "level": 30,
+    "question": "Paciente uruguayo con amiloidosis avanzada y disfunción renal, ¿qué estrategia es fundamental para mejorar pronóstico?",
+    "options": [
+      {"text": "Manejo integral con ajuste de tratamientos y soporte renal", "correct": true},
+      {"text": "Solo diuréticos", "correct": false},
+      {"text": "Suspensión de terapias específicas", "correct": false},
+      {"text": "Trasplante renal inmediato", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_119",
+    "level": 30,
+    "question": "¿Qué principio ético debe guiar la decisión de limitar intervenciones en amiloidosis terminal?",
+    "options": [
+      {"text": "No maleficencia y respeto a la dignidad del paciente", "correct": true},
+      {"text": "Autonomía sin límites", "correct": false},
+      {"text": "Beneficencia sin considerar calidad de vida", "correct": false},
+      {"text": "Justicia distributiva sin individualización", "correct": false}
+    ]
+  },
+  {
+    "id": "ci_120",
+    "level": 30,
+    "question": "¿Cuál es la recomendación actual para el seguimiento clínico de pacientes con amiloidosis cardíaca en remisión terapéutica?",
+    "options": [
+      {"text": "Monitoreo regular con biomarcadores, ecocardiografía y evaluación funcional", "correct": true},
+      {"text": "No se requiere seguimiento tras remisión", "correct": false},
+      {"text": "Solo seguimiento hematológico", "correct": false},
+      {"text": "Solo evaluación clínica sin estudios complementarios", "correct": false}
+    ]
+  }
+]
