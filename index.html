@@ -1170,38 +1170,44 @@
                 <h1>¿Quién quiere ser cardiólogo?</h1>
                 <p class="subtitle">COMPETENCIA INDIVIDUAL Y POR EQUIPOS</p>
                 
-                <div class="form-group">
-                    <label for="playerName">Nombre y apellido:</label>
-                    <input type="text" id="playerName" placeholder="Dr. Juan Pérez López" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="playerNickname">Pseudónimo (se mostrará en los rankings):</label>
-                    <input type="text" id="playerNickname" placeholder="CardioMaster2025" required maxlength="20">
-                </div>
-                
-                <div class="form-group">
-                    <label for="playerId">Cédula de identidad (sin dígito verificador):</label>
-                    <input type="text" id="playerId" placeholder="1234567" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="playerTeam">Grupo del foro:</label>
-                    <select id="playerTeam" required>
-                        <option value="">Selecciona tu grupo</option>
-                        <option value="A">Grupo A</option>
-                        <option value="B">Grupo B</option>
-                        <option value="C">Grupo C</option>
-                    </select>
-                </div>
+                <form onsubmit="event.preventDefault(); startGame();">
+                    <div class="form-group">
+                        <label for="playerName">📝 Nombre y apellido:</label>
+                        <input type="text" id="playerName" placeholder="Dr. Juan Pérez López" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="playerNickname">🎭 Pseudónimo (aparecerá en los rankings):</label>
+                        <input type="text" id="playerNickname" placeholder="CardioMaster2025" required maxlength="20" 
+                               style="background-color: rgba(59, 130, 246, 0.1); border-color: #3b82f6;">
+                        <small style="color: #94a3b8; font-size: 0.8rem;">Solo letras, números y guión bajo. Entre 3-20 caracteres.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="playerId">🆔 Cédula de identidad (sin dígito verificador):</label>
+                        <input type="text" id="playerId" placeholder="1234567" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="playerTeam">👥 Grupo del foro:</label>
+                        <select id="playerTeam" required>
+                            <option value="">Selecciona tu grupo</option>
+                            <option value="A">Grupo A</option>
+                            <option value="B">Grupo B</option>
+                            <option value="C">Grupo C</option>
+                        </select>
+                    </div>
+                </form>
                 
                 <div class="privacy-note">
-                    🏆 <strong>Competencia:</strong> Participás tanto en el ranking individual como en el de tu equipo. Tu nombre real es privado (solo lo ve el administrador), en los rankings públicos aparece tu pseudónimo. Tu cédula es solo para validar participación y evitar múltiples intentos.
+                    🏆 <strong>Competencia:</strong> Participás tanto en el ranking individual como en el de tu equipo. 
+                    <br>🔒 <strong>Privacidad:</strong> Tu nombre real es privado (solo lo ve el administrador), en los rankings públicos aparece tu pseudónimo. 
+                    <br>📋 <strong>Validación:</strong> Tu cédula es solo para validar participación y evitar múltiples intentos.
                 </div>
                 
                 <div id="intentosMessage" style="display: none; color: #f59e0b; margin: 20px 0; font-weight: bold;"></div>
                 
-                <button class="btn" onclick="startGame()">COMENZAR COMPETENCIA</button>
+                <button class="btn" onclick="startGame()">🚀 COMENZAR COMPETENCIA</button>
             </div>
             
             <!-- Pantalla de juego -->
