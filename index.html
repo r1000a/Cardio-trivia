@@ -901,6 +901,67 @@
             font-style: italic;
         }
         
+        .error-message {
+            background: rgba(220, 38, 38, 0.1);
+            border: 2px solid rgba(220, 38, 38, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            color: #f87171;
+            text-align: center;
+        }
+
+        /* Mejoras de jugabilidad */
+        .combo-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(34, 197, 94, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .combo-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .achievement-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(251, 191, 36, 0.5);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s ease;
+            z-index: 100;
+            max-width: 300px;
+        }
+
+        .achievement-popup.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .achievement-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .achievement-desc {
+            font-size: 0.875rem;
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             h1 {
@@ -1172,6 +1233,19 @@
                 <button class="btn" onclick="showTab('dashboard')">📊 VER DASHBOARD</button>
             </div>
         </div>
+
+        <!-- Error message container -->
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+    </div>
+
+    <!-- Indicadores de combo y logros -->
+    <div class="combo-indicator" id="comboIndicator">
+        <span id="comboText">¡Racha de 3!</span>
+    </div>
+
+    <div class="achievement-popup" id="achievementPopup">
+        <div class="achievement-title" id="achievementTitle">¡Logro desbloqueado!</div>
+        <div class="achievement-desc" id="achievementDesc">Descripción del logro</div>
     </div>
     
     <script>
@@ -1207,141 +1281,181 @@
         let playerAttempts = 0;
         let isAdminAuthenticated = false;
         const ADMIN_PASSWORD = "cardio2025admin";
+        let questionBank = [];
+        let correctStreak = 0;
         
-        // Banco de preguntas (mantenemos las 60 originales, después las reemplazarás con 120)
-        const questionBank = [
-            {"id": "ic_001", "level": 1, "question": "¿Cuál es el síntoma más específico de insuficiencia cardíaca?", "options": [{"text": "Disnea de esfuerzo", "correct": false}, {"text": "Ortopnea", "correct": true}, {"text": "Edemas en miembros inferiores", "correct": false}, {"text": "Fatiga", "correct": false}]},
-            {"id": "ic_002", "level": 1, "question": "¿Qué fracción de eyección define la insuficiencia cardíaca con función reducida (ICFEr)?", "options": [{"text": "<50%", "correct": false}, {"text": "<40%", "correct": true}, {"text": "<35%", "correct": false}, {"text": "<30%", "correct": false}]},
-            {"id": "ic_003", "level": 2, "question": "¿Qué biomarcador es más específico para diagnóstico de falla cardíaca aguda?", "options": [{"text": "Troponina", "correct": false}, {"text": "Péptido natriurético tipo B (BNP)", "correct": true}, {"text": "Creatinina", "correct": false}, {"text": "Procalcitonina", "correct": false}]},
-            {"id": "ic_004", "level": 2, "question": "En pacientes con ICFEr, ¿qué clase de fármaco ha demostrado reducir mortalidad en todos los estudios?", "options": [{"text": "Diuréticos de asa", "correct": false}, {"text": "Betabloqueadores", "correct": true}, {"text": "Digoxina", "correct": false}, {"text": "Antagonistas del calcio", "correct": false}]},
-            {"id": "ic_005", "level": 3, "question": "¿Qué parámetro ecocardiográfico es más útil para evaluar presión de llenado ventricular izquierdo?", "options": [{"text": "Fracción de eyección", "correct": false}, {"text": "Relación E/e'", "correct": true}, {"text": "Volumen auricular izquierdo", "correct": false}, {"text": "TAPSE", "correct": false}]},
-            {"id": "ic_006", "level": 3, "question": "En insuficiencia cardíaca descompensada, ¿qué signo físico es predictor de mal pronóstico?", "options": [{"text": "Hipotensión ortostática", "correct": false}, {"text": "Tercer ruido cardíaco (S3)", "correct": true}, {"text": "Soplo sistólico", "correct": false}, {"text": "Pulso irregular", "correct": false}]},
-            {"id": "ic_007", "level": 4, "question": "¿Qué mecanismo explica la mejoría con sacubitril/valsartán vs. enalapril en PARADIGM-HF?", "options": [{"text": "Bloqueo dual del SRA y neprilisina", "correct": true}, {"text": "Supresión de aldosterona", "correct": false}, {"text": "Vasodilatación coronaria", "correct": false}, {"text": "Reducción de poscarga", "correct": false}]},
-            {"id": "ic_008", "level": 4, "question": "En pacientes con ICFEr y fibrilación auricular, ¿qué estrategia tiene mejor evidencia de reducir hospitalizaciones?", "options": [{"text": "Control estricto de frecuencia", "correct": false}, {"text": "Ablación de FA", "correct": true}, {"text": "Terapia antitrombótica", "correct": false}, {"text": "Cardioversión eléctrica", "correct": false}]},
-            {"id": "ic_009", "level": 5, "question": "¿Qué parámetro hemodinámico invasivo define mejor la precarga ventricular izquierda?", "options": [{"text": "Presión arterial media", "correct": false}, {"text": "Presión capilar pulmonar", "correct": true}, {"text": "Gasto cardíaco", "correct": false}, {"text": "Resistencia vascular sistémica", "correct": false}]},
-            {"id": "ic_010", "level": 5, "question": "En síndrome cardiorrenal tipo 1, ¿qué intervención es más efectiva para preservar función renal?", "options": [{"text": "Suspensión de diuréticos", "correct": false}, {"text": "Terapia de ultrafiltración", "correct": false}, {"text": "Optimización de volemia guiada por presión venosa", "correct": true}, {"text": "Aumento de dosis de IECA", "correct": false}]},
-            {"id": "ic_011", "level": 6, "question": "¿Qué hallazgo en resonancia cardíaca es diagnóstico de amiloidosis cardíaca?", "options": [{"text": "Realce subendocárdico", "correct": false}, {"text": "Realce transmural", "correct": false}, {"text": "Realce global subepicárdico", "correct": true}, {"text": "Defecto de perfusión reversible", "correct": false}]},
-            {"id": "ic_012", "level": 6, "question": "En pacientes con miocardiopatía hipertrófica e IC refractaria, ¿qué tratamiento tiene mejor evidencia?", "options": [{"text": "Alcohol septal", "correct": false}, {"text": "Micetomía quirúrgica", "correct": true}, {"text": "Terapia de resincronización", "correct": false}, {"text": "Bloqueadores de canales de calcio", "correct": false}]},
-            {"id": "ic_013", "level": 7, "question": "¿Qué gen es más frecuentemente asociado a miocardiopatía dilatada familiar?", "options": [{"text": "MYH7", "correct": false}, {"text": "TTN", "correct": true}, {"text": "LMNA", "correct": false}, {"text": "PKP2", "correct": false}]},
-            {"id": "ic_014", "level": 7, "question": "En IC con FEVI 30% y bloqueo de rama izquierda, ¿qué dispositivo reduce mortalidad súbita?", "options": [{"text": "DAI convencional", "correct": true}, {"text": "DAI subcutáneo", "correct": false}, {"text": "Marca pasos biventricular", "correct": false}, {"text": "Monitor implantable", "correct": false}]},
-            {"id": "ic_015", "level": 8, "question": "¿Qué parámetro de strain longitudinal global tiene valor pronóstico independiente en IC?", "options": [{"text": "Strain longitudinal > -15%", "correct": false}, {"text": "Strain longitudinal < -12%", "correct": false}, {"text": "Strain longitudinal < -8%", "correct": true}, {"text": "Strain radial > 35%", "correct": false}]},
-            {"id": "ic_016", "level": 8, "question": "En taquimiocardiopatía, ¿qué intervalo de recuperación de FEVI es característico?", "options": [{"text": "1-2 semanas", "correct": false}, {"text": "2-4 semanas", "correct": true}, {"text": "4-6 meses", "correct": false}, {"text": "Sin recuperación", "correct": false}]},
-            {"id": "ic_017", "level": 9, "question": "¿Qué fármaco ha demostrado reducir eventos en IC con FE preservada?", "options": [{"text": "Espironolactona", "correct": false}, {"text": "Sacubitril/valsartán", "correct": false}, {"text": "Empagliflozina", "correct": true}, {"text": "Carvedilol", "correct": false}]},
-            {"id": "ic_018", "level": 9, "question": "En shock cardiogénico refractario, ¿qué dispositivo de asistencia tiene menor riesgo de hemólisis?", "options": [{"text": "IABP", "correct": false}, {"text": "Impella CP", "correct": false}, {"text": "ECMO venoarterial", "correct": false}, {"text": "CentriMag", "correct": true}]},
-            {"id": "ic_019", "level": 10, "question": "¿Qué patrón de realce en RMN es típico de sarcoidosis cardíaca?", "options": [{"text": "Realce epicárdico", "correct": false}, {"text": "Realce mesocárdico", "correct": false}, {"text": "Realce parcheado no isquémico", "correct": true}, {"text": "Realce transmural", "correct": false}]},
-            {"id": "ic_020", "level": 10, "question": "En miocarditis fulminante, ¿qué hallazgo histológico predice recuperación?", "options": [{"text": "Infiltrado linfocitario", "correct": false}, {"text": "Necrosis miocítica focal", "correct": false}, {"text": "Edema intersticial", "correct": true}, {"text": "Fibrosis sustituyente", "correct": false}]},
-            {"id": "ic_021", "level": 11, "question": "¿Qué terapia avanzada está indicada en IC con FEVI 15% y contraindicación absoluta para trasplante?", "options": [{"text": "Terapia de resincronización", "correct": false}, {"text": "Oxigenación hiperbárica", "correct": false}, {"text": "Asistencia ventricular izquierda", "correct": true}, {"text": "Denervación renal", "correct": false}]},
-            {"id": "ic_022", "level": 11, "question": "En amiloidosis por transtiretina, ¿qué fármaco estabiliza el tetrámero proteico?", "options": [{"text": "Diflunisal", "correct": false}, {"text": "Tafamidis", "correct": true}, {"text": "Patisiran", "correct": false}, {"text": "Inotersen", "correct": false}]},
-            {"id": "ic_023", "level": 12, "question": "¿Qué parámetro en cateterismo derecho define mejor la reserva contráctil?", "options": [{"text": "Presión auricular derecha", "correct": false}, {"text": "Relación dP/dt máxima", "correct": true}, {"text": "Resistencia pulmonar", "correct": false}, {"text": "Gasto cardíaco", "correct": false}]},
-            {"id": "ic_024", "level": 12, "question": "En disfunción primaria de injerto postrasplante, ¿qué estrategia tiene mayor soporte?", "options": [{"text": "Ecmo venoarterial", "correct": true}, {"text": "Balón intraórtico", "correct": false}, {"text": "Inotrópicos en altas dosis", "correct": false}, {"text": "Oxigenación por membrana", "correct": false}]},
-            {"id": "ic_025", "level": 13, "question": "¿Qué técnica de imagen cuantifica mejor fibrosis miocárdica difusa?", "options": [{"text": "Ecocardiografía con contraste", "correct": false}, {"text": "Tomografía por emisión de positrones", "correct": false}, {"text": "Resonancia magnética con T1 mapping", "correct": true}, {"text": "TC coronario", "correct": false}]},
-            {"id": "ic_026", "level": 13, "question": "En pacientes con DAI e infección del dispositivo, ¿cuál es el manejo óptimo?", "options": [{"text": "Antibióticos prolongados", "correct": false}, {"text": "Extracción completa del sistema", "correct": true}, {"text": "Desbridamiento quirúrgico", "correct": false}, {"text": "Reemplazo parcial", "correct": false}]},
-            {"id": "ic_027", "level": 14, "question": "¿Qué fenotipo de IC responde mejor a vericiguat según el estudio VICTORIA?", "options": [{"text": "IC con FEVI <25%", "correct": false}, {"text": "IC con NT-proBNP <8000", "correct": false}, {"text": "IC recientemente descompensada", "correct": true}, {"text": "IC con fibrilación auricular", "correct": false}]},
-            {"id": "ic_028", "level": 14, "question": "En enfermedad de Chagas con IC, ¿qué arritmia es marcador de mal pronóstico?", "options": [{"text": "Taquicardia ventricular sostenida", "correct": true}, {"text": "Bloqueo AV de primer grado", "correct": false}, {"text": "Extrasístoles ventriculares", "correct": false}, {"text": "Fibrilación auricular", "correct": false}]},
-            {"id": "ic_029", "level": 15, "question": "¿Qué patrón hemodinámico define la falla ventricular derecha aislada?", "options": [{"text": "PCP >15 mmHg con IC bajo", "correct": false}, {"text": "PAD >10 mmHg con IC normal", "correct": false}, {"text": "PAD >15 mmHg con PCP normal", "correct": true}, {"text": "RVP >3 UW", "correct": false}]},
-            {"id": "ic_030", "level": 15, "question": "En miocardiopatía periparto, ¿qué factor predice recuperación completa?", "options": [{"text": "FEVI inicial >30%", "correct": false}, {"text": "Troponina elevada", "correct": false}, {"text": "FEVI >50% a los 6 meses", "correct": true}, {"text": "Edad materna <30 años", "correct": false}]},
-            {"id": "ic_031", "level": 16, "question": "¿Qué técnica permite evaluación directa de presión intracardiaca sin cateterismo?", "options": [{"text": "Ecocardiografía 4D", "correct": false}, {"text": "Monitor CardioMEMS", "correct": true}, {"text": "Resonancia con contraste", "correct": false}, {"text": "SPECT de perfusión", "correct": false}]},
-            {"id": "ic_032", "level": 16, "question": "En terapia con inhibidores de SGLT2, ¿qué efecto explica la reducción de descompensaciones?", "options": [{"text": "Reducción de glucosa", "correct": false}, {"text": "Disminución de volumen intravascular", "correct": true}, {"text": "Aumento de contractilidad", "correct": false}, {"text": "Bloqueo neurohormonal", "correct": false}]},
-            {"id": "ic_033", "level": 17, "question": "¿Qué valor de strain auricular izquierdo predice FA en IC?", "options": [{"text": "<15%", "correct": false}, {"text": "<23%", "correct": true}, {"text": "<30%", "correct": false}, {"text": "<35%", "correct": false}]},
-            {"id": "ic_034", "level": 17, "question": "En síndrome de takotsubo, ¿qué factor desencadenante es más frecuente?", "options": [{"text": "Ejercicio intenso", "correct": false}, {"text": "Estrés emocional agudo", "correct": true}, {"text": "Hipertensión severa", "correct": false}, {"text": "Anestesia general", "correct": false}]},
-            {"id": "ic_035", "level": 18, "question": "¿Qué gen mutado requiere DAI primario en miocardiopatía dilatada?", "options": [{"text": "TTN truncante", "correct": false}, {"text": "LMNA", "correct": true}, {"text": "MYBPC3", "correct": false}, {"text": "DSP", "correct": false}]},
-            {"id": "ic_036", "level": 18, "question": "En pacientes con DAI y tormenta eléctrica, ¿qué fármaco es primera línea?", "options": [{"text": "Amiodarona IV", "correct": true}, {"text": "Lidocaína", "correct": false}, {"text": "Propranolol", "correct": false}, {"text": "Verapamilo", "correct": false}]},
-            {"id": "ic_037", "level": 19, "question": "¿Qué biomarcador predice respuesta a hierro IV en IC?", "options": [{"text": "Ferritina <100", "correct": true}, {"text": "Transferrina baja", "correct": false}, {"text": "Hematocrito <35%", "correct": false}, {"text": "Hepcidina elevada", "correct": false}]},
-            {"id": "ic_038", "level": 19, "question": "En IC terminal, ¿qué escala valida mejor pronóstico a 6 meses?", "options": [{"text": "NYHA", "correct": false}, {"text": "MAGGIC", "correct": false}, {"text": "Seattle Heart Failure Model", "correct": false}, {"text": "Puntuación de riesgo PAL-HF", "correct": true}]},
-            {"id": "ic_039", "level": 20, "question": "¿Qué característica define la miocardiopatía arritmogénica biventricular?", "options": [{"text": "Afectación predominante de VI", "correct": false}, {"text": "Sustitución fibroadiposa en ambos ventrículos", "correct": true}, {"text": "Dilatación aislada de VD", "correct": false}, {"text": "Asociación con mutación MYH7", "correct": false}]},
-            {"id": "ic_040", "level": 20, "question": "En asistencia ventricular continua, ¿qué parámetro indica mal acoplamiento bomba-corazón?", "options": [{"text": "Flujo pulsátil <3 L/min", "correct": false}, {"text": "Apertura intermitente de válvula aórtica", "correct": true}, {"text": "PIA >15 mmHg", "correct": false}, {"text": "Diferencia de pulsos >20 mmHg", "correct": false}]},
-            {"id": "ic_041", "level": 21, "question": "¿Qué técnica quirúrgica mejora geometría ventricular en cardiomiopatía isquémica?", "options": [{"text": "Bypass aorto-coronario", "correct": false}, {"text": "Anuloplastia mitral", "correct": false}, {"text": "Procedimiento de Dor", "correct": true}, {"text": "Ablación endocárdica", "correct": false}]},
-            {"id": "ic_042", "level": 21, "question": "En enfermedad de Fabry, ¿qué hallazgo ecocardiográfico es patognomónico?", "options": [{"text": "Engrosamiento concéntrico", "correct": false}, {"text": "Banda ecogénica endocárdica", "correct": true}, {"text": "Aneurisma apical", "correct": false}, {"text": "Disfunción diastólica grado III", "correct": false}]},
-            {"id": "ic_043", "level": 22, "question": "¿Qué parámetro en PET cardíaco diagnostica inflamación activa en sarcoidosis?", "options": [{"text": "Captación heterogénea de FDG", "correct": true}, {"text": "Defecto de perfusión reversible", "correct": false}, {"text": "Captación ósea asociada", "correct": false}, {"text": "SUV max >10", "correct": false}]},
-            {"id": "ic_044", "level": 22, "question": "En hipertensión pulmonar postcapilar, ¿qué fármaco tiene indicación específica?", "options": [{"text": "Bosentán", "correct": false}, {"text": "Riociguat", "correct": false}, {"text": "Selexipag", "correct": false}, {"text": "Ninguno actualmente", "correct": true}]},
-            {"id": "ic_045", "level": 23, "question": "¿Qué cambio genético requiere screening familiar en miocardiopatía no compactada?", "options": [{"text": "Mutación MYH7", "correct": false}, {"text": "Mutación TTN", "correct": false}, {"text": "Mutación LMNA", "correct": false}, {"text": "Mutación MYBPC3", "correct": true}]},
-            {"id": "ic_046", "level": 23, "question": "En disfunción diastólica avanzada, ¿qué maniobra mejora llenado ventricular?", "options": [{"text": "Reducción de frecuencia cardíaca", "correct": true}, {"text": "Aumento de precarga", "correct": false}, {"text": "Vasodilatadores arteriales", "correct": false}, {"text": "Inotrópicos positivos", "correct": false}]},
-            {"id": "ic_047", "level": 24, "question": "¿Qué patrón en cateterismo define perfusión coronaria no obstructiva?", "options": [{"text": "FFR >0.80", "correct": false}, {"text": "IMR >25", "correct": true}, {"text": "CFR <2.0", "correct": false}, {"text": "RVR >1.0", "correct": false}]},
-            {"id": "ic_048", "level": 24, "question": "En trasplante cardíaco, ¿qué valor de donante/recipiente es crítico para sobrevida?", "options": [{"text": "Diferencia de peso >20%", "correct": false}, {"text": "Diferencia de talla >10 cm", "correct": false}, {"text": "Proporción de masa ventricular", "correct": true}, {"text": "Edad donante >45 años", "correct": false}]},
-            {"id": "ic_049", "level": 25, "question": "¿Qué terapia génica ha mostrado resultados prometedores en IC con FE reducida?", "options": [{"text": "Terapia con SERCA2a", "correct": true}, {"text": "Suplencia de distrofina", "correct": false}, {"text": "Modulación de titina", "correct": false}, {"text": "Inhibición de fosfolamban", "correct": false}]},
-            {"id": "ic_050", "level": 25, "question": "En shock cardiogénico por IAM, ¿qué estrategia reduce mortalidad a 30 días?", "options": [{"text": "Revascularización completa inmediata", "correct": true}, {"text": "Soporte inotrópico máximo", "correct": false}, {"text": "Contrapulsación intraórtica", "correct": false}, {"text": "ECMO precoz", "correct": false}]},
-            {"id": "ic_051", "level": 26, "question": "¿Qué parámetro de resonancia cuantifica hierro miocárdico en hemocromatosis?", "options": [{"text": "T1 nativo", "correct": false}, {"text": "T2*", "correct": true}, {"text": "Realce tardío", "correct": false}, {"text": "T2 mapping", "correct": false}]},
-            {"id": "ic_052", "level": 26, "question": "En miocardiopatía diabética, ¿qué mecanismo explica la disfunción diastólica precoz?", "options": [{"text": "Depósito de colágeno", "correct": false}, {"text": "Alteración metabolismo de calcio", "correct": false}, {"text": "Glicación avanzada de proteínas", "correct": true}, {"text": "Disfunción mitocondrial", "correct": false}]},
-            {"id": "ic_053", "level": 27, "question": "¿Qué técnica permite biopsia miocárdica guiada por electroanatomía?", "options": [{"text": "Eco intracardíaco", "correct": false}, {"text": "Navegación electromagnética", "correct": true}, {"text": "Fluoroscopia 3D", "correct": false}, {"text": "PET/CT fusionado", "correct": false}]},
-            {"id": "ic_054", "level": 27, "question": "En IC con bloqueo completo de rama izquierda, ¿qué parámetro ecográfico predice respuesta a TRC?", "options": [{"text": "Disfunción moderada de VD", "correct": false}, {"text": "Asincronía septal tardía", "correct": false}, {"text": "Retraso septal-lateral >65 ms", "correct": true}, {"text": "Strain radial <15%", "correct": false}]},
-            {"id": "ic_055", "level": 28, "question": "¿Qué valor de presión de distensión arterial predice inestabilidad con vasodilatadores?", "options": [{"text": "PAD <65 mmHg", "correct": true}, {"text": "PAS <100 mmHg", "correct": false}, {"text": "PP <40 mmHg", "correct": false}, {"text": "PAM <70 mmHg", "correct": false}]},
-            {"id": "ic_056", "level": 28, "question": "En recuperación de función ventricular, ¿qué fármaco debe continuarse indefinidamente?", "options": [{"text": "Betabloqueadores", "correct": true}, {"text": "IECA", "correct": false}, {"text": "Antagonistas de aldosterona", "correct": false}, {"text": "Diuréticos", "correct": false}]},
-            {"id": "ic_057", "level": 29, "question": "¿Qué proteína plasmática es biomarcador de estrés de retículo endoplásmico en IC?", "options": [{"text": "Galectina-3", "correct": false}, {"text": "ST2 soluble", "correct": false}, {"text": "GDF-15", "correct": false}, {"text": "GRP78", "correct": true}]},
-            {"id": "ic_058", "level": 29, "question": "En terapia celular para IC, ¿qué tipo celular tiene mayor potencial regenerativo?", "options": [{"text": "Células mononucleadas de médula ósea", "correct": false}, {"text": "Cardiomiocitos derivados de iPSC", "correct": true}, {"text": "Células mesenquimales", "correct": false}, {"text": "Células CD34+", "correct": false}]},
-            {"id": "ic_059", "level": 30, "question": "¿Qué sistema de neuromodulación reduce actividad simpática renal en IC refractaria?", "options": [{"text": "Estimulación vagal", "correct": false}, {"text": "Barorreflex activation therapy", "correct": false}, {"text": "Ablación simpática renal", "correct": true}, {"text": "Modulación de médula espinal", "correct": false}]},
-            {"id": "ic_060", "level": 30, "question": "En asistencia ventricular total artificial, ¿qué dispositivo tiene mayor durabilidad?", "options": [{"text": "HeartMate 3", "correct": true}, {"text": "Novacor", "correct": false}, {"text": "SynCardia", "correct": false}, {"text": "Jarvik 2000", "correct": false}]}
-        ];
-        
-        // Títulos por nivel (30 niveles completos)
+        // Títulos mejorados por nivel (30 niveles progresivos y graciosos)
         const levelTitles = {
-            1: "El que cura todo con agua con sal",
-            2: "El que dice 'para el corazón lo mejor es el ajo'",
-            3: "El botija que confunde un estetoscopio con un cargador",
-            4: "El que cree que la presión se mide con el dedo en la muñeca",
-            5: "El interno que ausculta la espalda buscando el ritmo sinusal",
-            6: "El que receta ibuprofeno para el dolor precordial 'por las dudas'",
-            7: "El que cree que el ecocardio se hace con gel y buena onda",
-            8: "Aquel que convierte un dolor de pecho en un diagnóstico de 15 líneas",
-            9: "El que interpreta la radiografía como si fuera una constelación",
-            10: "El que escucha un soplo y pide en secreto que no le pregunten de qué es",
-            11: "El que prescribe según lo que leyó en un grupo de WhatsApp",
-            12: "El que dice 'probemos con carvedilol a ver qué pasa'",
-            13: "El que escucha un R3 y lo anota aunque no esté seguro si no eran gases",
-            14: "El que ya no dice 'tiene algo de falla' habla de IC con elementos congestivos",
-            15: "El que pide BNP con cara seria aunque no sepa bien cómo interpretarlo",
-            16: "El que empieza a citar artículos y ya no solo frases de la clínica médica",
-            17: "El que entiende que no todo lo que se hincha es por 'retención'",
-            18: "El que ya no ve todo como blanco y negro sino como 4 cuadrantes de Forrester",
-            19: "El que sabe que los gliflozins no son una banda de rock noruega",
-            20: "El que dejó de hablar de la FEVI, y mete strain y remodelado",
-            21: "El que se emociona con un TAPSE >20 como si fuera una buena noticia familiar",
-            22: "El que empieza a explicar la IC con analogías elegantes",
-            23: "El que discute la clasificación universal de infarto como si hubiera estado en la mesa donde la armaron",
-            24: "El que ajusta dosis de beta bloqueantes como quien afina una guitarra",
-            25: "El que lee el ECG como si fuera partitura y encuentra la música oculta",
-            26: "El que distingue entre empeoramiento clínico y progresión insidiosa",
-            27: "El que recomienda rehabilitación cardiaca y se emociona al decir 'multidisciplinario'",
-            28: "El que se indigna si no hay seguimiento post-alta",
-            29: "El que guía al Heart Team con calma y convicción, como pastor clínico",
-            30: "Oráculo cardiológico Manuel Quintela, de punta y al medio"
+            1: "Estudiante de primer año con estetoscopio al revés",
+            2: "Interno que confunde el ECG con un sismógrafo",
+            3: "R1 que ausculta con esperanza pero sin certeza", 
+            4: "R2 que ya distingue un soplo de los ruidos intestinales",
+            5: "R3 que dice 'suena raro' con aire profesional",
+            6: "Fellow novato que googlea bajo la mesa",
+            7: "Cardiólogo junior que todavía suda con las arritmias",
+            8: "El que ya no confunde la aorta con la vena cava",
+            9: "Especialista que empieza a entender el Forrester",
+            10: "El que explica la IC sin usar las manos",
+            11: "Experto en FEVI que habla de strain para impresionar",
+            12: "El que dice 'claramente es una miocardiopatía' (aunque dude)",
+            13: "Maestro del cateterismo que nunca admite que se perdió",
+            14: "El que lee los estudios pero solo el abstract",
+            15: "Gurú del ecocardio que ve cosas que otros no ven",
+            16: "El que cita las guías ESC de memoria (las partes fáciles)",
+            17: "Referente que tiene una anécdota para cada caso",
+            18: "El que ya no teme a las taquicardias ventriculares",
+            19: "Sabio que distingue ATTR de AL con solo mirar al paciente",
+            20: "El que hace diagnósticos mientras toma el café",
+            21: "Maestro Jedi del ventrículo derecho",
+            22: "El que ve patrones donde otros ven caos",
+            23: "Oráculo de las miocardiopatías infiltrativas",
+            24: "El que susurra a los marcapasos",
+            25: "Leyenda viviente del servicio de cardiología",
+            26: "El que tiene nombre propio en las guías clínicas",
+            27: "Semidiós de la hemodinamia",
+            28: "El que hace ablaciones con los ojos cerrados",
+            29: "Casi omnisciente cardiovascular",
+            30: "Deidad cardiológica del Olimpo uruguayo"
         };
         
-        // Descripciones humorísticas (30 horóscopos únicos)
+        // Descripciones humorísticas mejoradas
         const levelDescriptions = {
-            1: "Felicitaciones, estás en el nivel básico de la medicina casera. Tu principal herramienta terapéutica es el agua con sal, que según vos cura desde un resfrío hasta una arritmia ventricular. En el fondo, tenés fe ciega en los remedios de la abuela.",
-            2: "Has avanzado al nivel de curandero barrial. Tu arsenal se expandió: ajo para la presión, manzanilla para los nervios y cebolla para todo lo demás. Todavía creés que el limón puede destapar arterias.",
-            3: "Sos ese interno tierno que todos quieren proteger. Confundís cables con instrumental médico y tenés esa inocencia que hace que los pacientes te sonrían con ternura. Al menos ya no intentás escuchar el corazón por la espalda.",
-            4: "Nivel estudiante avanzado: ya sabés que el pulso no se toma con el dedo gordo, pero seguís buscando el punto exacto en la muñeca como si fuera un tesoro escondido. Los pacientes te tienen paciencia.",
-            5: "Sos el que ausculta con cara seria pero en realidad está rezando para que no le pregunten qué escuchaste. Al menos ya diferenciás entre un pulmón y un corazón en la radiografía.",
-            6: "Nivel 'médico precavido': para cualquier dolor en el pecho recetás ibuprofeno 'por las dudas' y mandás al paciente a caminar. Tu filosofía es 'si se mejora solo, mejor'.",
-            7: "Ya entendiste que el ecocardiograma no es solo gel y buena onda, pero seguís viendo las imágenes como si fueran nubes en el cielo. Al menos preguntás cosas que suenan técnicas.",
-            8: "Has desarrollado el talento especial de convertir un simple dolor de pecho en un diagnóstico diferencial de 15 patologías. Tu especialidad es encontrar zebras donde hay caballos.",
-            9: "Interpretás las radiografías como constelaciones cósmicas. Ves patrones donde no los hay, pero al menos ya no confundís una costilla con el corazón. Progreso lento pero seguro.",
-            10: "Escuchás soplos por todos lados, aunque no estés muy seguro de qué tipo son. Tu estrategia es anotar 'soplo sistólico grado II/VI' y que alguien más se haga cargo.",
-            11: "Tu conocimiento médico proviene principalmente de grupos de WhatsApp de médicos. Citás papers que nunca leíste completos y usás términos en inglés para sonar más profesional.",
-            12: "Entraste en la era del carvedilol experimental. Tu frase favorita es 'probemos con carvedilol a ver qué pasa'. Al menos ya sabés que es un betabloqueante.",
-            13: "Desarrollaste el oído mágico para escuchar R3, aunque la mitad de las veces son gases intestinales. Pero lo anotás en la historia igual, por si acaso tenías razón.",
-            14: "Evolucionaste del 'tiene algo de falla' al sofisticado 'IC con elementos congestivos'. Tu vocabulario se está volviendo más elegante, aunque seguís sin estar muy seguro.",
-            15: "Pedís BNP con cara de experto, aunque después googleás discretamente cómo interpretarlo. Al menos ya sabés que tiene que ver con el corazón y no con el riñón.",
-            16: "Comenzaste a citar estudios reales: 'según PARADIGM-HF...' aunque solo leíste el abstract. Pero sonás convincente y eso es lo que importa en esta etapa.",
-            17: "Ya entendiste que no todo lo que se hincha es 'retención'. Empezaste a usar términos como 'sobrecarga de volumen' y 'redistribución'. Tu evolución semántica es notable.",
-            18: "Descubriste los cuadrantes de Forrester y ahora clasificás todo en húmedo-seco, frío-caliente. Es como el juego de la batalla naval pero con hemodinamia.",
-            19: "Aprendiste que los gliflozinas no son una banda noruega de metal, sino que son medicamentos revolucionarios. Empezaste a recetar con más fundamento científico.",
-            20: "Dejaste de hablar solo de FEVI. Ahora metés strain, remodelado y función diastólica. Tu jerga cardiológica se está volviendo respetable y casi comprensible.",
-            21: "Te emocionás genuinamente cuando ves un TAPSE mayor a 20 mm, como si fuera una buena noticia familiar. Ya entendés que el ventrículo derecho también existe e importa.",
-            22: "Desarrollaste el arte de explicar la IC con analogías elegantes: comparás el corazón con una bomba de agua, los vasos con mangueras. Tus pacientes te entienden y agradecen.",
-            23: "Discutís la clasificación universal de infarto como si hubieras estado en la mesa donde la escribieron. Citás a Thygesen con la familiaridad de quien lo conoce personalmente.",
-            24: "Ajustás dosis de betabloqueantes como un músico que afina su guitarra: con precisión, paciencia y sabiendo que cada pequeño cambio puede hacer una gran diferencia.",
-            25: "Leés el ECG como si fuera una partitura musical y encontrás la melodía oculta en cada complejo QRS. Los ritmos cardíacos tienen música para vos.",
-            26: "Distinguís entre empeoramiento clínico franco y progresión insidiosa silenciosa. Tu ojo clínico se afinó y podés detectar matices sutiles que antes te pasaban inadvertidos.",
-            27: "Recomendás rehabilitación cardíaca y te emocionás al pronunciar 'abordaje multidisciplinario'. Entendiste que curar no es solo recetar pastillas.",
-            28: "Te indignás genuinamente cuando no hay seguimiento post-alta adecuado. Sabés que el alta hospitalaria es solo el comienzo del verdadero tratamiento.",
-            29: "Guiás al Heart Team con la calma y convicción de un pastor experimentado. Tu juicio clínico se volvió una brújula confiable para decisiones complejas.",
-            30: "Llegaste al olimpo cardiológico uruguayo. Sos el oráculo del Hospital de Clínicas, de punta y al medio. Los residentes te consultan, los adjuntos te respetan, y los pacientes te bendicen."
+            1: "Recién empezás tu viaje cardiológico. Todavía creés que el corazón es solo una bomba y que los betabloqueantes son vitaminas potentes. Tu estetoscopio está más de adorno que de instrumento, pero hey, todos empezamos así.",
+            2: "Ya sabés que el ECG no mide terremotos, aunque a veces parezca. Identificás las ondas P, QRS y T, pero cuando aparece un bloqueo de rama te mareás un poco. Progreso es progreso.",
+            3: "Empezás a auscultar con cierta confianza, aunque secretamente rezás para no encontrar nada raro. Los soplos te suenan todos iguales, pero al menos ya no confundís el primero con el segundo ruido.",
+            4: "¡Felicitaciones! Ya distinguís entre ruidos cardíacos y borborigmos. Todavía sudás cuando te preguntan sobre el ciclo cardíaco, pero al menos ya no decís que la diástole es cuando el corazón descansa.",
+            5: "Tu vocabulario médico se expande: ya decís 'hallazgos sugestivos' y 'correlación clínica' con soltura. Cuando algo suena raro, lo anotás con cara seria aunque no sepas exactamente qué es.",
+            6: "Nivel Fellow novato: tu teléfono tiene más apps médicas que redes sociales. Consultás UpToDate discretamente y ya empezás a entender por qué la cardiología es tan compleja.",
+            7: "Las arritmias ya no te dan pánico, solo una sudoración moderada. Empezás a ver patrones en el caos del ECG y ocasionalmente acertás el diagnóstico sin ayuda.",
+            8: "Gran logro: ya no confundís estructuras anatómicas básicas. La diferencia entre arterias y venas es clara, y hasta te animás a explicar la circulación pulmonar sin trabarte.",
+            9: "Descubriste a Forrester y su clasificación. Ahora ves el mundo en cuadrantes: húmedo-seco, frío-caliente. Tu comprensión hemodinámica empieza a tener sentido.",
+            10: "Podés explicar la insuficiencia cardíaca sin gesticular desesperadamente. Usás términos como 'remodelado ventricular' y 'activación neurohormonal' con naturalidad.",
+            11: "Te uniste al club del strain. Hablar de FEVI es muy 2020, ahora impresionás con deformación miocárdica y mecánica ventricular. Los residentes te miran con respeto.",
+            12: "Tu confianza crece: diagnosticás miocardiopatías con relativa certeza. Aunque por dentro dudés, tu cara poker es impecable cuando dices 'claramente es restrictiva'.",
+            13: "Maestro del cateterismo: navegás las coronarias como GPS humano. Solo te perdiste una vez en la circunfleja, pero nadie tiene que saberlo.",
+            14: "Lees estudios científicos... bueno, los abstracts y las conclusiones. Citás el PARADIGM-HF en conversaciones casuales y todos piensan que leíste el paper completo.",
+            15: "Gurú ecocardiográfico: ves disfunciones diastólicas donde otros ven manchas grises. Tu ojo entrenado detecta alteraciones sutiles que escapan a los mortales.",
+            16: "Las guías ESC son tu lectura ligera. Recitás las recomendaciones clase I con facilidad, aunque las IIb todavía te confunden un poco.",
+            17: "Cada paciente te recuerda a otro caso. Tu repertorio de anécdotas médicas es extenso y ligeramente exagerado, pero siempre educativo.",
+            18: "Las taquicardias ventriculares son tu pan de cada día. Ya no corres a buscar ayuda, calmadamente administras amiodarona mientras explicás la fisiopatología.",
+            19: "Diagnosticás amiloidosis con una mirada. Distinguís ATTR de AL por el patrón de sudoración del paciente (o eso creés). Tu intuición clínica es envidiable.",
+            20: "Hacés diagnósticos entre sorbo y sorbo de café. Tu cerebro procesa información cardiológica en piloto automático. Los residentes piensan que tenés superpoderes.",
+            21: "El ventrículo derecho no tiene secretos para vos. TAPSE, función longitudinal, acoplamiento VD-AP... hablás su idioma fluentemente.",
+            22: "Ves patrones donde otros ven electrocardiogramas normales. Tu capacidad para detectar sutilezas es legendaria. Matrix cardiológico.",
+            23: "Las miocardiopatías infiltrativas son tu especialidad. Hemocromatosis, sarcoidosis, amiloidosis... las detectás como Pokemon raros.",
+            24: "Los marcapasos te obedecen. Programás resincronizadores con la misma facilidad con que otros configuran el despertador.",
+            25: "Leyenda viviente: los fellows cuentan historias sobre tus diagnósticos imposibles. Tu nombre es sinónimo de excelencia cardiológica.",
+            26: "Tu apellido aparece en las guías clínicas. Has contribuido tanto al campo que los nuevos fellows estudian tus casos.",
+            27: "Semidiós hemodinámico: calculás resistencias vasculares mentalmente. Las curvas de presión-volumen son tu arte abstracto favorito.",
+            28: "Hacés ablaciones a ciegas y nunca fallás. Tu mano es más precisa que el sistema de navegación 3D. Chuck Norris de la electrofisiología.",
+            29: "Casi omnisciente: predecís eventos cardiovasculares con precisión inquietante. Los pacientes piensan que lees mentes, los colegas saben que es experiencia pura.",
+            30: "Alcanzaste la deidad cardiológica uruguaya. Tu conocimiento trasciende los libros. Sos el oráculo al que todos consultan, el maestro de maestros. En el Olimpo del Hospital de Clínicas, tu trono está asegurado."
         };
+        
+        // Cargar preguntas desde archivo JSON
+        async function loadQuestions() {
+            try {
+                // Primero intentar cargar desde GitHub
+                const possiblePaths = [
+                    'questions_bank.json',
+                    'questions-bank.json', 
+                    'questionsBank.json',
+                    './questions_bank.json',
+                    '/questions_bank.json'
+                ];
+                
+                let loaded = false;
+                
+                for (const path of possiblePaths) {
+                    try {
+                        const response = await fetch(path);
+                        if (response.ok) {
+                            questionBank = await response.json();
+                            console.log(`Preguntas cargadas exitosamente desde ${path}:`, questionBank.length);
+                            loaded = true;
+                            break;
+                        }
+                    } catch (e) {
+                        console.log(`No se pudo cargar desde ${path}`);
+                    }
+                }
+                
+                // Si no se cargó desde archivo, usar las preguntas del documento
+                if (!loaded && window.fs && window.fs.readFile) {
+                    try {
+                        const fileContent = await window.fs.readFile('questions_bank.json', { encoding: 'utf8' });
+                        questionBank = JSON.parse(fileContent);
+                        console.log('Preguntas cargadas desde window.fs:', questionBank.length);
+                        loaded = true;
+                    } catch (e) {
+                        console.log('No se pudo cargar desde window.fs');
+                    }
+                }
+                
+                // Si aún no se cargó, mostrar error
+                if (!loaded || questionBank.length === 0) {
+                    console.error('No se pudieron cargar las preguntas desde archivo');
+                    showError('Error cargando las preguntas. Por favor, verifica que el archivo questions_bank.json esté en el servidor.');
+                    
+                    // Usar preguntas de respaldo mínimas para que el juego funcione
+                    questionBank = [
+                        {"id": "demo_001", "level": 1, "question": "¿Cuál es la función principal del corazón?", "options": [{"text": "Bombear sangre", "correct": true}, {"text": "Filtrar toxinas", "correct": false}, {"text": "Producir hormonas", "correct": false}, {"text": "Regular temperatura", "correct": false}]}
+                    ];
+                }
+                
+            } catch (error) {
+                console.error('Error general cargando preguntas:', error);
+                showError('Error cargando las preguntas: ' + error.message);
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Mejoras de jugabilidad
+        function showCombo(streak) {
+            const indicator = document.getElementById('comboIndicator');
+            const comboText = document.getElementById('comboText');
+            
+            if (streak >= 3) {
+                comboText.textContent = `¡Racha de ${streak}!`;
+                indicator.classList.add('show');
+                
+                // Bonus de puntos por racha
+                if (streak === 5) {
+                    score += 2;
+                    showAchievement("¡Racha de 5!", "Bonus: +2 puntos");
+                } else if (streak === 10) {
+                    score += 5;
+                    showAchievement("¡Racha perfecta!", "Bonus: +5 puntos");
+                }
+                
+                setTimeout(() => {
+                    indicator.classList.remove('show');
+                }, 2000);
+            }
+        }
+        
+        function showAchievement(title, description) {
+            const popup = document.getElementById('achievementPopup');
+            document.getElementById('achievementTitle').textContent = title;
+            document.getElementById('achievementDesc').textContent = description;
+            
+            popup.classList.add('show');
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 3000);
+        }
         
         // Inicialización
-        window.addEventListener('load', function() {
+        window.addEventListener('load', async function() {
+            await loadQuestions();
             loadDashboard();
             setupFirebaseListeners();
             updateLivesDisplay();
@@ -1682,7 +1796,7 @@
                             <div class="rank-number">${index + 1}</div>
                             <div>
                                 <div class="rank-name">${result.nombre}</div>
-                                <div class="rank-title">${levelTitles[result.nivel] || 'El que cura todo con agua con sal'}</div>
+                                <div class="rank-title">${levelTitles[result.nivel] || 'Estudiante de primer año con estetoscopio al revés'}</div>
                             </div>
                             <div class="rank-team team-${result.grupo?.toLowerCase() || 'a'}">Grupo ${result.grupo || 'A'}</div>
                             <div class="rank-score">${result.puntaje} pts</div>
@@ -1835,6 +1949,15 @@
                 return;
             }
             
+            // Verificar que las preguntas estén cargadas
+            if (questionBank.length === 0) {
+                await loadQuestions();
+                if (questionBank.length === 0) {
+                    alert('Error: No se pudieron cargar las preguntas. Por favor, recarga la página.');
+                    return;
+                }
+            }
+            
             try {
                 playerAttempts = await checkPlayerAttempts(id);
                 
@@ -1871,6 +1994,7 @@
             maxLevelReached = 1;
             answeredQuestions.clear();
             comodines = { fifty: true, change: true };
+            correctStreak = 0;
             document.getElementById('comodin5050').disabled = false;
             document.getElementById('comodinChange').disabled = false;
             
@@ -1978,6 +2102,7 @@
             stopTimer();
             // Tiempo agotado = respuesta incorrecta = 0 puntos
             lives--;
+            correctStreak = 0;
             updateLivesDisplay();
             
             const allOptions = document.querySelectorAll('.option');
@@ -2011,13 +2136,26 @@
                 opt.onclick = null;
             });
             
-            // Sistema de puntuación simplificado
+            // Sistema de puntuación con bonus por tiempo
             if (option.correct) {
                 element.classList.add('correct');
-                score += 1; // Respuesta correcta = +1
+                correctStreak++;
+                
+                // Puntos base + bonus por tiempo
+                let points = 1;
+                if (timeLeft >= 20) points += 1; // Respuesta rápida
+                if (currentLevel >= 20) points += 1; // Niveles difíciles
+                
+                score += points;
+                showCombo(correctStreak);
+                
+                // Logros especiales
+                if (correctStreak === 3) {
+                    showAchievement("¡En racha!", "3 respuestas correctas seguidas");
+                }
             } else {
                 element.classList.add('incorrect');
-                // Respuesta incorrecta = 0 puntos, perder vida
+                correctStreak = 0;
                 lives--;
                 
                 // Mostrar la opción correcta
@@ -2154,7 +2292,7 @@
         }
         
         function getLevelTitle(level) {
-            return levelTitles[level] || "El que cura todo con agua con sal";
+            return levelTitles[level] || "Estudiante de primer año con estetoscopio al revés";
         }
         
         async function endGame() {
@@ -2163,6 +2301,15 @@
             // Asegurar que el nivel máximo nunca exceda 30
             if (maxLevelReached > 30) {
                 maxLevelReached = 30;
+            }
+            
+            // Logros finales
+            if (maxLevelReached >= 25) {
+                showAchievement("¡Maestro cardiólogo!", "Alcanzaste un nivel élite");
+            } else if (maxLevelReached >= 20) {
+                showAchievement("¡Experto reconocido!", "Nivel avanzado alcanzado");
+            } else if (maxLevelReached >= 15) {
+                showAchievement("¡En camino a la excelencia!", "Buen desempeño");
             }
             
             const result = {
@@ -2204,6 +2351,7 @@
             maxLevelReached = 1;
             answeredQuestions.clear();
             comodines = { fifty: true, change: true };
+            correctStreak = 0;
             document.getElementById('comodin5050').disabled = false;
             document.getElementById('comodinChange').disabled = false;
             
