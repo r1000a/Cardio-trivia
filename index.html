@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¿Quién quiere ser cardiólogo? - Episodio 1</title>
+    <title>¿Quién quiere ser cardiólogo? - Competencia por Equipos</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -140,6 +140,7 @@
             justify-content: center;
             margin-bottom: 32px;
             gap: 12px;
+            flex-wrap: wrap;
         }
         
         .nav-tab {
@@ -243,6 +244,11 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
         
+        select option {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+        
         .privacy-note {
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid rgba(59, 130, 246, 0.3);
@@ -294,7 +300,7 @@
             background: linear-gradient(135deg, #b91c1c, #991b1b);
         }
         
-        /* Dashboard Público */
+        /* Dashboard */
         .dashboard-section {
             background: rgba(30, 41, 59, 0.4);
             backdrop-filter: blur(10px);
@@ -339,6 +345,96 @@
             margin-top: 8px;
         }
         
+        /* Ranking por equipos */
+        .team-rankings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+        
+        .team-section {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .team-section:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .team-section.team-a {
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+        
+        .team-section.team-b {
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+        
+        .team-section.team-c {
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+        
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+        .team-a .team-header {
+            background: rgba(34, 197, 94, 0.1);
+        }
+        
+        .team-b .team-header {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .team-c .team-header {
+            background: rgba(251, 191, 36, 0.1);
+        }
+        
+        .team-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .team-a .team-name {
+            color: #22c55e;
+        }
+        
+        .team-b .team-name {
+            color: #3b82f6;
+        }
+        
+        .team-c .team-name {
+            color: #fbbf24;
+        }
+        
+        .team-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+        
+        .team-player {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin: 4px 0;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        
         .live-feed {
             background: rgba(15, 23, 42, 0.4);
             border-radius: 12px;
@@ -363,6 +459,28 @@
         .feed-player {
             font-weight: 600;
             color: #60a5fa;
+        }
+        
+        .feed-team {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        
+        .feed-team.team-a {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        
+        .feed-team.team-b {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .feed-team.team-c {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
         }
         
         .feed-score {
@@ -397,6 +515,30 @@
         .player-info, .game-stats, .comodines {
             font-family: 'JetBrains Mono', monospace;
             text-align: center;
+        }
+        
+        .player-team {
+            margin-top: 8px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .player-team.team-a {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        
+        .player-team.team-b {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .player-team.team-c {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
         }
         
         .lives {
@@ -646,7 +788,7 @@
         
         .player-rank {
             display: grid;
-            grid-template-columns: 60px 2fr auto auto;
+            grid-template-columns: 60px 2fr auto auto auto;
             gap: 16px;
             padding: 16px;
             background: rgba(15, 23, 42, 0.6);
@@ -685,6 +827,28 @@
         .rank-name {
             font-weight: 600;
             color: #e2e8f0;
+        }
+        
+        .rank-team {
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .rank-team.team-a {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        
+        .rank-team.team-b {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .rank-team.team-c {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
         }
         
         .rank-score {
@@ -756,6 +920,12 @@
                 height: 50px;
             }
             
+            .nav-tabs {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+            
             .game-header {
                 grid-template-columns: 1fr;
                 gap: 16px;
@@ -771,12 +941,16 @@
                 gap: 12px;
             }
             
-            .rank-level {
+            .rank-level, .rank-team {
                 display: none;
             }
             
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .team-rankings {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -798,14 +972,16 @@
         <!-- Navegación -->
         <div class="nav-tabs">
             <div class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</div>
+            <div class="nav-tab" onclick="showTab('individual')">🏆 Individual</div>
+            <div class="nav-tab" onclick="showTab('equipos')">👥 Equipos</div>
             <div class="nav-tab" onclick="showTab('game')">🎮 Jugar</div>
             <div class="nav-tab" onclick="showTab('admin')">🔐 Admin</div>
         </div>
         
-        <!-- Dashboard Público -->
+        <!-- Dashboard General -->
         <div id="dashboard" class="tab-content active">
-            <h1>🏥 Dashboard Público</h1>
-            <p class="subtitle">ESTADÍSTICAS EN TIEMPO REAL</p>
+            <h1>🏥 Dashboard General</h1>
+            <p class="subtitle">COMPETENCIA INDIVIDUAL Y POR EQUIPOS</p>
             
             <!-- Estadísticas Generales -->
             <div class="dashboard-section">
@@ -813,7 +989,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number" id="totalJugadores">-</div>
-                        <div class="stat-label">Total Jugadores</div>
+                        <div class="stat-label">Total Participantes</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-number" id="promedioScore">-</div>
@@ -825,24 +1001,52 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-number" id="jugadoresHoy">-</div>
-                        <div class="stat-label">Jugadores Hoy</div>
+                        <div class="stat-label">Participantes Hoy</div>
                     </div>
                 </div>
             </div>
             
-            <!-- Top 10 Global -->
+            <!-- Ranking por Equipos -->
             <div class="dashboard-section">
-                <h2>🏆 Top 10 Global</h2>
-                <div class="top-players" id="topPlayers">
-                    <div class="loading">Cargando rankings...</div>
+                <h2>🥇 Ranking de Equipos</h2>
+                <div class="team-rankings" id="teamRankings">
+                    <div class="loading">Cargando estadísticas de equipos...</div>
                 </div>
             </div>
             
             <!-- Feed en Vivo -->
             <div class="dashboard-section">
-                <h2>🎮 Últimas Partidas</h2>
+                <h2>🎮 Actividad Reciente</h2>
                 <div class="live-feed" id="liveFeed">
                     <div class="loading">Cargando actividad reciente...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ranking Individual -->
+        <div id="individual" class="tab-content">
+            <h1>🏆 Ranking Individual</h1>
+            <p class="subtitle">MEJORES PARTICIPANTES</p>
+            
+            <!-- Top 20 Individual -->
+            <div class="ranking-section">
+                <h2 class="ranking-title">🏅 Top 20 Individual</h2>
+                <div class="top-players" id="topIndividual">
+                    <div class="loading">Cargando ranking individual...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ranking por Equipos -->
+        <div id="equipos" class="tab-content">
+            <h1>👥 Competencia por Equipos</h1>
+            <p class="subtitle">RANKING DETALLADO POR GRUPO</p>
+            
+            <!-- Estadísticas de Equipos -->
+            <div class="dashboard-section">
+                <h2>📊 Estadísticas por Equipo</h2>
+                <div class="team-rankings" id="detailedTeamStats">
+                    <div class="loading">Cargando estadísticas detalladas...</div>
                 </div>
             </div>
         </div>
@@ -876,38 +1080,43 @@
             <!-- Pantalla de inicio -->
             <div id="startScreen">
                 <h1>¿Quién quiere ser cardiólogo?</h1>
-                <p class="subtitle">EPISODIO 1: INSUFICIENCIA CARDÍACA</p>
+                <p class="subtitle">COMPETENCIA INDIVIDUAL Y POR EQUIPOS</p>
                 
                 <div class="form-group">
-                    <label for="playerName">Nombre completo:</label>
-                    <input type="text" id="playerName" placeholder="Dr. Juan Pérez" required>
+                    <label for="playerName">Nombre y apellido:</label>
+                    <input type="text" id="playerName" placeholder="Dr. Juan Pérez López" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="playerId">Cédula de identidad:</label>
-                    <input type="text" id="playerId" placeholder="1.234.567-8" required>
+                    <label for="playerId">Cédula de identidad (sin dígito verificador):</label>
+                    <input type="text" id="playerId" placeholder="1234567" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="playerPseudonym">Pseudónimo público:</label>
-                    <input type="text" id="playerPseudonym" placeholder="CardioMaster2025" required>
+                    <label for="playerTeam">Grupo del foro:</label>
+                    <select id="playerTeam" required>
+                        <option value="">Selecciona tu grupo</option>
+                        <option value="A">Grupo A</option>
+                        <option value="B">Grupo B</option>
+                        <option value="C">Grupo C</option>
+                    </select>
                 </div>
                 
                 <div class="privacy-note">
-                    🔒 <strong>Privacidad:</strong> Tu nombre real y cédula son privados. En el ranking público solo aparece tu pseudónimo.
+                    🏆 <strong>Competencia:</strong> Participás tanto en el ranking individual como en el de tu equipo. Tus datos personales son privados, solo se muestra tu nombre en los rankings.
                 </div>
                 
                 <div id="intentosMessage" style="display: none; color: #f59e0b; margin: 20px 0; font-weight: bold;"></div>
                 
-                <button class="btn" onclick="startGame()">COMENZAR AVENTURA</button>
+                <button class="btn" onclick="startGame()">COMENZAR COMPETENCIA</button>
             </div>
             
             <!-- Pantalla de juego -->
             <div id="gameScreen">
                 <div class="game-header">
                     <div class="player-info">
-                        <div>Jugador: <span id="displayName"></span></div>
-                        <div>Pseudónimo: <span id="displayPseudonym"></span></div>
+                        <div>Participante: <span id="displayName"></span></div>
+                        <div class="player-team" id="displayTeam"></div>
                         <div class="lives">
                             Vidas: 
                             <span class="heart" id="heart1">💙</span>
@@ -947,7 +1156,7 @@
             
             <!-- Pantalla de resultados -->
             <div id="resultsScreen">
-                <h1>¡Juego Terminado!</h1>
+                <h1>¡Competencia Terminada!</h1>
                 <div class="final-score">Puntaje Final: <span id="finalScore">0</span></div>
                 <div class="level-name" id="levelName"></div>
                 <div>Nivel máximo alcanzado: <span id="maxLevel">1</span>/30</div>
@@ -959,7 +1168,7 @@
                 </div>
                 
                 <button class="btn" id="retryButton" onclick="retryGame()">🔄 REINTENTAR</button>
-                <button class="btn" onclick="newGame()">👤 NUEVO JUGADOR</button>
+                <button class="btn" onclick="newGame()">👤 NUEVO PARTICIPANTE</button>
                 <button class="btn" onclick="showTab('dashboard')">📊 VER DASHBOARD</button>
             </div>
         </div>
@@ -983,7 +1192,7 @@
         const database = firebase.database();
         
         // Variables globales
-        let currentPlayer = { name: '', id: '', pseudonym: '' };
+        let currentPlayer = { name: '', id: '', team: '' };
         let currentLevel = 1;
         let score = 0;
         let lives = 3;
@@ -999,7 +1208,7 @@
         let isAdminAuthenticated = false;
         const ADMIN_PASSWORD = "cardio2025admin";
         
-        // Banco de preguntas generadas por Perplexity
+        // Banco de preguntas (mantenemos las 60 originales, después las reemplazarás con 120)
         const questionBank = [
             {"id": "ic_001", "level": 1, "question": "¿Cuál es el síntoma más específico de insuficiencia cardíaca?", "options": [{"text": "Disnea de esfuerzo", "correct": false}, {"text": "Ortopnea", "correct": true}, {"text": "Edemas en miembros inferiores", "correct": false}, {"text": "Fatiga", "correct": false}]},
             {"id": "ic_002", "level": 1, "question": "¿Qué fracción de eyección define la insuficiencia cardíaca con función reducida (ICFEr)?", "options": [{"text": "<50%", "correct": false}, {"text": "<40%", "correct": true}, {"text": "<35%", "correct": false}, {"text": "<30%", "correct": false}]},
@@ -1062,8 +1271,6 @@
             {"id": "ic_059", "level": 30, "question": "¿Qué sistema de neuromodulación reduce actividad simpática renal en IC refractaria?", "options": [{"text": "Estimulación vagal", "correct": false}, {"text": "Barorreflex activation therapy", "correct": false}, {"text": "Ablación simpática renal", "correct": true}, {"text": "Modulación de médula espinal", "correct": false}]},
             {"id": "ic_060", "level": 30, "question": "En asistencia ventricular total artificial, ¿qué dispositivo tiene mayor durabilidad?", "options": [{"text": "HeartMate 3", "correct": true}, {"text": "Novacor", "correct": false}, {"text": "SynCardia", "correct": false}, {"text": "Jarvik 2000", "correct": false}]}
         ];
-        
-        // El banco de preguntas ya está completo con 90 preguntas reales
         
         // Títulos por nivel (30 niveles completos)
         const levelTitles = {
@@ -1133,35 +1340,13 @@
             30: "Llegaste al olimpo cardiológico uruguayo. Sos el oráculo del Hospital de Clínicas, de punta y al medio. Los residentes te consultan, los adjuntos te respetan, y los pacientes te bendicen."
         };
         
-        // Cargar preguntas desde archivo JSON externo
-        async function loadExternalQuestions() {
-            try {
-                const response = await fetch('questions-bank.json');
-                if (!response.ok) throw new Error('No se pudo cargar questions-bank.json');
-                const data = await response.json();
-                return data.questions || data; // Soporta ambos formatos
-            } catch (error) {
-                console.warn('Usando banco de preguntas por defecto:', error);
-                return questionBank; // Fallback a preguntas embebidas
-            }
-        }
-
-        // Inicialización mejorada
-        window.addEventListener('load', async function() {
-            // Cargar preguntas externas si están disponibles
-            const externalQuestions = await loadExternalQuestions();
-            if (externalQuestions !== questionBank) {
-                console.log('Preguntas externas cargadas:', externalQuestions.length);
-                // Reemplazar banco de preguntas
-                questionBank.length = 0; // Limpiar array original
-                questionBank.push(...externalQuestions);
-            }
-            
+        // Inicialización
+        window.addEventListener('load', function() {
             loadDashboard();
             setupFirebaseListeners();
             updateLivesDisplay();
             handleMissingLogos();
-            console.log('App inicializada con Firebase - Banco de preguntas:', questionBank.length);
+            console.log('App inicializada con Firebase - Competencia por equipos');
         });
         
         // Manejar logos faltantes
@@ -1194,9 +1379,17 @@
             // Activar nav-tab correspondiente
             event.target.classList.add('active');
             
-            // Recargar dashboard si es necesario
-            if (tabName === 'dashboard') {
-                loadDashboard();
+            // Cargar datos específicos según el tab
+            switch(tabName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'individual':
+                    loadIndividualRanking();
+                    break;
+                case 'equipos':
+                    loadTeamRankings();
+                    break;
             }
         }
         
@@ -1227,7 +1420,7 @@
                                     <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Fecha/Hora</th>
                                     <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Nombre Completo</th>
                                     <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Cédula</th>
-                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Pseudónimo</th>
+                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Grupo</th>
                                     <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Puntaje</th>
                                     <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Nivel</th>
                                     <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Intento</th>
@@ -1242,7 +1435,7 @@
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.fecha}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.nombre}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.cedula}</td>
-                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.pseudonimo}</td>
+                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.grupo}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.puntaje}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.nivel}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.intento}</td>
@@ -1269,16 +1462,16 @@
                 if (results) {
                     const resultsArray = Object.values(results);
                     
-                    let csv = 'Fecha/Hora,Nombre Completo,Cédula,Pseudónimo,Puntaje,Nivel Máximo,Título,Intento\n';
+                    let csv = 'Fecha/Hora,Nombre Completo,Cédula,Grupo,Puntaje,Nivel Máximo,Título,Intento\n';
                     
                     resultsArray.forEach(result => {
-                        csv += `"${result.fecha}","${result.nombre}","${result.cedula}","${result.pseudonimo}",${result.puntaje},${result.nivel},"${result.titulo}",${result.intento}\n`;
+                        csv += `"${result.fecha}","${result.nombre}","${result.cedula}","${result.grupo}",${result.puntaje},${result.nivel},"${result.titulo}",${result.intento}\n`;
                     });
                     
                     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
                     const link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = `registro_completo_cardiologia_${new Date().toISOString().split('T')[0]}.csv`;
+                    link.download = `competencia_cardiologia_${new Date().toISOString().split('T')[0]}.csv`;
                     link.click();
                 }
             });
@@ -1303,7 +1496,7 @@
         function setupFirebaseListeners() {
             database.ref('resultados').on('value', (snapshot) => {
                 updateDashboardStats();
-                updateTopPlayers();
+                updateTeamRankings();
                 updateLiveFeed();
             });
         }
@@ -1350,21 +1543,42 @@
                     const avgScore = resultsArray.reduce((sum, r) => sum + r.puntaje, 0) / totalPlayers;
                     const maxLevel = Math.max(...resultsArray.map(r => r.nivel));
                     
-                    // Contar jugadores de hoy usando timestamp
-                    const now = new Date();
-                    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-                    const todayEnd = todayStart + 24 * 60 * 60 * 1000; // 24 horas después
-                    
+                    // Contar jugadores de hoy
+                    const today = new Date().toDateString();
                     const playersToday = resultsArray.filter(r => {
-                        const timestamp = r.timestamp || 0;
-                        return timestamp >= todayStart && timestamp < todayEnd;
+                        const resultDate = new Date(r.timestamp || 0).toDateString();
+                        return resultDate === today;
                     }).length;
+                    
+                    // Estadísticas por equipo
+                    const teamStats = {
+                        A: { players: 0, totalScore: 0, avgScore: 0, maxLevel: 0 },
+                        B: { players: 0, totalScore: 0, avgScore: 0, maxLevel: 0 },
+                        C: { players: 0, totalScore: 0, avgScore: 0, maxLevel: 0 }
+                    };
+                    
+                    resultsArray.forEach(result => {
+                        const team = result.grupo;
+                        if (teamStats[team]) {
+                            teamStats[team].players++;
+                            teamStats[team].totalScore += result.puntaje;
+                            teamStats[team].maxLevel = Math.max(teamStats[team].maxLevel, result.nivel);
+                        }
+                    });
+                    
+                    // Calcular promedios por equipo
+                    Object.keys(teamStats).forEach(team => {
+                        if (teamStats[team].players > 0) {
+                            teamStats[team].avgScore = Math.round((teamStats[team].totalScore / teamStats[team].players) * 10) / 10;
+                        }
+                    });
                     
                     await database.ref('estadisticas').set({
                         totalJugadores: totalPlayers,
                         promedioScore: Math.round(avgScore * 10) / 10,
                         nivelMaximo: maxLevel,
                         jugadoresHoy: playersToday,
+                        equipos: teamStats,
                         ultimaActualizacion: firebase.database.ServerValue.TIMESTAMP
                     });
                 }
@@ -1376,7 +1590,7 @@
         // Funciones Dashboard
         function loadDashboard() {
             updateDashboardStats();
-            updateTopPlayers();
+            updateTeamRankings();
             updateLiveFeed();
         }
         
@@ -1396,7 +1610,43 @@
             }
         }
         
-        async function updateTopPlayers() {
+        async function updateTeamRankings() {
+            try {
+                const snapshot = await database.ref('estadisticas/equipos').once('value');
+                const teamStats = snapshot.val();
+                
+                if (teamStats) {
+                    const container = document.getElementById('teamRankings');
+                    container.innerHTML = '';
+                    
+                    // Ordenar equipos por promedio
+                    const sortedTeams = Object.entries(teamStats)
+                        .sort(([,a], [,b]) => b.avgScore - a.avgScore);
+                    
+                    sortedTeams.forEach(([teamName, stats]) => {
+                        const teamSection = document.createElement('div');
+                        teamSection.className = `team-section team-${teamName.toLowerCase()}`;
+                        
+                        teamSection.innerHTML = `
+                            <div class="team-header">
+                                <div class="team-name">GRUPO ${teamName}</div>
+                                <div class="team-stats">
+                                    <span>👥 ${stats.players}</span>
+                                    <span>🏆 ${stats.avgScore} pts</span>
+                                    <span>📈 Nv.${stats.maxLevel}</span>
+                                </div>
+                            </div>
+                        `;
+                        
+                        container.appendChild(teamSection);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading team rankings:', error);
+            }
+        }
+        
+        async function loadIndividualRanking() {
             try {
                 const snapshot = await database.ref('resultados').orderByChild('puntaje').limitToLast(20).once('value');
                 const results = snapshot.val();
@@ -1404,19 +1654,20 @@
                 if (results) {
                     const resultsArray = Object.values(results).sort((a, b) => b.puntaje - a.puntaje);
                     
+                    // Obtener mejor resultado por jugador (por cédula)
                     const uniqueResults = new Map();
                     resultsArray.forEach(result => {
-                        const existing = uniqueResults.get(result.pseudonimo);
+                        const existing = uniqueResults.get(result.cedula);
                         if (!existing || result.puntaje > existing.puntaje) {
-                            uniqueResults.set(result.pseudonimo, result);
+                            uniqueResults.set(result.cedula, result);
                         }
                     });
                     
                     const topResults = Array.from(uniqueResults.values())
                         .sort((a, b) => b.puntaje - a.puntaje)
-                        .slice(0, 10);
+                        .slice(0, 20);
                     
-                    const container = document.getElementById('topPlayers');
+                    const container = document.getElementById('topIndividual');
                     container.innerHTML = '';
                     
                     topResults.forEach((result, index) => {
@@ -1430,9 +1681,10 @@
                         playerRank.innerHTML = `
                             <div class="rank-number">${index + 1}</div>
                             <div>
-                                <div class="rank-name">${result.pseudonimo}</div>
+                                <div class="rank-name">${result.nombre}</div>
                                 <div class="rank-title">${levelTitles[result.nivel] || 'El que cura todo con agua con sal'}</div>
                             </div>
+                            <div class="rank-team team-${result.grupo?.toLowerCase() || 'a'}">Grupo ${result.grupo || 'A'}</div>
                             <div class="rank-score">${result.puntaje} pts</div>
                             <div class="rank-level">Nv.${result.nivel}</div>
                         `;
@@ -1441,7 +1693,81 @@
                     });
                 }
             } catch (error) {
-                console.error('Error loading top players:', error);
+                console.error('Error loading individual ranking:', error);
+            }
+        }
+        
+        async function loadTeamRankings() {
+            try {
+                const snapshot = await database.ref('resultados').once('value');
+                const results = snapshot.val();
+                
+                if (results) {
+                    const resultsArray = Object.values(results);
+                    
+                    // Agrupar por equipo y obtener mejor resultado por jugador
+                    const teamPlayers = {
+                        A: new Map(),
+                        B: new Map(),
+                        C: new Map()
+                    };
+                    
+                    resultsArray.forEach(result => {
+                        const team = result.grupo;
+                        if (teamPlayers[team]) {
+                            const existing = teamPlayers[team].get(result.cedula);
+                            if (!existing || result.puntaje > existing.puntaje) {
+                                teamPlayers[team].set(result.cedula, result);
+                            }
+                        }
+                    });
+                    
+                    const container = document.getElementById('detailedTeamStats');
+                    container.innerHTML = '';
+                    
+                    // Crear sección para cada equipo
+                    ['A', 'B', 'C'].forEach(teamName => {
+                        const players = Array.from(teamPlayers[teamName].values())
+                            .sort((a, b) => b.puntaje - a.puntaje);
+                        
+                        const avgScore = players.length > 0 ? 
+                            Math.round((players.reduce((sum, p) => sum + p.puntaje, 0) / players.length) * 10) / 10 : 0;
+                        const maxLevel = players.length > 0 ? 
+                            Math.max(...players.map(p => p.nivel)) : 0;
+                        
+                        const teamSection = document.createElement('div');
+                        teamSection.className = `team-section team-${teamName.toLowerCase()}`;
+                        
+                        let playersHTML = '';
+                        players.slice(0, 10).forEach((player, index) => {
+                            playersHTML += `
+                                <div class="team-player">
+                                    <span>${index + 1}. ${player.nombre}</span>
+                                    <span>${player.puntaje} pts - Nv.${player.nivel}</span>
+                                </div>
+                            `;
+                        });
+                        
+                        teamSection.innerHTML = `
+                            <div class="team-header">
+                                <div class="team-name">GRUPO ${teamName}</div>
+                                <div class="team-stats">
+                                    <span>👥 ${players.length}</span>
+                                    <span>🏆 ${avgScore} pts</span>
+                                    <span>📈 Nv.${maxLevel}</span>
+                                </div>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <h3 style="color: #94a3b8; margin-bottom: 12px; font-size: 1rem;">Top 10 del grupo:</h3>
+                                ${playersHTML || '<div style="color: #64748b; font-style: italic;">No hay participantes aún</div>'}
+                            </div>
+                        `;
+                        
+                        container.appendChild(teamSection);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading team rankings:', error);
             }
         }
         
@@ -1464,7 +1790,8 @@
                         
                         feedItem.innerHTML = `
                             <div>
-                                <div class="feed-player">${result.pseudonimo}</div>
+                                <div class="feed-player">${result.nombre}</div>
+                                <div class="feed-team team-${result.grupo?.toLowerCase() || 'a'}">Grupo ${result.grupo || 'A'}</div>
                             </div>
                             <div class="feed-score">${result.puntaje} pts - Nv.${result.nivel}</div>
                             <div class="feed-time">${timeAgo}</div>
@@ -1495,10 +1822,16 @@
         async function startGame() {
             const name = document.getElementById('playerName').value.trim();
             const id = document.getElementById('playerId').value.trim();
-            const pseudonym = document.getElementById('playerPseudonym').value.trim();
+            const team = document.getElementById('playerTeam').value;
             
-            if (!name || !id || !pseudonym) {
+            if (!name || !id || !team) {
                 alert('Por favor, completá todos los campos');
+                return;
+            }
+            
+            // Validar formato de cédula (solo números, sin dígito verificador)
+            if (!/^\d{6,8}$/.test(id)) {
+                alert('La cédula debe tener entre 6 y 8 dígitos, sin dígito verificador');
                 return;
             }
             
@@ -1523,9 +1856,13 @@
                 return;
             }
             
-            currentPlayer = { name, id, pseudonym };
+            currentPlayer = { name, id, team };
             document.getElementById('displayName').textContent = name;
-            document.getElementById('displayPseudonym').textContent = pseudonym;
+            
+            // Mostrar equipo con estilo
+            const teamDisplay = document.getElementById('displayTeam');
+            teamDisplay.textContent = `Grupo ${team}`;
+            teamDisplay.className = `player-team team-${team.toLowerCase()}`;
             
             // Resetear variables del juego
             currentLevel = 1;
@@ -1831,7 +2168,7 @@
             const result = {
                 nombre: currentPlayer.name,
                 cedula: currentPlayer.id,
-                pseudonimo: currentPlayer.pseudonym,
+                grupo: currentPlayer.team,
                 puntaje: score,
                 nivel: maxLevelReached,
                 titulo: getLevelTitle(maxLevelReached),
@@ -1841,9 +2178,9 @@
             
             try {
                 await saveGameResult(result);
-                console.log('Juego guardado exitosamente');
+                console.log('Resultado guardado exitosamente');
             } catch (error) {
-                console.error('Error guardando juego:', error);
+                console.error('Error guardando resultado:', error);
                 alert('Error guardando el resultado. Tu progreso puede no haberse guardado.');
             }
             
@@ -1884,7 +2221,7 @@
             document.getElementById('startScreen').style.display = 'block';
             document.getElementById('playerName').value = '';
             document.getElementById('playerId').value = '';
-            document.getElementById('playerPseudonym').value = '';
+            document.getElementById('playerTeam').value = '';
             document.getElementById('intentosMessage').style.display = 'none';
         }
     </script>
