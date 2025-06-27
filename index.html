@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¿Quién quiere ser cardiólogo? - Competencia por Equipos</title>
+    <title>¿Quién quiere ser cardiólogo? - Competencia Individual y por Equipos</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -104,6 +104,32 @@
             font-weight: 500;
         }
         
+        /* Contador de visitas */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+        }
+        
+        .visit-counter {
+            color: #60a5fa;
+        }
+        
+        .online-players {
+            color: #22c55e;
+        }
+        
+        .last-update {
+            color: #94a3b8;
+        }
+        
         h1 {
             font-size: 2.75rem;
             font-weight: 700;
@@ -175,6 +201,48 @@
         
         .tab-content.active {
             display: block;
+        }
+        
+        /* Notificaciones en tiempo real */
+        .live-notifications {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 350px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        
+        .notification {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s ease;
+            pointer-events: auto;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .notification.new-record {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+        
+        .notification.team-update {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+        
+        .notification.game-start {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
         }
         
         /* Admin Panel */
@@ -378,6 +446,10 @@
             border-color: rgba(251, 191, 36, 0.4);
         }
         
+        .team-section.team-individual {
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+        
         .team-header {
             display: flex;
             justify-content: space-between;
@@ -399,6 +471,10 @@
             background: rgba(251, 191, 36, 0.1);
         }
         
+        .team-individual .team-header {
+            background: rgba(139, 92, 246, 0.1);
+        }
+        
         .team-name {
             font-size: 1.5rem;
             font-weight: 700;
@@ -415,6 +491,10 @@
         
         .team-c .team-name {
             color: #fbbf24;
+        }
+        
+        .team-individual .team-name {
+            color: #8b5cf6;
         }
         
         .team-stats {
@@ -483,6 +563,11 @@
             color: #fbbf24;
         }
         
+        .feed-team.team-individual {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+        }
+        
         .feed-score {
             color: #3b82f6;
             font-family: 'JetBrains Mono', monospace;
@@ -539,6 +624,11 @@
         .player-team.team-c {
             background: rgba(251, 191, 36, 0.2);
             color: #fbbf24;
+        }
+        
+        .player-team.team-individual {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
         }
         
         .lives {
@@ -851,6 +941,11 @@
             color: #fbbf24;
         }
         
+        .rank-team.team-individual {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+        }
+        
         .rank-score {
             font-family: 'JetBrains Mono', monospace;
             color: #3b82f6;
@@ -1013,11 +1108,40 @@
             .team-rankings {
                 grid-template-columns: 1fr;
             }
+            
+            .stats-bar {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+            
+            .live-notifications {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Notificaciones en tiempo real -->
+    <div class="live-notifications" id="liveNotifications"></div>
+
     <div class="container">
+        <!-- Barra de estadísticas en tiempo real -->
+        <div class="stats-bar">
+            <div class="visit-counter">
+                🌐 Visitas: <span id="visitCount">-</span>
+            </div>
+            <div class="online-players">
+                👤 Jugando ahora: <span id="onlinePlayers">-</span>
+            </div>
+            <div class="last-update">
+                🔄 Última actualización: <span id="lastUpdate">-</span>
+            </div>
+        </div>
+        
         <!-- Header institucional -->
         <div class="institutional-header">
             <div class="logo-container">
@@ -1053,6 +1177,10 @@
                         <div class="stat-label">Total Participantes</div>
                     </div>
                     <div class="stat-card">
+                        <div class="stat-number" id="totalPartidas">-</div>
+                        <div class="stat-label">Partidas Iniciadas</div>
+                    </div>
+                    <div class="stat-card">
                         <div class="stat-number" id="promedioScore">-</div>
                         <div class="stat-label">Puntaje Promedio</div>
                     </div>
@@ -1063,6 +1191,10 @@
                     <div class="stat-card">
                         <div class="stat-number" id="jugadoresHoy">-</div>
                         <div class="stat-label">Participantes Hoy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="visitasHoy">-</div>
+                        <div class="stat-label">Visitas de Hoy</div>
                     </div>
                 </div>
             </div>
@@ -1081,10 +1213,10 @@
                         <li><strong style="color: #fbbf24;">+10 puntos bonus</strong> por completar los 30 niveles</li>
                     </ul>
                     
-                    <h3 style="color: #60a5fa; margin: 16px 0; font-size: 1.1rem;">👥 Puntaje Grupal:</h3>
+                    <h3 style="color: #60a5fa; margin: 16px 0; font-size: 1.1rem;">👥 Modalidades:</h3>
                     <p style="color: #94a3b8; margin: 0;">
-                        Se calcula como el <strong>promedio de los mejores puntajes</strong> de cada participante del grupo.
-                        Solo se considera el mejor intento de cada jugador.
+                        <strong>🏆 Individual:</strong> Competís solo, tu puntaje aparece en el ranking general.<br>
+                        <strong>👥 Por Equipos:</strong> Tu puntaje suma al promedio de tu grupo (A, B o C).
                     </p>
                     
                     <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 12px; margin-top: 16px;">
@@ -1189,20 +1321,22 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="playerTeam">👥 Grupo del foro:</label>
+                        <label for="playerTeam">🎯 Modalidad de juego:</label>
                         <select id="playerTeam" required>
-                            <option value="">Selecciona tu grupo</option>
-                            <option value="A">Grupo A</option>
-                            <option value="B">Grupo B</option>
-                            <option value="C">Grupo C</option>
+                            <option value="">Selecciona tu modalidad</option>
+                            <option value="A">👥 Grupo A (competencia por equipos)</option>
+                            <option value="B">👥 Grupo B (competencia por equipos)</option>
+                            <option value="C">👥 Grupo C (competencia por equipos)</option>
+                            <option value="INDIVIDUAL">🏆 Individual (solo tu puntaje)</option>
                         </select>
                     </div>
                 </form>
                 
                 <div class="privacy-note">
-                    🏆 <strong>Competencia:</strong> Participás tanto en el ranking individual como en el de tu equipo. 
+                    🏆 <strong>Competencia:</strong> Podés elegir participar individualmente o como parte de un equipo del foro. 
                     <br>🔒 <strong>Privacidad:</strong> Tu nombre real es privado (solo lo ve el administrador), en los rankings públicos aparece tu pseudónimo. 
                     <br>📋 <strong>Validación:</strong> Tu cédula es solo para validar participación y evitar múltiples intentos.
+                    <br>🎮 <strong>Límites:</strong> Máximo 2 intentos por persona.
                 </div>
                 
                 <div id="intentosMessage" style="display: none; color: #f59e0b; margin: 20px 0; font-weight: bold;"></div>
@@ -1319,23 +1453,25 @@
         let playerAttempts = 0;
         let isAdminAuthenticated = false;
         const ADMIN_PASSWORD = "cardio2025admin";
-        let questionBank = []; // IMPORTANTE: Este array se llenará SOLO desde el archivo JSON
+        let questionBank = [];
         let correctStreak = 0;
+        let currentSessionId = null;
+        let lastKnownRecords = { individual: null, teams: {} };
         
         // Sistema de puntaje mejorado y balanceado
         const SCORING_SYSTEM = {
-            BASE_POINTS: 1,                    // Punto base por respuesta correcta
-            TIME_BONUS_THRESHOLD: 20,          // Segundos para bonus de tiempo
-            TIME_BONUS_POINTS: 1,              // Bonus por respuesta rápida
-            HARD_LEVEL_THRESHOLD: 20,          // A partir de qué nivel se considera difícil
-            HARD_LEVEL_BONUS: 1,               // Bonus por nivel difícil
-            STREAK_BONUS_5: 3,                 // Bonus por racha de 5 (reducido)
-            STREAK_BONUS_10: 5,                // Bonus por racha de 10 (reducido)
-            PERFECT_GAME_BONUS: 10,            // Bonus por completar los 30 niveles
-            MAX_THEORETICAL_SCORE: 100         // Puntaje máximo teórico para referencia
+            BASE_POINTS: 1,
+            TIME_BONUS_THRESHOLD: 20,
+            TIME_BONUS_POINTS: 1,
+            HARD_LEVEL_THRESHOLD: 20,
+            HARD_LEVEL_BONUS: 1,
+            STREAK_BONUS_5: 3,
+            STREAK_BONUS_10: 5,
+            PERFECT_GAME_BONUS: 10,
+            MAX_THEORETICAL_SCORE: 100
         };
         
-        // Títulos mejorados por nivel (30 niveles progresivos y graciosos)
+        // Títulos por nivel (30 niveles progresivos y graciosos)
         const levelTitles = {
             1: "Estudiante de primer año con estetoscopio al revés",
             2: "Interno que confunde el ECG con un sismógrafo",
@@ -1403,14 +1539,277 @@
             30: "Alcanzaste la deidad cardiológica uruguaya. Tu conocimiento trasciende los libros. Sos el oráculo al que todos consultan, el maestro de maestros. En el Olimpo del Hospital de Clínicas, tu trono está asegurado."
         };
         
-        // IMPORTANTE: No más preguntas hardcodeadas. Solo se cargan desde el archivo JSON
+        // ===============================
+        // FUNCIONES DE CONTADOR DE VISITAS
+        // ===============================
         
-        // Cargar preguntas desde archivo JSON
+        async function recordVisit() {
+            try {
+                const today = new Date().toDateString();
+                const timestamp = Date.now();
+                
+                // Incrementar contador total de visitas
+                await database.ref('analytics/totalVisits').transaction((current) => (current || 0) + 1);
+                
+                // Incrementar contador de visitas de hoy
+                await database.ref(`analytics/dailyVisits/${today}`).transaction((current) => (current || 0) + 1);
+                
+                // Registrar visita individual con timestamp
+                const visitId = database.ref('analytics/visits').push().key;
+                await database.ref(`analytics/visits/${visitId}`).set({
+                    timestamp: timestamp,
+                    date: today,
+                    userAgent: navigator.userAgent,
+                    ip: 'hidden' // Por privacidad
+                });
+                
+                console.log('📊 Visita registrada exitosamente');
+            } catch (error) {
+                console.error('Error registrando visita:', error);
+            }
+        }
+        
+        async function updateVisitCounters() {
+            try {
+                const totalSnapshot = await database.ref('analytics/totalVisits').once('value');
+                const totalVisits = totalSnapshot.val() || 0;
+                
+                const today = new Date().toDateString();
+                const todaySnapshot = await database.ref(`analytics/dailyVisits/${today}`).once('value');
+                const visitsToday = todaySnapshot.val() || 0;
+                
+                document.getElementById('visitCount').textContent = totalVisits.toLocaleString();
+                document.getElementById('visitasHoy').textContent = visitsToday;
+                
+            } catch (error) {
+                console.error('Error updating visit counters:', error);
+                document.getElementById('visitCount').textContent = '-';
+                document.getElementById('visitasHoy').textContent = '-';
+            }
+        }
+        
+        // ===============================
+        // FUNCIONES DE JUGADORES ONLINE
+        // ===============================
+        
+        async function trackOnlinePlayer() {
+            try {
+                const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                currentSessionId = sessionId;
+                
+                // Registrar presencia del jugador
+                const playerRef = database.ref(`analytics/onlinePlayers/${sessionId}`);
+                await playerRef.set({
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    status: 'browsing'
+                });
+                
+                // Configurar desconexión automática
+                playerRef.onDisconnect().remove();
+                
+                // Actualizar estado cuando inicie el juego
+                window.updatePlayerStatus = async (status) => {
+                    if (currentSessionId) {
+                        await database.ref(`analytics/onlinePlayers/${currentSessionId}`).update({
+                            status: status,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP
+                        });
+                    }
+                };
+                
+            } catch (error) {
+                console.error('Error tracking online player:', error);
+            }
+        }
+        
+        async function updateOnlineCount() {
+            try {
+                const snapshot = await database.ref('analytics/onlinePlayers').once('value');
+                const onlinePlayers = snapshot.val();
+                
+                if (onlinePlayers) {
+                    const count = Object.keys(onlinePlayers).length;
+                    document.getElementById('onlinePlayers').textContent = count;
+                } else {
+                    document.getElementById('onlinePlayers').textContent = '0';
+                }
+            } catch (error) {
+                console.error('Error updating online count:', error);
+                document.getElementById('onlinePlayers').textContent = '-';
+            }
+        }
+        
+        // ===============================
+        // FUNCIONES DE INICIO DE PARTIDA
+        // ===============================
+        
+        async function recordGameStart(playerData) {
+            try {
+                const gameStartId = database.ref('gameStarts').push().key;
+                await database.ref(`gameStarts/${gameStartId}`).set({
+                    ...playerData,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    fecha: new Date().toLocaleString('es-UY'),
+                    completed: false,
+                    sessionId: currentSessionId
+                });
+                
+                return gameStartId;
+            } catch (error) {
+                console.error('Error recording game start:', error);
+                return null;
+            }
+        }
+        
+        async function updateGameProgress(gameStartId, level, score) {
+            try {
+                if (gameStartId) {
+                    await database.ref(`gameStarts/${gameStartId}`).update({
+                        currentLevel: level,
+                        currentScore: score,
+                        lastUpdate: firebase.database.ServerValue.TIMESTAMP
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating game progress:', error);
+            }
+        }
+        
+        async function markGameCompleted(gameStartId, finalResult) {
+            try {
+                if (gameStartId) {
+                    await database.ref(`gameStarts/${gameStartId}`).update({
+                        completed: true,
+                        finalScore: finalResult.puntaje,
+                        finalLevel: finalResult.nivel,
+                        completedAt: firebase.database.ServerValue.TIMESTAMP
+                    });
+                }
+            } catch (error) {
+                console.error('Error marking game completed:', error);
+            }
+        }
+        
+        // ===============================
+        // SISTEMA DE NOTIFICACIONES
+        // ===============================
+        
+        function showNotification(message, type = 'default', duration = 4000) {
+            const notificationContainer = document.getElementById('liveNotifications');
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            notificationContainer.appendChild(notification);
+            
+            // Mostrar notificación
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            // Ocultar y remover notificación
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 500);
+            }, duration);
+        }
+        
+        // ===============================
+        // FUNCIONES DE DETECCIÓN DE RÉCORDS
+        // ===============================
+        
+        async function checkForNewRecords() {
+            try {
+                // Obtener datos actuales
+                const resultsSnapshot = await database.ref('resultados').once('value');
+                const results = resultsSnapshot.val();
+                
+                if (!results) return;
+                
+                const resultsArray = Object.values(results);
+                
+                // Obtener mejor resultado individual
+                const bestIndividual = resultsArray.reduce((best, current) => 
+                    current.puntaje > best.puntaje ? current : best
+                );
+                
+                // Verificar nuevo récord individual
+                if (!lastKnownRecords.individual || bestIndividual.puntaje > lastKnownRecords.individual.puntaje) {
+                    if (lastKnownRecords.individual) { // Solo mostrar si no es la primera carga
+                        showNotification(
+                            `🏆 ¡NUEVO RÉCORD! ${bestIndividual.pseudonimo || bestIndividual.nombre} alcanzó ${bestIndividual.puntaje} puntos`,
+                            'new-record',
+                            6000
+                        );
+                    }
+                    lastKnownRecords.individual = bestIndividual;
+                }
+                
+                // Verificar cambios en equipos
+                const teamStats = {
+                    A: { players: 0, totalScore: 0, avgScore: 0 },
+                    B: { players: 0, totalScore: 0, avgScore: 0 },
+                    C: { players: 0, totalScore: 0, avgScore: 0 }
+                };
+                
+                // Obtener mejores resultados por jugador
+                const uniqueResults = new Map();
+                resultsArray.forEach(result => {
+                    if (result.grupo && ['A', 'B', 'C'].includes(result.grupo)) {
+                        const existing = uniqueResults.get(result.cedula);
+                        if (!existing || result.puntaje > existing.puntaje) {
+                            uniqueResults.set(result.cedula, result);
+                        }
+                    }
+                });
+                
+                // Calcular estadísticas por equipo
+                Array.from(uniqueResults.values()).forEach(result => {
+                    const team = result.grupo;
+                    if (teamStats[team]) {
+                        teamStats[team].players++;
+                        teamStats[team].totalScore += result.puntaje;
+                    }
+                });
+                
+                Object.keys(teamStats).forEach(team => {
+                    if (teamStats[team].players > 0) {
+                        teamStats[team].avgScore = Math.round((teamStats[team].totalScore / teamStats[team].players) * 10) / 10;
+                    }
+                });
+                
+                // Verificar cambios en el ranking de equipos
+                const sortedTeams = Object.entries(teamStats)
+                    .filter(([,stats]) => stats.players > 0)
+                    .sort(([,a], [,b]) => b.avgScore - a.avgScore);
+                
+                if (sortedTeams.length > 0) {
+                    const currentLeader = sortedTeams[0];
+                    const previousLeader = lastKnownRecords.teamLeader;
+                    
+                    if (previousLeader && currentLeader[0] !== previousLeader[0]) {
+                        showNotification(
+                            `👑 ¡GRUPO ${currentLeader[0]} TOMA EL LIDERAZGO! Promedio: ${currentLeader[1].avgScore} puntos`,
+                            'team-update',
+                            5000
+                        );
+                    }
+                    
+                    lastKnownRecords.teamLeader = currentLeader;
+                }
+                
+            } catch (error) {
+                console.error('Error checking for new records:', error);
+            }
+        }
+        
+        // ===============================
+        // CARGAR PREGUNTAS DESDE JSON
+        // ===============================
+        
         async function loadQuestions() {
             try {
                 console.log('Iniciando carga de preguntas...');
                 
-                // Intentar cargar desde múltiples rutas posibles
                 const possiblePaths = [
                     'questions_bank.json',
                     'questions-bank.json', 
@@ -1422,7 +1821,6 @@
                 ];
                 
                 let loaded = false;
-                let lastError = null;
                 
                 for (const path of possiblePaths) {
                     try {
@@ -1439,12 +1837,10 @@
                             }
                         }
                     } catch (e) {
-                        lastError = e;
                         console.log(`❌ No se pudo cargar desde ${path}:`, e.message);
                     }
                 }
                 
-                // Si no se cargó desde archivo y existe window.fs (en el entorno de Claude)
                 if (!loaded && window.fs && window.fs.readFile) {
                     try {
                         console.log('Intentando cargar desde window.fs...');
@@ -1461,7 +1857,6 @@
                     }
                 }
                 
-                // Si aún no se cargó, mostrar error detallado
                 if (!loaded || questionBank.length === 0) {
                     console.error('❌ ERROR: No se pudieron cargar las preguntas');
                     showError(`
@@ -1485,7 +1880,6 @@
                         }
                     ];
                     
-                    // Duplicar la pregunta de emergencia para todos los niveles
                     for (let i = 2; i <= 30; i++) {
                         questionBank.push({...questionBank[0], id: `emergency_${i.toString().padStart(3, '0')}`, level: i});
                     }
@@ -1504,7 +1898,7 @@
                 errorDiv.style.display = 'block';
                 setTimeout(() => {
                     errorDiv.style.display = 'none';
-                }, 10000); // Mostrar por 10 segundos
+                }, 10000);
             }
             console.error(message);
         }
@@ -1525,7 +1919,10 @@
             }, 3000);
         }
         
-        // Mejoras de jugabilidad
+        // ===============================
+        // MEJORAS DE JUGABILIDAD
+        // ===============================
+        
         function showCombo(streak) {
             const indicator = document.getElementById('comboIndicator');
             const comboText = document.getElementById('comboText');
@@ -1551,17 +1948,33 @@
             }, 3000);
         }
         
-        // Inicialización
+        // ===============================
+        // INICIALIZACIÓN
+        // ===============================
+        
         window.addEventListener('load', async function() {
             await loadQuestions();
+            await recordVisit();
+            await trackOnlinePlayer();
             loadDashboard();
             setupFirebaseListeners();
             updateLivesDisplay();
             handleMissingLogos();
-            console.log('App inicializada con Firebase - Competencia por equipos');
+            
+            // Configurar actualizaciones automáticas
+            setInterval(updateVisitCounters, 30000); // Cada 30 segundos
+            setInterval(updateOnlineCount, 15000); // Cada 15 segundos
+            setInterval(checkForNewRecords, 20000); // Cada 20 segundos
+            setInterval(() => {
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('es-UY');
+            }, 60000); // Cada minuto
+            
+            // Mostrar tiempo inicial
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('es-UY');
+            
+            console.log('🎮 App inicializada con todas las mejoras - Competencia por equipos e individual');
         });
         
-        // Manejar logos faltantes
         function handleMissingLogos() {
             const logos = ['logo-ccu', 'logo-uac'];
             logos.forEach(logoId => {
@@ -1573,25 +1986,22 @@
             });
         }
         
-        // Funciones de navegación
+        // ===============================
+        // FUNCIONES DE NAVEGACIÓN
+        // ===============================
+        
         function showTab(tabName) {
-            // Ocultar todos los tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            // Ocultar todos los nav-tabs activos
             document.querySelectorAll('.nav-tab').forEach(navTab => {
                 navTab.classList.remove('active');
             });
             
-            // Mostrar tab seleccionado
             document.getElementById(tabName).classList.add('active');
-            
-            // Activar nav-tab correspondiente
             event.target.classList.add('active');
             
-            // Cargar datos específicos según el tab
             switch(tabName) {
                 case 'dashboard':
                     loadDashboard();
@@ -1605,7 +2015,10 @@
             }
         }
         
-        // Funciones de administración
+        // ===============================
+        // FUNCIONES DE ADMINISTRACIÓN
+        // ===============================
+        
         function verifyAdmin() {
             const password = document.getElementById('adminPassword').value;
             if (password === ADMIN_PASSWORD) {
@@ -1619,47 +2032,96 @@
         
         async function loadAdminData() {
             try {
-                const snapshot = await database.ref('resultados').once('value');
-                const results = snapshot.val();
+                const resultsSnapshot = await database.ref('resultados').once('value');
+                const results = resultsSnapshot.val();
+                
+                const gameStartsSnapshot = await database.ref('gameStarts').once('value');
+                const gameStarts = gameStartsSnapshot.val();
+                
+                let tableHTML = `
+                    <h4>📊 Resumen de Actividad</h4>
+                    <p>Partidas iniciadas: ${gameStarts ? Object.keys(gameStarts).length : 0}</p>
+                    <p>Partidas completadas: ${results ? Object.keys(results).length : 0}</p>
+                    <br>
+                    
+                    <h4>📋 Resultados Completos</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <thead>
+                            <tr style="background: rgba(59, 130, 246, 0.2);">
+                                <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Fecha/Hora</th>
+                                <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Nombre Real</th>
+                                <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Pseudónimo</th>
+                                <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Cédula</th>
+                                <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Modalidad</th>
+                                <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Puntaje</th>
+                                <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Nivel</th>
+                                <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Intento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
                 
                 if (results) {
                     const resultsArray = Object.values(results).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
                     
-                    let tableHTML = `
-                        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                            <thead>
-                                <tr style="background: rgba(59, 130, 246, 0.2);">
-                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Fecha/Hora</th>
-                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Nombre Real</th>
-                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Pseudónimo</th>
-                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Cédula</th>
-                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Grupo</th>
-                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Puntaje</th>
-                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Nivel</th>
-                                    <th style="padding: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">Intento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    `;
-                    
                     resultsArray.forEach(result => {
+                        const modalidad = result.grupo === 'INDIVIDUAL' ? 'Individual' : `Grupo ${result.grupo}`;
                         tableHTML += `
                             <tr>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.fecha}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.nombre}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.pseudonimo || 'Sin pseudónimo'}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.cedula}</td>
-                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.grupo}</td>
+                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${modalidad}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.puntaje}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.nivel}</td>
                                 <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">${result.intento}</td>
                             </tr>
                         `;
                     });
-                    
-                    tableHTML += '</tbody></table>';
-                    document.getElementById('adminTable').innerHTML = tableHTML;
                 }
+                
+                tableHTML += '</tbody></table>';
+                
+                // Agregar tabla de partidas iniciadas pero no completadas
+                if (gameStarts) {
+                    const incompleteGames = Object.values(gameStarts).filter(game => !game.completed);
+                    
+                    if (incompleteGames.length > 0) {
+                        tableHTML += `
+                            <br><br>
+                            <h4>🎮 Partidas Iniciadas pero No Completadas</h4>
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                                <thead>
+                                    <tr style="background: rgba(251, 191, 36, 0.2);">
+                                        <th style="padding: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">Modalidad</th>
+                                        <th style="padding: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">Nivel Alcanzado</th>
+                                        <th style="padding: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">Última Actividad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+                        
+                        incompleteGames.forEach(game => {
+                            const modalidad = game.grupo === 'INDIVIDUAL' ? 'Individual' : `Grupo ${game.grupo}`;
+                            const lastUpdate = game.lastUpdate ? new Date(game.lastUpdate).toLocaleString('es-UY') : 'Sin actividad';
+                            tableHTML += `
+                                <tr>
+                                    <td style="padding: 8px; border: 1px solid rgba(251, 191, 36, 0.2);">${game.fecha}</td>
+                                    <td style="padding: 8px; border: 1px solid rgba(251, 191, 36, 0.2);">${game.nombre}</td>
+                                    <td style="padding: 8px; border: 1px solid rgba(251, 191, 36, 0.2);">${game.pseudonimo || 'Sin pseudónimo'}</td>
+                                    <td style="padding: 8px; border: 1px solid rgba(251, 191, 36, 0.2);">${modalidad}</td>
+                                    <td style="padding: 8px; border: 1px solid rgba(251, 191, 36, 0.2);">${game.currentLevel || 1}</td>
+                                    <td style="padding: 8px; border: 1px solid rgba(251, 191, 36, 0.2);">${lastUpdate}</td>
+                                </tr>
+                            `;
+                        });
+                        
+                        tableHTML += '</tbody></table>';
+                    }
+                }
+                
+                document.getElementById('adminTable').innerHTML = tableHTML;
             } catch (error) {
                 console.error('Error loading admin data:', error);
             }
@@ -1676,10 +2138,11 @@
                 if (results) {
                     const resultsArray = Object.values(results);
                     
-                    let csv = 'Fecha/Hora,Nombre Real,Pseudónimo,Cédula,Grupo,Puntaje,Nivel Máximo,Título,Intento\n';
+                    let csv = 'Fecha/Hora,Nombre Real,Pseudónimo,Cédula,Modalidad,Puntaje,Nivel Máximo,Título,Intento\n';
                     
                     resultsArray.forEach(result => {
-                        csv += `"${result.fecha}","${result.nombre}","${result.pseudonimo || 'Sin pseudónimo'}","${result.cedula}","${result.grupo}",${result.puntaje},${result.nivel},"${result.titulo}",${result.intento}\n`;
+                        const modalidad = result.grupo === 'INDIVIDUAL' ? 'Individual' : `Grupo ${result.grupo}`;
+                        csv += `"${result.fecha}","${result.nombre}","${result.pseudonimo || 'Sin pseudónimo'}","${result.cedula}","${modalidad}",${result.puntaje},${result.nivel},"${result.titulo}",${result.intento}\n`;
                     });
                     
                     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1700,18 +2163,32 @@
             if (confirm('¿Estás seguro de que quieres eliminar TODOS los datos? Esta acción no se puede deshacer.')) {
                 database.ref('resultados').remove();
                 database.ref('estadisticas').remove();
+                database.ref('gameStarts').remove();
+                database.ref('analytics').remove();
                 alert('Todos los datos han sido eliminados');
                 loadAdminData();
                 loadDashboard();
             }
         }
         
-        // Funciones Firebase
+        // ===============================
+        // FUNCIONES FIREBASE
+        // ===============================
+        
         function setupFirebaseListeners() {
             database.ref('resultados').on('value', (snapshot) => {
                 updateDashboardStats();
                 updateTeamRankings();
                 updateLiveFeed();
+                checkForNewRecords();
+            });
+            
+            database.ref('analytics/onlinePlayers').on('value', (snapshot) => {
+                updateOnlineCount();
+            });
+            
+            database.ref('analytics/totalVisits').on('value', (snapshot) => {
+                updateVisitCounters();
             });
         }
         
@@ -1748,12 +2225,16 @@
         
         async function updateGlobalStats() {
             try {
-                const snapshot = await database.ref('resultados').once('value');
-                const results = snapshot.val();
+                const resultsSnapshot = await database.ref('resultados').once('value');
+                const results = resultsSnapshot.val();
+                
+                const gameStartsSnapshot = await database.ref('gameStarts').once('value');
+                const gameStarts = gameStartsSnapshot.val();
                 
                 if (results) {
                     const resultsArray = Object.values(results);
                     const totalPlayers = resultsArray.length;
+                    const totalGames = gameStarts ? Object.keys(gameStarts).length : 0;
                     const avgScore = resultsArray.reduce((sum, r) => sum + r.puntaje, 0) / totalPlayers;
                     const maxLevel = Math.max(...resultsArray.map(r => r.nivel));
                     
@@ -1768,10 +2249,21 @@
                     const teamStats = {
                         A: { players: 0, totalScore: 0, avgScore: 0, maxLevel: 0 },
                         B: { players: 0, totalScore: 0, avgScore: 0, maxLevel: 0 },
-                        C: { players: 0, totalScore: 0, avgScore: 0, maxLevel: 0 }
+                        C: { players: 0, totalScore: 0, avgScore: 0, maxLevel: 0 },
+                        INDIVIDUAL: { players: 0, totalScore: 0, avgScore: 0, maxLevel: 0 }
                     };
                     
+                    // Obtener mejores resultados por jugador
+                    const uniqueResults = new Map();
                     resultsArray.forEach(result => {
+                        const existing = uniqueResults.get(result.cedula);
+                        if (!existing || result.puntaje > existing.puntaje) {
+                            uniqueResults.set(result.cedula, result);
+                        }
+                    });
+                    
+                    // Calcular estadísticas por equipo
+                    Array.from(uniqueResults.values()).forEach(result => {
                         const team = result.grupo;
                         if (teamStats[team]) {
                             teamStats[team].players++;
@@ -1789,6 +2281,7 @@
                     
                     await database.ref('estadisticas').set({
                         totalJugadores: totalPlayers,
+                        totalPartidas: totalGames,
                         promedioScore: Math.round(avgScore * 10) / 10,
                         nivelMaximo: maxLevel,
                         jugadoresHoy: playersToday,
@@ -1801,11 +2294,16 @@
             }
         }
         
-        // Funciones Dashboard
+        // ===============================
+        // FUNCIONES DASHBOARD
+        // ===============================
+        
         function loadDashboard() {
             updateDashboardStats();
             updateTeamRankings();
             updateLiveFeed();
+            updateVisitCounters();
+            updateOnlineCount();
         }
         
         async function updateDashboardStats() {
@@ -1815,6 +2313,7 @@
                 
                 if (stats) {
                     document.getElementById('totalJugadores').textContent = stats.totalJugadores || 0;
+                    document.getElementById('totalPartidas').textContent = stats.totalPartidas || 0;
                     document.getElementById('promedioScore').textContent = stats.promedioScore || 0;
                     document.getElementById('nivelMaximo').textContent = stats.nivelMaximo || 0;
                     document.getElementById('jugadoresHoy').textContent = stats.jugadoresHoy || 0;
@@ -1833,11 +2332,15 @@
                     const container = document.getElementById('teamRankings');
                     container.innerHTML = '';
                     
-                    // Ordenar equipos por promedio
-                    const sortedTeams = Object.entries(teamStats)
+                    // Separar equipos de grupos e individuales
+                    const groupTeams = Object.entries(teamStats)
+                        .filter(([teamName]) => ['A', 'B', 'C'].includes(teamName))
                         .sort(([,a], [,b]) => b.avgScore - a.avgScore);
                     
-                    sortedTeams.forEach(([teamName, stats]) => {
+                    const individualStats = teamStats['INDIVIDUAL'];
+                    
+                    // Mostrar equipos de grupos
+                    groupTeams.forEach(([teamName, stats]) => {
                         const teamSection = document.createElement('div');
                         teamSection.className = `team-section team-${teamName.toLowerCase()}`;
                         
@@ -1854,6 +2357,25 @@
                         
                         container.appendChild(teamSection);
                     });
+                    
+                    // Mostrar sección individual
+                    if (individualStats && individualStats.players > 0) {
+                        const individualSection = document.createElement('div');
+                        individualSection.className = 'team-section team-individual';
+                        
+                        individualSection.innerHTML = `
+                            <div class="team-header">
+                                <div class="team-name">INDIVIDUAL</div>
+                                <div class="team-stats">
+                                    <span>👥 ${individualStats.players}</span>
+                                    <span>🏆 ${individualStats.avgScore} pts</span>
+                                    <span>📈 Nv.${individualStats.maxLevel}</span>
+                                </div>
+                            </div>
+                        `;
+                        
+                        container.appendChild(individualSection);
+                    }
                 }
             } catch (error) {
                 console.error('Error loading team rankings:', error);
@@ -1892,8 +2414,9 @@
                         else if (index === 1) playerRank.classList.add('podium-2');
                         else if (index === 2) playerRank.classList.add('podium-3');
                         
-                        // Usar pseudónimo si existe, sino el nombre real
                         const displayName = result.pseudonimo || result.nombre;
+                        const teamDisplay = result.grupo === 'INDIVIDUAL' ? 'Individual' : `Grupo ${result.grupo}`;
+                        const teamClass = result.grupo === 'INDIVIDUAL' ? 'team-individual' : `team-${result.grupo?.toLowerCase() || 'a'}`;
                         
                         playerRank.innerHTML = `
                             <div class="rank-number">${index + 1}</div>
@@ -1901,7 +2424,7 @@
                                 <div class="rank-name">${displayName}</div>
                                 <div class="rank-title">${levelTitles[result.nivel] || 'Estudiante de primer año con estetoscopio al revés'}</div>
                             </div>
-                            <div class="rank-team team-${result.grupo?.toLowerCase() || 'a'}">Grupo ${result.grupo || 'A'}</div>
+                            <div class="rank-team ${teamClass}">${teamDisplay}</div>
                             <div class="rank-score">${result.puntaje} pts</div>
                             <div class="rank-level">Nv.${result.nivel}</div>
                         `;
@@ -1926,7 +2449,8 @@
                     const teamPlayers = {
                         A: new Map(),
                         B: new Map(),
-                        C: new Map()
+                        C: new Map(),
+                        INDIVIDUAL: new Map()
                     };
                     
                     resultsArray.forEach(result => {
@@ -1943,7 +2467,7 @@
                     container.innerHTML = '';
                     
                     // Crear sección para cada equipo
-                    ['A', 'B', 'C'].forEach(teamName => {
+                    ['A', 'B', 'C', 'INDIVIDUAL'].forEach(teamName => {
                         const players = Array.from(teamPlayers[teamName].values())
                             .sort((a, b) => b.puntaje - a.puntaje);
                         
@@ -1957,7 +2481,6 @@
                         
                         let playersHTML = '';
                         players.slice(0, 10).forEach((player, index) => {
-                            // Usar pseudónimo si existe, sino el nombre real
                             const displayName = player.pseudonimo || player.nombre;
                             playersHTML += `
                                 <div class="team-player">
@@ -1967,9 +2490,11 @@
                             `;
                         });
                         
+                        const teamDisplayName = teamName === 'INDIVIDUAL' ? 'INDIVIDUAL' : `GRUPO ${teamName}`;
+                        
                         teamSection.innerHTML = `
                             <div class="team-header">
-                                <div class="team-name">GRUPO ${teamName}</div>
+                                <div class="team-name">${teamDisplayName}</div>
                                 <div class="team-stats">
                                     <span>👥 ${players.length}</span>
                                     <span>🏆 ${avgScore} pts</span>
@@ -1977,7 +2502,7 @@
                                 </div>
                             </div>
                             <div style="margin-top: 16px;">
-                                <h3 style="color: #94a3b8; margin-bottom: 12px; font-size: 1rem;">Top 10 del grupo:</h3>
+                                <h3 style="color: #94a3b8; margin-bottom: 12px; font-size: 1rem;">Top 10 ${teamName === 'INDIVIDUAL' ? 'individual' : 'del grupo'}:</h3>
                                 ${playersHTML || '<div style="color: #64748b; font-style: italic;">No hay participantes aún</div>'}
                             </div>
                         `;
@@ -2006,13 +2531,14 @@
                         feedItem.className = 'feed-item';
                         
                         const timeAgo = getTimeAgo(result.timestamp);
-                        // Usar pseudónimo si existe, sino el nombre real
                         const displayName = result.pseudonimo || result.nombre;
+                        const teamDisplay = result.grupo === 'INDIVIDUAL' ? 'Individual' : `Grupo ${result.grupo}`;
+                        const teamClass = result.grupo === 'INDIVIDUAL' ? 'team-individual' : `team-${result.grupo?.toLowerCase() || 'a'}`;
                         
                         feedItem.innerHTML = `
                             <div>
                                 <div class="feed-player">${displayName}</div>
-                                <div class="feed-team team-${result.grupo?.toLowerCase() || 'a'}">Grupo ${result.grupo || 'A'}</div>
+                                <div class="feed-team ${teamClass}">${teamDisplay}</div>
                             </div>
                             <div class="feed-score">${result.puntaje} pts - Nv.${result.nivel}</div>
                             <div class="feed-time">${timeAgo}</div>
@@ -2039,7 +2565,12 @@
             return 'ahora';
         }
         
-        // Funciones del juego
+        // ===============================
+        // FUNCIONES DEL JUEGO
+        // ===============================
+        
+        let gameStartId = null;
+        
         async function startGame() {
             const name = document.getElementById('playerName').value.trim();
             const nickname = document.getElementById('playerNickname').value.trim();
@@ -2094,12 +2625,33 @@
             }
             
             currentPlayer = { name, nickname, id, team };
-            document.getElementById('displayName').textContent = nickname; // Mostrar pseudónimo
+            
+            // Registrar inicio de partida
+            gameStartId = await recordGameStart(currentPlayer);
+            
+            // Actualizar estado del jugador
+            if (window.updatePlayerStatus) {
+                await window.updatePlayerStatus('playing');
+            }
+            
+            // Mostrar notificación de nuevo jugador
+            showNotification(
+                `🎮 ${nickname} comenzó una nueva partida`,
+                'game-start',
+                3000
+            );
+            
+            document.getElementById('displayName').textContent = nickname;
             
             // Mostrar equipo con estilo
             const teamDisplay = document.getElementById('displayTeam');
-            teamDisplay.textContent = `Grupo ${team}`;
-            teamDisplay.className = `player-team team-${team.toLowerCase()}`;
+            if (team === 'INDIVIDUAL') {
+                teamDisplay.textContent = 'Individual';
+                teamDisplay.className = 'player-team team-individual';
+            } else {
+                teamDisplay.textContent = `Grupo ${team}`;
+                teamDisplay.className = `player-team team-${team.toLowerCase()}`;
+            }
             
             // Resetear variables del juego
             currentLevel = 1;
@@ -2214,7 +2766,6 @@
         
         function timeOut() {
             stopTimer();
-            // Tiempo agotado = respuesta incorrecta = 0 puntos
             lives--;
             correctStreak = 0;
             updateLivesDisplay();
@@ -2297,6 +2848,11 @@
             
             updateScore();
             updateLivesDisplay();
+            
+            // Actualizar progreso del juego
+            if (gameStartId) {
+                updateGameProgress(gameStartId, currentLevel, score);
+            }
             
             if (lives <= 0) {
                 setTimeout(endGame, 2000);
@@ -2448,8 +3004,8 @@
             }
             
             const result = {
-                nombre: currentPlayer.name,        // Nombre real (solo para admin)
-                pseudonimo: currentPlayer.nickname, // Pseudónimo (para rankings públicos)
+                nombre: currentPlayer.name,
+                pseudonimo: currentPlayer.nickname,
                 cedula: currentPlayer.id,
                 grupo: currentPlayer.team,
                 puntaje: score,
@@ -2461,6 +3017,17 @@
             
             try {
                 await saveGameResult(result);
+                
+                // Marcar juego como completado
+                if (gameStartId) {
+                    await markGameCompleted(gameStartId, result);
+                }
+                
+                // Actualizar estado del jugador
+                if (window.updatePlayerStatus) {
+                    await window.updatePlayerStatus('finished');
+                }
+                
                 console.log('Resultado guardado exitosamente');
             } catch (error) {
                 console.error('Error guardando resultado:', error);
@@ -2488,6 +3055,7 @@
             answeredQuestions.clear();
             comodines = { fifty: true, change: true };
             correctStreak = 0;
+            gameStartId = null;
             document.getElementById('comodin5050').disabled = false;
             document.getElementById('comodinChange').disabled = false;
             
@@ -2498,6 +3066,9 @@
             updateLivesDisplay();
             updateCurrentLevel();
             showLevelScreen();
+            
+            // Registrar nuevo intento
+            recordGameStart(currentPlayer).then(id => gameStartId = id);
         }
         
         function newGame() {
@@ -2508,7 +3079,11 @@
             document.getElementById('playerId').value = '';
             document.getElementById('playerTeam').value = '';
             document.getElementById('intentosMessage').style.display = 'none';
+            gameStartId = null;
         }
     </script>
 </body>
-</html>
+</html>1px solid rgba(251, 191, 36, 0.3);">Fecha/Hora Inicio</th>
+                                        <th style="padding: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">Nombre</th>
+                                        <th style="padding: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">Pseudónimo</th>
+                                        <th style="padding: 12px; border: 
