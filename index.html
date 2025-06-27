@@ -723,9 +723,26 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
-        // Variables globales básicas
+        // Variables globales
+        let currentPlayer = { name: '', nickname: '', id: '', team: '' };
+        let currentLevel = 1;
+        let score = 0;
+        let lives = 3;
+        let maxLevelReached = 1;
+        let currentQuestion = null;
+        let answeredQuestions = new Set();
+        let timeLeft = 30;
+        let timerInterval = null;
+        let comodines = { fifty: true, change: true };
+        let shuffledOptions = [];
+        let eliminated5050 = false;
+        let playerAttempts = 0;
         let isAdminAuthenticated = false;
         const ADMIN_PASSWORD = "cardio2025admin";
+        let questionBank = [];
+        let correctStreak = 0;
+        let currentSessionId = null;
+        let gameStartId = null;
         
         // Funciones básicas
         function showTab(tabName) {
@@ -740,8 +757,189 @@
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
             
-            if (tabName === 'dashboard') {
-                loadDashboard();
+            switch(tabName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'individual':
+                    loadIndividualRanking();
+                    break;
+                case 'equipos':
+                    loadDetailedTeamRankings();
+                    break;
+            }
+        }
+        
+        async function loadIndividualRanking() {
+            try {
+                const snapshot = await database.ref('resultados').once('value');
+                const results = snapshot.val();
+                
+                const container = document.getElementById('individual');
+                
+                if (!results) {
+                    container.innerHTML = `
+                        <h1>🏆 Ranking Individual</h1>
+                        <p class="subtitle">MEJORES PARTICIPANTES</p>
+                        <div class="loading">No hay datos aún. ¡Sé el primero en jugar!</div>
+                    `;
+                    return;
+                }
+                
+                const resultsArray = Object.values(results);
+                
+                // Obtener mejor resultado por jugador (por cédula)
+                const uniqueResults = new Map();
+                resultsArray.forEach(result => {
+                    const existing = uniqueResults.get(result.cedula);
+                    if (!existing || result.puntaje > existing.puntaje) {
+                        uniqueResults.set(result.cedula, result);
+                    }
+                });
+                
+                const topResults = Array.from(uniqueResults.values())
+                    .sort((a, b) => b.puntaje - a.puntaje)
+                    .slice(0, 20);
+                
+                let html = `
+                    <h1>🏆 Ranking Individual</h1>
+                    <p class="subtitle">MEJORES PARTICIPANTES</p>
+                    <div class="dashboard-section">
+                        <h2>🏅 Top 20 Individual</h2>
+                `;
+                
+                if (topResults.length > 0) {
+                    html += '<div style="display: grid; gap: 12px;">';
+                    
+                    topResults.forEach((result, index) => {
+                        const displayName = result.pseudonimo || result.nombre;
+                        const teamDisplay = result.grupo === 'INDIVIDUAL' ? 'Individual' : `Grupo ${result.grupo}`;
+                        
+                        html += `
+                            <div style="display: grid; grid-template-columns: 50px 2fr auto auto auto; gap: 16px; padding: 16px; background: rgba(15, 23, 42, 0.6); border-radius: 12px; align-items: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #60a5fa; text-align: center; font-family: 'JetBrains Mono', monospace;">${index + 1}</div>
+                                <div>
+                                    <div style="font-weight: 600; color: #e2e8f0;">${displayName}</div>
+                                </div>
+                                <div style="padding: 4px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; ${result.grupo === 'INDIVIDUAL' ? 'background: rgba(139, 92, 246, 0.2); color: #8b5cf6;' : 'background: rgba(59, 130, 246, 0.2); color: #3b82f6;'}">${teamDisplay}</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; color: #3b82f6; font-weight: 600;">${result.puntaje} pts</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; color: #60a5fa; font-size: 0.875rem;">Nv.${result.nivel}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                } else {
+                    html += '<div class="loading">No hay resultados para mostrar</div>';
+                }
+                
+                html += '</div>';
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading individual ranking:', error);
+                document.getElementById('individual').innerHTML = `
+                    <h1>🏆 Ranking Individual</h1>
+                    <p class="subtitle">MEJORES PARTICIPANTES</p>
+                    <div class="loading">Error cargando datos</div>
+                `;
+            }
+        }
+        
+        async function loadDetailedTeamRankings() {
+            try {
+                const snapshot = await database.ref('resultados').once('value');
+                const results = snapshot.val();
+                
+                const container = document.getElementById('equipos');
+                
+                if (!results) {
+                    container.innerHTML = `
+                        <h1>👥 Competencia por Equipos</h1>
+                        <p class="subtitle">RANKING DETALLADO POR GRUPO</p>
+                        <div class="loading">No hay datos aún. ¡Sé el primero en jugar!</div>
+                    `;
+                    return;
+                }
+                
+                const resultsArray = Object.values(results);
+                
+                // Agrupar por equipo y obtener mejor resultado por jugador
+                const teamPlayers = {
+                    A: new Map(),
+                    B: new Map(),
+                    C: new Map(),
+                    INDIVIDUAL: new Map()
+                };
+                
+                resultsArray.forEach(result => {
+                    const team = result.grupo;
+                    if (teamPlayers[team]) {
+                        const existing = teamPlayers[team].get(result.cedula);
+                        if (!existing || result.puntaje > existing.puntaje) {
+                            teamPlayers[team].set(result.cedula, result);
+                        }
+                    }
+                });
+                
+                let html = `
+                    <h1>👥 Competencia por Equipos</h1>
+                    <p class="subtitle">RANKING DETALLADO POR GRUPO</p>
+                    <div class="dashboard-section">
+                        <h2>📊 Estadísticas por Equipo</h2>
+                        <div class="team-rankings">
+                `;
+                
+                ['A', 'B', 'C', 'INDIVIDUAL'].forEach(teamName => {
+                    const players = Array.from(teamPlayers[teamName].values())
+                        .sort((a, b) => b.puntaje - a.puntaje);
+                    
+                    const avgScore = players.length > 0 ? 
+                        Math.round((players.reduce((sum, p) => sum + p.puntaje, 0) / players.length) * 10) / 10 : 0;
+                    const maxLevel = players.length > 0 ? 
+                        Math.max(...players.map(p => p.nivel)) : 0;
+                    
+                    const teamDisplayName = teamName === 'INDIVIDUAL' ? 'INDIVIDUAL' : `GRUPO ${teamName}`;
+                    
+                    let playersHTML = '';
+                    players.slice(0, 10).forEach((player, index) => {
+                        const displayName = player.pseudonimo || player.nombre;
+                        playersHTML += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 4px 0; background: rgba(30, 41, 59, 0.4); border-radius: 8px; font-size: 0.875rem;">
+                                <span>${index + 1}. ${displayName}</span>
+                                <span>${player.puntaje} pts - Nv.${player.nivel}</span>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                        <div class="team-section team-${teamName.toLowerCase()}">
+                            <div class="team-header">
+                                <div class="team-name">${teamDisplayName}</div>
+                                <div class="team-stats">
+                                    <span>👥 ${players.length}</span>
+                                    <span>🏆 ${avgScore} pts</span>
+                                    <span>📈 Nv.${maxLevel}</span>
+                                </div>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <h3 style="color: #94a3b8; margin-bottom: 12px; font-size: 1rem;">Top 10 ${teamName === 'INDIVIDUAL' ? 'individual' : 'del grupo'}:</h3>
+                                ${playersHTML || '<div style="color: #64748b; font-style: italic;">No hay participantes aún</div>'}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div></div>';
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading detailed team rankings:', error);
+                document.getElementById('equipos').innerHTML = `
+                    <h1>👥 Competencia por Equipos</h1>
+                    <p class="subtitle">RANKING DETALLADO POR GRUPO</p>
+                    <div class="loading">Error cargando datos</div>
+                `;
             }
         }
         
@@ -753,76 +951,210 @@
             updateLastUpdate();
         }
         
+        // Funciones Firebase reales
+        async function recordVisit() {
+            try {
+                const today = new Date().toDateString();
+                const timestamp = Date.now();
+                
+                await database.ref('analytics/totalVisits').transaction((current) => (current || 0) + 1);
+                await database.ref(`analytics/dailyVisits/${today}`).transaction((current) => (current || 0) + 1);
+                
+                const visitId = database.ref('analytics/visits').push().key;
+                await database.ref(`analytics/visits/${visitId}`).set({
+                    timestamp: timestamp,
+                    date: today,
+                    userAgent: navigator.userAgent,
+                    ip: 'hidden'
+                });
+            } catch (error) {
+                console.error('Error registrando visita:', error);
+            }
+        }
+        
+        async function trackOnlinePlayer() {
+            try {
+                const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                currentSessionId = sessionId;
+                
+                const playerRef = database.ref(`analytics/onlinePlayers/${sessionId}`);
+                await playerRef.set({
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    status: 'browsing'
+                });
+                
+                playerRef.onDisconnect().remove();
+            } catch (error) {
+                console.error('Error tracking online player:', error);
+            }
+        }
+        
+        function setupFirebaseListeners() {
+            database.ref('resultados').on('value', (snapshot) => {
+                updateDashboardStats();
+                updateTeamRankings();
+            });
+            
+            database.ref('analytics/onlinePlayers').on('value', (snapshot) => {
+                updateOnlineCount();
+            });
+            
+            database.ref('analytics/totalVisits').on('value', (snapshot) => {
+                updateVisitCounters();
+            });
+        }
+        
         async function updateDashboardStats() {
             try {
-                // Simular datos para demo
-                document.getElementById('totalJugadores').textContent = '42';
-                document.getElementById('totalPartidas').textContent = '58';
-                document.getElementById('promedioScore').textContent = '32.5';
-                document.getElementById('nivelMaximo').textContent = '28';
-                document.getElementById('jugadoresHoy').textContent = '7';
-                document.getElementById('visitasHoy').textContent = '23';
+                const resultsSnapshot = await database.ref('resultados').once('value');
+                const results = resultsSnapshot.val();
+                
+                const gameStartsSnapshot = await database.ref('gameStarts').once('value');
+                const gameStarts = gameStartsSnapshot.val();
+                
+                if (results) {
+                    const resultsArray = Object.values(results);
+                    const totalPlayers = resultsArray.length;
+                    const totalGames = gameStarts ? Object.keys(gameStarts).length : 0;
+                    const avgScore = resultsArray.reduce((sum, r) => sum + r.puntaje, 0) / totalPlayers;
+                    const maxLevel = Math.max(...resultsArray.map(r => r.nivel));
+                    
+                    const today = new Date().toDateString();
+                    const playersToday = resultsArray.filter(r => {
+                        const resultDate = new Date(r.timestamp || 0).toDateString();
+                        return resultDate === today;
+                    }).length;
+                    
+                    document.getElementById('totalJugadores').textContent = totalPlayers || 0;
+                    document.getElementById('totalPartidas').textContent = totalGames || 0;
+                    document.getElementById('promedioScore').textContent = Math.round(avgScore * 10) / 10 || 0;
+                    document.getElementById('nivelMaximo').textContent = maxLevel || 0;
+                    document.getElementById('jugadoresHoy').textContent = playersToday || 0;
+                } else {
+                    document.getElementById('totalJugadores').textContent = '0';
+                    document.getElementById('totalPartidas').textContent = '0';
+                    document.getElementById('promedioScore').textContent = '0';
+                    document.getElementById('nivelMaximo').textContent = '0';
+                    document.getElementById('jugadoresHoy').textContent = '0';
+                }
             } catch (error) {
                 console.error('Error loading stats:', error);
+                document.getElementById('totalJugadores').textContent = '-';
+                document.getElementById('totalPartidas').textContent = '-';
+                document.getElementById('promedioScore').textContent = '-';
+                document.getElementById('nivelMaximo').textContent = '-';
+                document.getElementById('jugadoresHoy').textContent = '-';
             }
         }
         
         async function updateTeamRankings() {
             try {
+                const snapshot = await database.ref('resultados').once('value');
+                const results = snapshot.val();
+                
                 const container = document.getElementById('teamRankings');
-                container.innerHTML = `
-                    <div class="team-section team-a">
+                
+                if (!results) {
+                    container.innerHTML = '<div class="loading">No hay datos aún. ¡Sé el primero en jugar!</div>';
+                    return;
+                }
+                
+                const resultsArray = Object.values(results);
+                
+                // Agrupar por equipo y obtener mejor resultado por jugador
+                const teamPlayers = {
+                    A: new Map(),
+                    B: new Map(),
+                    C: new Map(),
+                    INDIVIDUAL: new Map()
+                };
+                
+                resultsArray.forEach(result => {
+                    const team = result.grupo;
+                    if (teamPlayers[team]) {
+                        const existing = teamPlayers[team].get(result.cedula);
+                        if (!existing || result.puntaje > existing.puntaje) {
+                            teamPlayers[team].set(result.cedula, result);
+                        }
+                    }
+                });
+                
+                // Calcular estadísticas por equipo
+                const teamStats = {};
+                Object.keys(teamPlayers).forEach(team => {
+                    const players = Array.from(teamPlayers[team].values());
+                    teamStats[team] = {
+                        players: players.length,
+                        avgScore: players.length > 0 ? 
+                            Math.round((players.reduce((sum, p) => sum + p.puntaje, 0) / players.length) * 10) / 10 : 0,
+                        maxLevel: players.length > 0 ? 
+                            Math.max(...players.map(p => p.nivel)) : 0
+                    };
+                });
+                
+                // Generar HTML
+                container.innerHTML = '';
+                
+                ['A', 'B', 'C', 'INDIVIDUAL'].forEach(teamName => {
+                    const stats = teamStats[teamName];
+                    const teamSection = document.createElement('div');
+                    teamSection.className = `team-section team-${teamName.toLowerCase()}`;
+                    
+                    const displayName = teamName === 'INDIVIDUAL' ? 'INDIVIDUAL' : `GRUPO ${teamName}`;
+                    
+                    teamSection.innerHTML = `
                         <div class="team-header">
-                            <div class="team-name">GRUPO A</div>
+                            <div class="team-name">${displayName}</div>
                             <div class="team-stats">
-                                <span>👥 15</span>
-                                <span>🏆 35.2 pts</span>
-                                <span>📈 Nv.25</span>
+                                <span>👥 ${stats.players}</span>
+                                <span>🏆 ${stats.avgScore} pts</span>
+                                <span>📈 Nv.${stats.maxLevel}</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="team-section team-b">
-                        <div class="team-header">
-                            <div class="team-name">GRUPO B</div>
-                            <div class="team-stats">
-                                <span>👥 18</span>
-                                <span>🏆 31.8 pts</span>
-                                <span>📈 Nv.28</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="team-section team-c">
-                        <div class="team-header">
-                            <div class="team-name">GRUPO C</div>
-                            <div class="team-stats">
-                                <span>👥 12</span>
-                                <span>🏆 29.1 pts</span>
-                                <span>📈 Nv.22</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="team-section team-individual">
-                        <div class="team-header">
-                            <div class="team-name">INDIVIDUAL</div>
-                            <div class="team-stats">
-                                <span>👥 8</span>
-                                <span>🏆 38.5 pts</span>
-                                <span>📈 Nv.30</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                    `;
+                    
+                    container.appendChild(teamSection);
+                });
+                
             } catch (error) {
                 console.error('Error loading team rankings:', error);
+                document.getElementById('teamRankings').innerHTML = '<div class="loading">Error cargando datos</div>';
             }
         }
         
-        function updateVisitCounters() {
-            document.getElementById('visitCount').textContent = '1,247';
+        async function updateVisitCounters() {
+            try {
+                const totalSnapshot = await database.ref('analytics/totalVisits').once('value');
+                const totalVisits = totalSnapshot.val() || 0;
+                
+                const today = new Date().toDateString();
+                const todaySnapshot = await database.ref(`analytics/dailyVisits/${today}`).once('value');
+                const visitsToday = todaySnapshot.val() || 0;
+                
+                document.getElementById('visitCount').textContent = totalVisits.toLocaleString();
+                document.getElementById('visitasHoy').textContent = visitsToday;
+            } catch (error) {
+                console.error('Error updating visit counters:', error);
+                document.getElementById('visitCount').textContent = '-';
+                document.getElementById('visitasHoy').textContent = '-';
+            }
         }
         
-        function updateOnlineCount() {
-            document.getElementById('onlinePlayers').textContent = Math.floor(Math.random() * 5) + 1;
+        async function updateOnlineCount() {
+            try {
+                const snapshot = await database.ref('analytics/onlinePlayers').once('value');
+                const onlinePlayers = snapshot.val();
+                
+                if (onlinePlayers) {
+                    const count = Object.keys(onlinePlayers).length;
+                    document.getElementById('onlinePlayers').textContent = count;
+                } else {
+                    document.getElementById('onlinePlayers').textContent = '0';
+                }
+            } catch (error) {
+                console.error('Error updating online count:', error);
+                document.getElementById('onlinePlayers').textContent = '-';
+            }
         }
         
         function updateLastUpdate() {
@@ -862,7 +1194,29 @@
         }
         
         function startGame() {
-            alert('Función de juego - se implementa con lógica completa');
+            const name = document.getElementById('playerName').value.trim();
+            const nickname = document.getElementById('playerNickname').value.trim();
+            const id = document.getElementById('playerId').value.trim();
+            const team = document.getElementById('playerTeam').value;
+            
+            if (!name || !nickname || !id || !team) {
+                alert('Por favor, completá todos los campos');
+                return;
+            }
+            
+            // Validar formato de cédula (solo números, sin dígito verificador)
+            if (!/^\d{6,8}$/.test(id)) {
+                alert('La cédula debe tener entre 6 y 8 dígitos, sin dígito verificador');
+                return;
+            }
+            
+            // Validar pseudónimo (alfanumérico, sin espacios especiales)
+            if (!/^[a-zA-Z0-9_áéíóúüñÁÉÍÓÚÜÑ]{3,20}$/.test(nickname)) {
+                alert('El pseudónimo debe tener entre 3 y 20 caracteres (letras, números y _ solamente)');
+                return;
+            }
+            
+            alert(`¡Bienvenido ${nickname}!\n\nModalidad: ${team === 'INDIVIDUAL' ? 'Individual' : 'Grupo ' + team}\n\nEl juego completo estará disponible pronto.\nPor ahora puedes ver las estadísticas en el Dashboard.`);
         }
         
         function handleMissingLogos() {
@@ -877,17 +1231,45 @@
         }
         
         // Inicialización
-        window.addEventListener('load', function() {
-            loadDashboard();
-            handleMissingLogos();
-            
-            // Actualizar cada 30 segundos
-            setInterval(() => {
-                updateOnlineCount();
-                updateLastUpdate();
-            }, 30000);
-            
-            console.log('✅ Juego de Cardiología - Versión Limpia Cargada');
+        window.addEventListener('load', async function() {
+            try {
+                // Registrar visita
+                await recordVisit();
+                
+                // Tracking de jugador online
+                await trackOnlinePlayer();
+                
+                // Configurar listeners de Firebase
+                setupFirebaseListeners();
+                
+                // Cargar dashboard inicial
+                loadDashboard();
+                
+                // Manejar logos faltantes
+                handleMissingLogos();
+                
+                // Actualizar contadores periódicamente
+                setInterval(() => {
+                    updateLastUpdate();
+                }, 60000); // Cada minuto
+                
+                console.log('✅ Juego de Cardiología - Conectado a Firebase Real');
+                
+            } catch (error) {
+                console.error('Error en inicialización:', error);
+                
+                // Si falla Firebase, mostrar datos por defecto
+                document.getElementById('totalJugadores').textContent = '0';
+                document.getElementById('totalPartidas').textContent = '0';
+                document.getElementById('promedioScore').textContent = '0';
+                document.getElementById('nivelMaximo').textContent = '0';
+                document.getElementById('jugadoresHoy').textContent = '0';
+                document.getElementById('visitasHoy').textContent = '0';
+                document.getElementById('visitCount').textContent = '-';
+                document.getElementById('onlinePlayers').textContent = '-';
+                
+                document.getElementById('teamRankings').innerHTML = '<div class="loading">Error de conexión. Verifica tu internet.</div>';
+            }
         });
     </script>
 </body>
