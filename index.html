@@ -943,9 +943,12 @@
                 
                 <div id="adminData" class="admin-data" style="display: none;">
                     <h3>📋 Registro Completo de Participantes</h3>
-                    <button class="btn" onclick="exportAdminData()">📥 Descargar CSV</button>
-                    <button class="btn btn-danger" onclick="clearAllData()">🗑️ Limpiar Datos</button>
-                    <button class="btn" onclick="testFirebaseConnection()" style="background: linear-gradient(135deg, #059669, #047857);">🔍 Probar Firebase</button>
+                    <div style="margin-bottom: 20px;">
+                        <button class="btn" onclick="exportAdminData()">📥 Descargar CSV</button>
+                        <button class="btn btn-danger" onclick="clearAllData()">🗑️ Limpiar Datos</button>
+                        <button class="btn" onclick="testFirebaseConnection()" style="background: linear-gradient(135deg, #059669, #047857);">🔍 Probar Firebase</button>
+                        <button class="btn" onclick="testDeletionPermissions()" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">🗑️ Test Eliminación</button>
+                    </div>
                     
                     <div id="adminTable" style="margin-top: 20px;">
                         <!-- Tabla de admin se genera aquí -->
@@ -2581,25 +2584,63 @@
         }
         
         async function clearAllData() {
-            if (!confirm('¿Estás seguro de que quieres eliminar TODOS los datos? Esta acción no se puede deshacer.')) {
+            if (!confirm('¿Estás seguro de que quieres eliminar TODOS los datos?\n\nEsta acción eliminará:\n- Todos los resultados de partidas\n- Todas las partidas iniciadas\n- Todos los datos de analytics\n\nEsta acción NO se puede deshacer.')) {
                 return;
             }
             
-            if (!confirm('Esta acción eliminará todos los resultados y estadísticas. ¿Continuar?')) {
+            if (!confirm('CONFIRMACIÓN FINAL: ¿Realmente quieres eliminar todos los datos?\n\nEscribe "ELIMINAR" en la siguiente ventana para confirmar.')) {
+                return;
+            }
+            
+            const confirmation = prompt('Escribe exactamente "ELIMINAR" para confirmar la eliminación:');
+            if (confirmation !== 'ELIMINAR') {
+                alert('Eliminación cancelada. Texto de confirmación incorrecto.');
                 return;
             }
             
             try {
-                await database.ref('resultados').remove();
-                await database.ref('gameStarts').remove();
-                await database.ref('analytics').remove();
+                console.log('🗑️ Iniciando eliminación completa de datos...');
+                showNotification('🗑️ Eliminando todos los datos...', 3000);
                 
-                alert('Todos los datos han sido eliminados');
+                // Eliminar resultados
+                console.log('🗑️ Eliminando resultados...');
+                await database.ref('resultados').remove();
+                
+                // Eliminar partidas iniciadas
+                console.log('🗑️ Eliminando partidas iniciadas...');
+                await database.ref('gameStarts').remove();
+                
+                // Eliminar analytics (pero mantener estructura básica)
+                console.log('🗑️ Eliminando analytics...');
+                await database.ref('analytics/visits').remove();
+                await database.ref('analytics/onlinePlayers').remove();
+                await database.ref('analytics/dailyVisits').remove();
+                
+                // Resetear contadores
+                await database.ref('analytics/totalVisits').set(0);
+                
+                console.log('✅ Eliminación completada exitosamente');
+                alert('✅ Todos los datos han sido eliminados correctamente');
+                
+                // Recargar datos del admin
                 loadAdminData();
                 
+                // Actualizar dashboard
+                setTimeout(() => {
+                    loadDashboard();
+                }, 1000);
+                
             } catch (error) {
-                console.error('Error clearing data:', error);
-                alert('Error al eliminar datos');
+                console.error('❌ Error eliminando datos:', error);
+                console.error('Detalles del error:', error.message);
+                
+                if (error.message.includes('Permission denied')) {
+                    alert('❌ Error: Permisos insuficientes en Firebase.\n\nVerifica que las reglas de Firebase permitan eliminación (.delete: true)');
+                } else if (error.message.includes('Network')) {
+                    alert('❌ Error de conexión a Firebase.\n\nVerifica tu conexión a internet e intenta nuevamente.');
+                } else {
+                    alert(`❌ Error eliminando datos: ${error.message}\n\nRevisa la consola para más detalles.`);
+                }
             }
         }
         
@@ -2771,35 +2812,74 @@
                 const testRef = await database.ref('resultados').push(testData);
                 console.log('✅ Escritura exitosa:', testRef.key);
                 
-                // Prueba 3: Eliminar datos de prueba
-                console.log('🗑️ Prueba 3: Eliminando datos de prueba...');
+                // Prueba 3: Eliminar datos de prueba (NUEVO TEST)
+                console.log('🗑️ Prueba 3: Probando eliminación...');
                 await testRef.remove();
                 console.log('✅ Eliminación exitosa');
                 
                 // Prueba 4: Verificar analytics
                 console.log('📊 Prueba 4: Probando analytics...');
-                await database.ref('analytics/testConnection').set({
+                const analyticsTestRef = await database.ref('analytics/testConnection').set({
                     timestamp: firebase.database.ServerValue.TIMESTAMP,
                     test: true
                 });
-                console.log('✅ Analytics funcionando');
+                console.log('✅ Analytics escritura OK');
                 
-                // Limpiar test de analytics
+                // Prueba 5: Eliminar analytics de prueba
+                console.log('🗑️ Prueba 5: Eliminando analytics de prueba...');
                 await database.ref('analytics/testConnection').remove();
+                console.log('✅ Analytics eliminación OK');
                 
                 console.log('🎉 === TODAS LAS PRUEBAS EXITOSAS ===');
-                showNotification('✅ Firebase funcionando correctamente', 3000);
+                showNotification('✅ Firebase funcionando correctamente (incluye eliminación)', 3000);
                 return true;
                 
             } catch (error) {
                 console.error('❌ Error en prueba de Firebase:', error);
                 console.error('🔧 Posibles soluciones:');
-                console.error('1. Verificar reglas de Firebase (deben permitir lectura/escritura sin auth)');
-                console.error('2. Verificar credenciales de Firebase en firebaseConfig');
-                console.error('3. Verificar conexión a internet');
-                console.error('4. Verificar que la base de datos esté activa en Firebase Console');
+                
+                if (error.message.includes('Permission denied')) {
+                    console.error('1. ❌ PROBLEMA DE PERMISOS: Las reglas de Firebase no permiten la operación');
+                    console.error('2. 🔧 SOLUCIÓN: Aplicar las reglas con .delete: true');
+                    console.error('3. 📋 REGLAS NECESARIAS: Las rutas principales deben tener ".delete": true');
+                } else {
+                    console.error('2. Verificar credenciales de Firebase en firebaseConfig');
+                    console.error('3. Verificar conexión a internet');
+                    console.error('4. Verificar que la base de datos esté activa en Firebase Console');
+                }
                 
                 showNotification('❌ Error de Firebase: ' + error.message, 5000);
+                return false;
+            }
+        }
+        
+        // Nueva función específica para probar eliminación
+        async function testDeletionPermissions() {
+            console.log('🗑️ === PRUEBA ESPECÍFICA DE ELIMINACIÓN ===');
+            
+            try {
+                // Crear dato de prueba
+                const testRef = await database.ref('test/deletion').set({
+                    test: true,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+                console.log('✅ Creación de test exitosa');
+                
+                // Intentar eliminar
+                await database.ref('test/deletion').remove();
+                console.log('✅ Eliminación de test exitosa');
+                
+                // Limpiar el nodo test completo
+                await database.ref('test').remove();
+                console.log('✅ Limpieza completa exitosa');
+                
+                console.log('🎉 === PERMISOS DE ELIMINACIÓN FUNCIONANDO ===');
+                showNotification('✅ Permisos de eliminación OK', 2000);
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Error en prueba de eliminación:', error);
+                showNotification('❌ Error de eliminación: ' + error.message, 5000);
                 return false;
             }
         }
@@ -2821,6 +2901,7 @@
         // Hacer disponible para debugging
         window.debugGameState = debugGameState;
         window.testFirebaseConnection = testFirebaseConnection;
+        window.testDeletionPermissions = testDeletionPermissions;
         window.refreshDashboard = refreshDashboard;
         
         // Mensaje de créditos en consola
