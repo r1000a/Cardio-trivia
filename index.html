@@ -945,6 +945,7 @@
                     <h3>📋 Registro Completo de Participantes</h3>
                     <button class="btn" onclick="exportAdminData()">📥 Descargar CSV</button>
                     <button class="btn btn-danger" onclick="clearAllData()">🗑️ Limpiar Datos</button>
+                    <button class="btn" onclick="testFirebaseConnection()" style="background: linear-gradient(135deg, #059669, #047857);">🔍 Probar Firebase</button>
                     
                     <div id="adminTable" style="margin-top: 20px;">
                         <!-- Tabla de admin se genera aquí -->
@@ -2741,6 +2742,68 @@
             return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
         
+        // Función de debug para verificar Firebase
+        async function testFirebaseConnection() {
+            console.log('🔍 === PRUEBA DE CONEXIÓN FIREBASE ===');
+            
+            try {
+                // Prueba 1: Leer datos existentes
+                console.log('📖 Prueba 1: Leyendo resultados...');
+                const readSnapshot = await database.ref('resultados').once('value');
+                const existingData = readSnapshot.val();
+                console.log('✅ Lectura exitosa:', existingData ? Object.keys(existingData).length + ' resultados' : 'Sin datos');
+                
+                // Prueba 2: Escribir datos de prueba
+                console.log('✏️ Prueba 2: Escribiendo datos de prueba...');
+                const testData = {
+                    nombre: 'Usuario de Prueba',
+                    pseudonimo: 'TestUser',
+                    cedula: '9999999',
+                    grupo: 'INDIVIDUAL',
+                    puntaje: 42,
+                    nivel: 10,
+                    fecha: new Date().toLocaleDateString('es-UY'),
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    intentoNumero: 1,
+                    esTest: true
+                };
+                
+                const testRef = await database.ref('resultados').push(testData);
+                console.log('✅ Escritura exitosa:', testRef.key);
+                
+                // Prueba 3: Eliminar datos de prueba
+                console.log('🗑️ Prueba 3: Eliminando datos de prueba...');
+                await testRef.remove();
+                console.log('✅ Eliminación exitosa');
+                
+                // Prueba 4: Verificar analytics
+                console.log('📊 Prueba 4: Probando analytics...');
+                await database.ref('analytics/testConnection').set({
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    test: true
+                });
+                console.log('✅ Analytics funcionando');
+                
+                // Limpiar test de analytics
+                await database.ref('analytics/testConnection').remove();
+                
+                console.log('🎉 === TODAS LAS PRUEBAS EXITOSAS ===');
+                showNotification('✅ Firebase funcionando correctamente', 3000);
+                return true;
+                
+            } catch (error) {
+                console.error('❌ Error en prueba de Firebase:', error);
+                console.error('🔧 Posibles soluciones:');
+                console.error('1. Verificar reglas de Firebase (deben permitir lectura/escritura sin auth)');
+                console.error('2. Verificar credenciales de Firebase en firebaseConfig');
+                console.error('3. Verificar conexión a internet');
+                console.error('4. Verificar que la base de datos esté activa en Firebase Console');
+                
+                showNotification('❌ Error de Firebase: ' + error.message, 5000);
+                return false;
+            }
+        }
+        
         // Debug: Función para desarrolladores
         function debugGameState() {
             console.log('=== ESTADO DEL JUEGO ===');
@@ -2757,6 +2820,8 @@
         
         // Hacer disponible para debugging
         window.debugGameState = debugGameState;
+        window.testFirebaseConnection = testFirebaseConnection;
+        window.refreshDashboard = refreshDashboard;
         
         // Mensaje de créditos en consola
         console.log(`
