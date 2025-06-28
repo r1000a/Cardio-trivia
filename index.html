@@ -371,7 +371,7 @@
             margin-top: 8px;
         }
         
-        /* Ranking por equipos */
+        /* Team rankings styles */
         .team-rankings {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -462,6 +462,173 @@
             color: #94a3b8;
         }
         
+        /* Game screen styles */
+        #gameScreen {
+            display: none;
+            text-align: center;
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 12px;
+        }
+        
+        .game-info {
+            display: flex;
+            gap: 24px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .lives {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        
+        .timer {
+            color: #60a5fa;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+        
+        .question-container {
+            background: rgba(30, 41, 59, 0.4);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        
+        .question {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .option {
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.125rem;
+            text-align: left;
+        }
+        
+        .option:hover:not(.eliminated):not(.correct):not(.incorrect) {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .option.correct {
+            background: rgba(34, 197, 94, 0.3);
+            border-color: #22c55e;
+        }
+        
+        .option.incorrect {
+            background: rgba(220, 38, 38, 0.3);
+            border-color: #dc2626;
+        }
+        
+        .option.eliminated {
+            opacity: 0.5;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+        
+        .lifelines {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .lifeline {
+            padding: 12px 24px;
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .lifeline:hover:not(.used) {
+            background: rgba(139, 92, 246, 0.3);
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .lifeline.used {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Result screen */
+        #resultScreen {
+            display: none;
+            text-align: center;
+        }
+        
+        .result-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 48px;
+            margin: 32px auto;
+            max-width: 600px;
+        }
+        
+        .result-score {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 16px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .result-level {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            margin-bottom: 32px;
+        }
+        
+        /* Forum member badge */
+        .forum-badge {
+            display: inline-block;
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .auto-assigned-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            color: #22c55e;
+            font-weight: 500;
+        }
+        
         .loading {
             text-align: center;
             color: #94a3b8;
@@ -523,6 +690,10 @@
             }
             
             .team-rankings {
+                grid-template-columns: 1fr;
+            }
+            
+            .options {
                 grid-template-columns: 1fr;
             }
             
@@ -677,7 +848,11 @@
                         <input type="text" id="playerId" placeholder="1234567" required>
                     </div>
                     
-                    <div class="form-group">
+                    <div id="autoAssignedGroup" class="auto-assigned-message" style="display: none;">
+                        ✅ ¡Cédula validada! Has sido asignado automáticamente al <strong id="assignedGroupName"></strong>
+                    </div>
+                    
+                    <div class="form-group" id="teamSelectGroup">
                         <label for="playerTeam">🎯 Modalidad de juego:</label>
                         <select id="playerTeam" required>
                             <option value="">Selecciona tu modalidad</option>
@@ -690,15 +865,51 @@
                 </form>
                 
                 <div class="privacy-note">
-                    🏆 <strong>Competencia:</strong> Podés elegir participar individualmente o como parte de un equipo del foro. 
+                    🏆 <strong>Competencia:</strong> Si eres miembro del foro, serás asignado automáticamente a tu grupo. Si no, puedes elegir jugar individualmente.
                     <br>🔒 <strong>Privacidad:</strong> Tu nombre real es privado (solo lo ve el administrador), en los rankings públicos aparece tu pseudónimo. 
-                    <br>📋 <strong>Validación:</strong> Tu cédula es solo para validar participación y evitar múltiples intentos.
+                    <br>📋 <strong>Validación:</strong> Tu cédula valida tu participación y pertenencia al foro.
                     <br>🎮 <strong>Límites:</strong> Máximo 2 intentos por persona.
                 </div>
                 
                 <div id="intentosMessage" style="display: none; color: #f59e0b; margin: 20px 0; font-weight: bold;"></div>
                 
                 <button class="btn" onclick="startGame()">🚀 COMENZAR COMPETENCIA</button>
+            </div>
+            
+            <!-- Pantalla de juego -->
+            <div id="gameScreen">
+                <div class="game-header">
+                    <div class="game-info">
+                        <div>Nivel: <span id="currentLevel">1</span>/15</div>
+                        <div>Puntaje: <span id="currentScore">0</span></div>
+                        <div class="lives">❤️ <span id="livesCount">3</span></div>
+                    </div>
+                    <div class="timer">⏱️ <span id="timeLeft">30</span>s</div>
+                </div>
+                
+                <div class="question-container">
+                    <div class="question" id="questionText"></div>
+                    <div class="options" id="optionsContainer"></div>
+                    <div class="lifelines">
+                        <button class="lifeline" id="fifty" onclick="useFiftyFifty()">
+                            50:50
+                        </button>
+                        <button class="lifeline" id="change" onclick="changeQuestion()">
+                            🔄 Cambiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pantalla de resultados -->
+            <div id="resultScreen">
+                <h1>🎉 ¡Juego Completado!</h1>
+                <div class="result-card">
+                    <div class="result-score" id="finalScore">0</div>
+                    <div class="result-level">Nivel alcanzado: <span id="finalLevel">1</span>/15</div>
+                    <div id="teamResult" style="margin: 20px 0; font-size: 1.25rem;"></div>
+                    <button class="btn" onclick="location.reload()">🔄 Volver al inicio</button>
+                </div>
             </div>
         </div>
 
@@ -707,7 +918,7 @@
     </div>
     
     <script>
-        // Configuración Firebase - TUS CREDENCIALES REALES
+        // Configuración Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAF1UK57tg4jK856RSU7Qcr1MT8QEeY4-o",
             authDomain: "cardiologia-game-uy.firebaseapp.com",
@@ -722,6 +933,31 @@
         // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+        
+        // Base de datos de miembros del foro (cédulas extraídas del Excel)
+        const validForumMembers = {
+            "27517612": "B", "30995275": "A", "31138428": "C", "31756199": "C", "35015820": "B",
+            "35754076": "B", "36975247": "B", "38978912": "B", "39875680": "B", "40452069": "C",
+            "40688920": "B", "41078609": "C", "41211117": "B", "41232290": "A", "41295530": "A",
+            "41439671": "C", "41440180": "A", "41605018": "C", "41795596": "A", "41866668": "C",
+            "41889993": "C", "41896580": "A", "41943091": "A", "41995033": "C", "42001180": "A",
+            "42059940": "A", "42088810": "C", "42103230": "A", "42159613": "A", "42232511": "C",
+            "42409810": "B", "42487125": "B", "42595420": "A", "42690517": "B", "42712120": "C",
+            "42747430": "A", "42756312": "C", "42802641": "C", "42959903": "B", "43002210": "A",
+            "43198240": "C", "43274741": "C", "43345260": "B", "43431922": "B", "43558613": "C",
+            "43574790": "B", "43596650": "C", "43770710": "B", "43791012": "B", "43803923": "A",
+            "43850011": "A", "43853018": "C", "43944515": "A", "44010510": "A", "44045918": "C",
+            "44166328": "B", "44235311": "A", "44343113": "C", "44357312": "B", "44381010": "C",
+            "44390916": "C", "44401626": "C", "44449725": "A", "44457319": "B", "44544822": "C",
+            "44613040": "C", "44662415": "B", "44684316": "B", "44708510": "A", "44869140": "A",
+            "44940318": "B", "44941416": "A", "45031015": "C", "45068422": "B", "45142211": "B",
+            "45182220": "B", "45212010": "C", "45283613": "B", "45448628": "A", "45537325": "C",
+            "45692614": "A", "45774816": "B", "45908810": "C", "45966318": "A", "46100113": "C",
+            "46138788": "A", "46211619": "A", "46452827": "C", "46539922": "C", "46639618": "A",
+            "46896620": "C", "47085610": "A", "47136619": "A", "47188923": "B", "47240111": "B",
+            "47355012": "B", "49273848": "C", "49490115": "C", "49557311": "A", "50301612": "C",
+            "65354721": "A"
+        };
         
         // Variables globales
         let currentPlayer = { name: '', nickname: '', id: '', team: '' };
@@ -739,10 +975,298 @@
         let playerAttempts = 0;
         let isAdminAuthenticated = false;
         const ADMIN_PASSWORD = "cardio2025admin";
-        let questionBank = [];
         let correctStreak = 0;
         let currentSessionId = null;
         let gameStartId = null;
+        
+        // Banco de preguntas de cardiología
+        const questionBank = [
+            // Nivel 1-3 (Fácil)
+            {
+                question: "¿Cuál es la frecuencia cardíaca normal en reposo de un adulto?",
+                options: ["60-100 lpm", "40-60 lpm", "100-120 lpm", "120-140 lpm"],
+                correct: 0,
+                level: 1
+            },
+            {
+                question: "¿Cuál es la presión arterial normal en un adulto?",
+                options: ["<120/80 mmHg", "<140/90 mmHg", "<160/100 mmHg", "<100/60 mmHg"],
+                correct: 0,
+                level: 1
+            },
+            {
+                question: "¿Cuál es el marcapasos natural del corazón?",
+                options: ["Nodo sinusal", "Nodo AV", "Haz de His", "Fibras de Purkinje"],
+                correct: 0,
+                level: 1
+            },
+            {
+                question: "¿Cuántas válvulas tiene el corazón?",
+                options: ["4", "2", "3", "5"],
+                correct: 0,
+                level: 1
+            },
+            {
+                question: "¿Qué arteria irriga principalmente el ventrículo izquierdo?",
+                options: ["Descendente anterior", "Circunfleja", "Coronaria derecha", "Marginal"],
+                correct: 0,
+                level: 2
+            },
+            {
+                question: "¿Cuál es el primer ruido cardíaco (S1)?",
+                options: ["Cierre de válvulas AV", "Cierre de válvulas semilunares", "Llenado ventricular", "Contracción auricular"],
+                correct: 0,
+                level: 2
+            },
+            {
+                question: "¿Qué representa la onda P en el ECG?",
+                options: ["Despolarización auricular", "Despolarización ventricular", "Repolarización ventricular", "Repolarización auricular"],
+                correct: 0,
+                level: 2
+            },
+            {
+                question: "¿Cuál es la enzima cardíaca más específica para infarto?",
+                options: ["Troponina", "CPK", "LDH", "GOT"],
+                correct: 0,
+                level: 3
+            },
+            {
+                question: "¿Qué fármaco está contraindicado en el bloqueo AV completo?",
+                options: ["Betabloqueantes", "IECA", "Estatinas", "Aspirina"],
+                correct: 0,
+                level: 3
+            },
+            {
+                question: "¿Cuál es el tratamiento de primera línea para la fibrilación auricular?",
+                options: ["Control de frecuencia + anticoagulación", "Cardioversión inmediata", "Ablación", "Marcapasos"],
+                correct: 0,
+                level: 3
+            },
+            
+            // Nivel 4-6 (Intermedio)
+            {
+                question: "¿Cuál es el mecanismo del edema en la insuficiencia cardíaca?",
+                options: ["Aumento de presión hidrostática", "Disminución de presión oncótica", "Aumento de permeabilidad", "Obstrucción linfática"],
+                correct: 0,
+                level: 4
+            },
+            {
+                question: "¿Qué hallazgo ECG es típico del infarto inferior?",
+                options: ["Elevación ST en II, III, aVF", "Elevación ST en V1-V4", "Depresión ST difusa", "Ondas Q en I, aVL"],
+                correct: 0,
+                level: 4
+            },
+            {
+                question: "¿Cuál es la causa más frecuente de muerte súbita en atletas jóvenes?",
+                options: ["Miocardiopatía hipertrófica", "Infarto agudo", "TEP", "Ruptura aórtica"],
+                correct: 0,
+                level: 4
+            },
+            {
+                question: "¿Qué define el síndrome de Brugada tipo 1?",
+                options: ["Elevación ST ≥2mm en V1-V3 con morfología coved", "PR corto + onda delta", "QT largo >460ms", "Alternancia eléctrica"],
+                correct: 0,
+                level: 5
+            },
+            {
+                question: "¿Cuál es el score más usado para estratificar riesgo en SCA?",
+                options: ["GRACE", "CHADS2", "Wells", "TIMI"],
+                correct: 0,
+                level: 5
+            },
+            {
+                question: "¿Qué parámetro ecocardiográfico define disfunción sistólica severa?",
+                options: ["FEVI <35%", "FEVI <45%", "FEVI <55%", "FEVI <65%"],
+                correct: 0,
+                level: 5
+            },
+            {
+                question: "¿Cuál es el tratamiento de elección para WPW sintomático?",
+                options: ["Ablación por radiofrecuencia", "Betabloqueantes", "Amiodarona", "Verapamilo"],
+                correct: 0,
+                level: 6
+            },
+            {
+                question: "¿Qué hallazgo define la estenosis aórtica severa?",
+                options: ["Área valvular <1 cm²", "Área valvular <1.5 cm²", "Gradiente medio >20 mmHg", "Velocidad máxima >3 m/s"],
+                correct: 0,
+                level: 6
+            },
+            {
+                question: "¿Cuál es la indicación clase I para CDI en prevención primaria?",
+                options: ["FEVI ≤35% + NYHA II-III", "FEVI ≤45% + NYHA I", "TV no sostenida", "Síncope de origen desconocido"],
+                correct: 0,
+                level: 6
+            },
+            
+            // Nivel 7-9 (Difícil)
+            {
+                question: "¿Qué mutación genética es más frecuente en la miocardiopatía hipertrófica?",
+                options: ["MYH7", "MYBPC3", "TNNT2", "TPM1"],
+                correct: 0,
+                level: 7
+            },
+            {
+                question: "¿Cuál es el mecanismo del fenómeno de Wenckebach?",
+                options: ["Prolongación progresiva del PR hasta bloqueo", "Bloqueo 2:1 fijo", "Disociación AV completa", "PR corto con onda delta"],
+                correct: 0,
+                level: 7
+            },
+            {
+                question: "¿Qué define el MINOCA?",
+                options: ["IAM con coronarias normales", "Angina microvascular", "Espasmo coronario", "Disección coronaria"],
+                correct: 0,
+                level: 7
+            },
+            {
+                question: "¿Cuál es el punto de corte de BNP para descartar IC aguda?",
+                options: ["<100 pg/mL", "<300 pg/mL", "<500 pg/mL", "<1000 pg/mL"],
+                correct: 0,
+                level: 8
+            },
+            {
+                question: "¿Qué patrón ECG sugiere hiperpotasemia severa?",
+                options: ["Ondas T picudas + QRS ancho", "QT largo + torsade", "Elevación ST difusa", "Depresión ST + T invertida"],
+                correct: 0,
+                level: 8
+            },
+            {
+                question: "¿Cuál es la indicación de denervación renal en HTA?",
+                options: ["HTA resistente con PA ≥160/100 pese a 3 fármacos", "HTA grado 1", "HTA secundaria", "HTA de bata blanca"],
+                correct: 0,
+                level: 8
+            },
+            {
+                question: "¿Qué hallazgo hemodinámico define el shock cardiogénico?",
+                options: ["IC <2.2 L/min/m² + PCP >18 mmHg", "PAM <65 mmHg", "Lactato >2 mmol/L", "SvO2 <65%"],
+                correct: 0,
+                level: 9
+            },
+            {
+                question: "¿Cuál es el mecanismo del signo de Kussmaul?",
+                options: ["Aumento de PVC con inspiración", "Disminución de PVC con inspiración", "Pulso paradójico", "Alternancia eléctrica"],
+                correct: 0,
+                level: 9
+            },
+            {
+                question: "¿Qué define la miocardiopatía de takotsubo?",
+                options: ["Discinesia apical + coronarias normales", "Hipocinesia global + coronarias normales", "Acinesia septal + LAD ocluida", "Discinesia basal + espasmo"],
+                correct: 0,
+                level: 9
+            },
+            
+            // Nivel 10-12 (Muy difícil)
+            {
+                question: "¿Cuál es el punto de corte de FFR para indicar revascularización?",
+                options: ["≤0.80", "≤0.75", "≤0.85", "≤0.90"],
+                correct: 0,
+                level: 10
+            },
+            {
+                question: "¿Qué parámetro define mejor la severidad de la insuficiencia mitral?",
+                options: ["EROA ≥40 mm²", "Vena contracta >7 mm", "Volumen regurgitante >30 mL", "Jet >40% AI"],
+                correct: 0,
+                level: 10
+            },
+            {
+                question: "¿Cuál es la dosis de carga de prasugrel en SCACEST?",
+                options: ["60 mg", "180 mg", "300 mg", "600 mg"],
+                correct: 0,
+                level: 10
+            },
+            {
+                question: "¿Qué hallazgo ECG es patognomónico de pericarditis?",
+                options: ["Elevación ST cóncava difusa + depresión PR", "Elevación ST convexa en V1-V4", "Alternancia eléctrica", "Bajo voltaje difuso"],
+                correct: 0,
+                level: 11
+            },
+            {
+                question: "¿Cuál es el mecanismo del fenómeno de no-reflow post-ICP?",
+                options: ["Obstrucción microvascular + espasmo + edema", "Reestenosis aguda", "Trombosis del stent", "Disección coronaria"],
+                correct: 0,
+                level: 11
+            },
+            {
+                question: "¿Qué define la respuesta hemodinámica anormal al ejercicio?",
+                options: ["Caída de PA >10 mmHg o no aumento", "PA sistólica >220 mmHg", "FC <85% teórica", "Doble producto <20000"],
+                correct: 0,
+                level: 11
+            },
+            {
+                question: "¿Cuál es el mecanismo del signo de Frank en IAM?",
+                options: ["Pliegue diagonal del lóbulo auricular", "Xantelasmas", "Arco corneal", "Nódulos de Osler"],
+                correct: 0,
+                level: 12
+            },
+            {
+                question: "¿Qué parámetro strain define disfunción subclínica del VI?",
+                options: ["GLS >-18%", "GLS >-20%", "GLS <-22%", "GLS <-16%"],
+                correct: 0,
+                level: 12
+            },
+            {
+                question: "¿Cuál es la indicación de ECMO-VA en shock cardiogénico?",
+                options: ["Shock refractario + edad <75 + potencial recuperación", "Cualquier shock cardiogénico", "Solo post-cardiotomía", "Solo miocarditis fulminante"],
+                correct: 0,
+                level: 12
+            },
+            
+            // Nivel 13-15 (Extremo)
+            {
+                question: "¿Qué mutación define el síndrome de QT largo tipo 3?",
+                options: ["SCN5A", "KCNQ1", "KCNH2", "KCNE1"],
+                correct: 0,
+                level: 13
+            },
+            {
+                question: "¿Cuál es el punto de corte de iFR para indicar revascularización?",
+                options: ["≤0.89", "≤0.80", "≤0.85", "≤0.92"],
+                correct: 0,
+                level: 13
+            },
+            {
+                question: "¿Qué parámetro hemodinámico diferencia la pericarditis constrictiva de la miocardiopatía restrictiva?",
+                options: ["Igualación de presiones diastólicas + interdependencia ventricular", "PCP > PAD", "PAP >50 mmHg", "Gradiente transpulmonar >12"],
+                correct: 0,
+                level: 13
+            },
+            {
+                question: "¿Cuál es el mecanismo del patrón de repolarización precoz maligno?",
+                options: ["Elevación punto J ≥2mm inferior/lateral + onda J", "Elevación ST <1mm V1-V3", "Onda T bifásica V2-V3", "QT largo + alternancia T"],
+                correct: 0,
+                level: 14
+            },
+            {
+                question: "¿Qué define el fenómeno de stunning miocárdico post-revascularización?",
+                options: ["Disfunción reversible pese a flujo restaurado", "Necrosis irreversible", "Hibernación crónica", "Remodelado adverso"],
+                correct: 0,
+                level: 14
+            },
+            {
+                question: "¿Cuál es la ecuación más precisa para estimar área valvular aórtica por continuidad?",
+                options: ["AVA = (TSVI × πr²) / VTI Ao", "AVA = 220 / Tmedio", "AVA = CO / (gradiente × 44.3)", "AVA = Vmax × 0.25"],
+                correct: 0,
+                level: 14
+            },
+            {
+                question: "¿Qué hallazgo molecular define la amiloidosis cardíaca por transtiretina?",
+                options: ["Depósito de TTR mal plegada", "Cadenas ligeras lambda", "Proteína SAA", "Beta-2 microglobulina"],
+                correct: 0,
+                level: 15
+            },
+            {
+                question: "¿Cuál es el mecanismo del patrón en 'root sign' en la disección aórtica?",
+                options: ["Dilatación de raíz con regurgitación central", "Prolapso comisural", "Restricción valvar", "Perforación de velo"],
+                correct: 0,
+                level: 15
+            },
+            {
+                question: "¿Qué parámetro de mecánica auricular predice FA de novo post-ablación?",
+                options: ["Strain reservoir AI <23%", "Volumen AI >34 mL/m²", "Velocidad A <50 cm/s", "TDI a' <8 cm/s"],
+                correct: 0,
+                level: 15
+            }
+        ];
         
         // Funciones básicas
         function showTab(tabName) {
@@ -770,6 +1294,445 @@
             }
         }
         
+        // Validación de cédula al escribir
+        document.getElementById('playerId').addEventListener('input', function() {
+            const cedula = this.value.trim();
+            
+            // Solo validar si tiene entre 6 y 8 dígitos
+            if (/^\d{6,8}$/.test(cedula)) {
+                if (validForumMembers[cedula]) {
+                    const assignedGroup = validForumMembers[cedula];
+                    
+                    // Mostrar mensaje de asignación automática
+                    document.getElementById('autoAssignedGroup').style.display = 'block';
+                    document.getElementById('assignedGroupName').textContent = `Grupo ${assignedGroup}`;
+                    
+                    // Seleccionar automáticamente el grupo y deshabilitar el selector
+                    document.getElementById('playerTeam').value = assignedGroup;
+                    document.getElementById('playerTeam').disabled = true;
+                    document.getElementById('teamSelectGroup').style.opacity = '0.6';
+                } else {
+                    // No es miembro del foro, puede elegir solo INDIVIDUAL
+                    document.getElementById('autoAssignedGroup').style.display = 'none';
+                    document.getElementById('playerTeam').disabled = false;
+                    document.getElementById('teamSelectGroup').style.opacity = '1';
+                    
+                    // Actualizar las opciones disponibles
+                    const teamSelect = document.getElementById('playerTeam');
+                    teamSelect.innerHTML = `
+                        <option value="">Selecciona tu modalidad</option>
+                        <option value="INDIVIDUAL">🏆 Individual (solo tu puntaje)</option>
+                    `;
+                    
+                    // Agregar nota de que solo puede jugar individual
+                    if (!document.getElementById('nonForumNote')) {
+                        const note = document.createElement('div');
+                        note.id = 'nonForumNote';
+                        note.style.cssText = 'color: #f59e0b; font-size: 0.875rem; margin-top: 8px;';
+                        note.textContent = '⚠️ No eres miembro del foro. Solo puedes participar en modalidad individual.';
+                        document.getElementById('teamSelectGroup').appendChild(note);
+                    }
+                }
+            } else {
+                // Resetear si la cédula no es válida
+                document.getElementById('autoAssignedGroup').style.display = 'none';
+                document.getElementById('playerTeam').disabled = false;
+                document.getElementById('teamSelectGroup').style.opacity = '1';
+                
+                const nonForumNote = document.getElementById('nonForumNote');
+                if (nonForumNote) nonForumNote.remove();
+            }
+        });
+        
+        async function startGame() {
+            const name = document.getElementById('playerName').value.trim();
+            const nickname = document.getElementById('playerNickname').value.trim();
+            const id = document.getElementById('playerId').value.trim();
+            const team = document.getElementById('playerTeam').value;
+            
+            if (!name || !nickname || !id || !team) {
+                alert('Por favor, completá todos los campos');
+                return;
+            }
+            
+            // Validar formato de cédula
+            if (!/^\d{6,8}$/.test(id)) {
+                alert('La cédula debe tener entre 6 y 8 dígitos, sin dígito verificador');
+                return;
+            }
+            
+            // Validar pseudónimo
+            if (!/^[a-zA-Z0-9_áéíóúüñÁÉÍÓÚÜÑ]{3,20}$/.test(nickname)) {
+                alert('El pseudónimo debe tener entre 3 y 20 caracteres (letras, números y _ solamente)');
+                return;
+            }
+            
+            // Validar pertenencia al grupo si no es INDIVIDUAL
+            if (team !== 'INDIVIDUAL') {
+                if (!validForumMembers[id] || validForumMembers[id] !== team) {
+                    alert('No estás autorizado para jugar en este grupo. Solo los miembros del foro pueden participar en la competencia por equipos.');
+                    return;
+                }
+            }
+            
+            try {
+                // Verificar intentos previos
+                const attemptsSnapshot = await database.ref(`jugadores/${id}/intentos`).once('value');
+                const attempts = attemptsSnapshot.val() || 0;
+                
+                if (attempts >= 2) {
+                    document.getElementById('intentosMessage').style.display = 'block';
+                    document.getElementById('intentosMessage').textContent = '⚠️ Ya has alcanzado el límite de 2 intentos.';
+                    return;
+                }
+                
+                // Guardar datos del jugador
+                currentPlayer = { name, nickname, id, team };
+                playerAttempts = attempts;
+                
+                // Registrar inicio de juego
+                gameStartId = database.ref('gameStarts').push().key;
+                await database.ref(`gameStarts/${gameStartId}`).set({
+                    jugador: name,
+                    cedula: id,
+                    grupo: team,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    intento: attempts + 1
+                });
+                
+                // Actualizar jugador online
+                if (currentSessionId) {
+                    await database.ref(`analytics/onlinePlayers/${currentSessionId}`).update({
+                        status: 'playing',
+                        cedula: id,
+                        grupo: team
+                    });
+                }
+                
+                // Mostrar mensaje de intentos restantes
+                if (attempts === 1) {
+                    alert('¡Este es tu último intento! Dale con todo 💪');
+                }
+                
+                // Iniciar juego
+                initGame();
+                
+            } catch (error) {
+                console.error('Error starting game:', error);
+                alert('Error al iniciar el juego. Por favor, intentá nuevamente.');
+            }
+        }
+        
+        function initGame() {
+            // Ocultar pantalla de inicio, mostrar juego
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            
+            // Resetear variables
+            currentLevel = 1;
+            score = 0;
+            lives = 3;
+            maxLevelReached = 1;
+            answeredQuestions.clear();
+            comodines = { fifty: true, change: true };
+            correctStreak = 0;
+            
+            // Actualizar UI
+            updateGameUI();
+            
+            // Cargar primera pregunta
+            loadQuestion();
+        }
+        
+        function updateGameUI() {
+            document.getElementById('currentLevel').textContent = currentLevel;
+            document.getElementById('currentScore').textContent = score;
+            document.getElementById('livesCount').textContent = lives;
+            
+            // Actualizar estado de comodines
+            document.getElementById('fifty').classList.toggle('used', !comodines.fifty);
+            document.getElementById('change').classList.toggle('used', !comodines.change);
+        }
+        
+        function loadQuestion() {
+            // Filtrar preguntas por nivel y no respondidas
+            const availableQuestions = questionBank.filter(q => 
+                q.level === currentLevel && !answeredQuestions.has(questionBank.indexOf(q))
+            );
+            
+            if (availableQuestions.length === 0) {
+                // Si no hay más preguntas del nivel, buscar del nivel anterior o siguiente
+                const alternativeQuestions = questionBank.filter(q => 
+                    Math.abs(q.level - currentLevel) <= 1 && !answeredQuestions.has(questionBank.indexOf(q))
+                );
+                
+                if (alternativeQuestions.length > 0) {
+                    currentQuestion = alternativeQuestions[Math.floor(Math.random() * alternativeQuestions.length)];
+                } else {
+                    // No hay más preguntas disponibles
+                    endGame();
+                    return;
+                }
+            } else {
+                currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+            }
+            
+            // Marcar pregunta como respondida
+            answeredQuestions.add(questionBank.indexOf(currentQuestion));
+            
+            // Mostrar pregunta
+            document.getElementById('questionText').textContent = currentQuestion.question;
+            
+            // Mezclar opciones
+            const options = [...currentQuestion.options];
+            const correctAnswer = options[currentQuestion.correct];
+            shuffledOptions = options.sort(() => Math.random() - 0.5);
+            const correctIndex = shuffledOptions.indexOf(correctAnswer);
+            currentQuestion.shuffledCorrect = correctIndex;
+            
+            // Mostrar opciones
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            
+            shuffledOptions.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                container.appendChild(button);
+            });
+            
+            // Resetear estado 50:50
+            eliminated5050 = false;
+            
+            // Iniciar timer
+            startTimer();
+        }
+        
+        function startTimer() {
+            timeLeft = 30;
+            updateTimerDisplay();
+            
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            document.getElementById('timeLeft').textContent = timeLeft;
+            
+            // Cambiar color según tiempo restante
+            const timerElement = document.querySelector('.timer');
+            if (timeLeft <= 10) {
+                timerElement.style.color = '#ef4444';
+            } else if (timeLeft <= 20) {
+                timerElement.style.color = '#f59e0b';
+            } else {
+                timerElement.style.color = '#60a5fa';
+            }
+        }
+        
+        function handleTimeout() {
+            // Marcar como incorrecta
+            const options = document.querySelectorAll('.option');
+            options[currentQuestion.shuffledCorrect].classList.add('correct');
+            
+            // Reducir vidas
+            lives--;
+            updateGameUI();
+            
+            // Mostrar mensaje
+            setTimeout(() => {
+                if (lives > 0) {
+                    alert(`⏱️ ¡Se acabó el tiempo! Te quedan ${lives} vidas.`);
+                    loadQuestion();
+                } else {
+                    endGame();
+                }
+            }, 1500);
+        }
+        
+        function selectAnswer(index) {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            const options = document.querySelectorAll('.option');
+            const selectedOption = options[index];
+            
+            // Deshabilitar todas las opciones
+            options.forEach(opt => opt.style.pointerEvents = 'none');
+            
+            if (index === currentQuestion.shuffledCorrect) {
+                // Respuesta correcta
+                selectedOption.classList.add('correct');
+                correctStreak++;
+                
+                // Calcular puntaje con bonus por racha
+                const baseScore = currentLevel * 100;
+                const timeBonus = Math.floor((timeLeft / 30) * 50);
+                const streakBonus = correctStreak > 2 ? (correctStreak - 2) * 50 : 0;
+                const levelScore = baseScore + timeBonus + streakBonus;
+                
+                score += levelScore;
+                updateGameUI();
+                
+                setTimeout(() => {
+                    if (currentLevel < 15) {
+                        currentLevel++;
+                        maxLevelReached = Math.max(maxLevelReached, currentLevel);
+                        loadQuestion();
+                    } else {
+                        // Completó todos los niveles
+                        alert('🎉 ¡INCREÍBLE! ¡Has completado todos los niveles!');
+                        endGame();
+                    }
+                }, 1500);
+            } else {
+                // Respuesta incorrecta
+                selectedOption.classList.add('incorrect');
+                options[currentQuestion.shuffledCorrect].classList.add('correct');
+                correctStreak = 0;
+                
+                lives--;
+                updateGameUI();
+                
+                setTimeout(() => {
+                    if (lives > 0) {
+                        alert(`❌ Respuesta incorrecta. Te quedan ${lives} vidas.`);
+                        loadQuestion();
+                    } else {
+                        endGame();
+                    }
+                }, 1500);
+            }
+        }
+        
+        function useFiftyFifty() {
+            if (!comodines.fifty || eliminated5050) return;
+            
+            comodines.fifty = false;
+            eliminated5050 = true;
+            updateGameUI();
+            
+            const options = document.querySelectorAll('.option');
+            const correctIndex = currentQuestion.shuffledCorrect;
+            
+            // Seleccionar 2 opciones incorrectas para eliminar
+            const incorrectIndices = [];
+            for (let i = 0; i < options.length; i++) {
+                if (i !== correctIndex) {
+                    incorrectIndices.push(i);
+                }
+            }
+            
+            // Mezclar y tomar 2
+            incorrectIndices.sort(() => Math.random() - 0.5);
+            const toEliminate = incorrectIndices.slice(0, 2);
+            
+            // Eliminar opciones
+            toEliminate.forEach(index => {
+                options[index].classList.add('eliminated');
+                options[index].onclick = null;
+            });
+        }
+        
+        function changeQuestion() {
+            if (!comodines.change) return;
+            
+            comodines.change = false;
+            updateGameUI();
+            
+            if (timerInterval) clearInterval(timerInterval);
+            
+            // Cargar nueva pregunta del mismo nivel
+            loadQuestion();
+        }
+        
+        async function endGame() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            // Ocultar juego, mostrar resultados
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('resultScreen').style.display = 'block';
+            
+            // Mostrar puntaje final
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalLevel').textContent = maxLevelReached;
+            
+            // Mensaje según el equipo
+            const teamResult = document.getElementById('teamResult');
+            if (currentPlayer.team === 'INDIVIDUAL') {
+                teamResult.innerHTML = '🏆 Has participado en modalidad individual';
+            } else {
+                teamResult.innerHTML = `👥 Tu puntaje contribuye al <strong>Grupo ${currentPlayer.team}</strong>`;
+            }
+            
+            try {
+                // Guardar resultado
+                const resultId = database.ref('resultados').push().key;
+                await database.ref(`resultados/${resultId}`).set({
+                    nombre: currentPlayer.name,
+                    pseudonimo: currentPlayer.nickname,
+                    cedula: currentPlayer.id,
+                    grupo: currentPlayer.team,
+                    puntaje: score,
+                    nivel: maxLevelReached,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    intento: playerAttempts + 1,
+                    esForoMiembro: validForumMembers[currentPlayer.id] ? true : false
+                });
+                
+                // Actualizar intentos del jugador
+                await database.ref(`jugadores/${currentPlayer.id}`).update({
+                    nombre: currentPlayer.name,
+                    pseudonimo: currentPlayer.nickname,
+                    intentos: playerAttempts + 1,
+                    mejorPuntaje: score,
+                    mejorNivel: maxLevelReached,
+                    ultimoIntento: firebase.database.ServerValue.TIMESTAMP
+                });
+                
+                // Actualizar estadísticas del equipo si no es individual
+                if (currentPlayer.team !== 'INDIVIDUAL') {
+                    await database.ref(`equipos/${currentPlayer.team}/participantes/${currentPlayer.id}`).set({
+                        nombre: currentPlayer.nickname,
+                        puntaje: score,
+                        nivel: maxLevelReached
+                    });
+                }
+                
+                // Marcar juego como completado
+                if (gameStartId) {
+                    await database.ref(`gameStarts/${gameStartId}`).update({
+                        completado: true,
+                        puntajeFinal: score,
+                        nivelFinal: maxLevelReached,
+                        timestampFin: firebase.database.ServerValue.TIMESTAMP
+                    });
+                }
+                
+                // Actualizar estado online
+                if (currentSessionId) {
+                    await database.ref(`analytics/onlinePlayers/${currentSessionId}`).update({
+                        status: 'finished',
+                        score: score
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error saving results:', error);
+                alert('Error al guardar los resultados. Tu puntaje es: ' + score);
+            }
+        }
+        
+        // Funciones de rankings y dashboard
         async function loadIndividualRanking() {
             try {
                 const snapshot = await database.ref('resultados').once('value');
@@ -788,7 +1751,7 @@
                 
                 const resultsArray = Object.values(results);
                 
-                // Obtener mejor resultado por jugador (por cédula)
+                // Obtener mejor resultado por jugador
                 const uniqueResults = new Map();
                 resultsArray.forEach(result => {
                     const existing = uniqueResults.get(result.cedula);
@@ -814,12 +1777,13 @@
                     topResults.forEach((result, index) => {
                         const displayName = result.pseudonimo || result.nombre;
                         const teamDisplay = result.grupo === 'INDIVIDUAL' ? 'Individual' : `Grupo ${result.grupo}`;
+                        const isForumMember = result.esForoMiembro ? '<span class="forum-badge">Miembro Foro</span>' : '';
                         
                         html += `
                             <div style="display: grid; grid-template-columns: 50px 2fr auto auto auto; gap: 16px; padding: 16px; background: rgba(15, 23, 42, 0.6); border-radius: 12px; align-items: center;">
                                 <div style="font-size: 1.5rem; font-weight: 700; color: #60a5fa; text-align: center; font-family: 'JetBrains Mono', monospace;">${index + 1}</div>
                                 <div>
-                                    <div style="font-weight: 600; color: #e2e8f0;">${displayName}</div>
+                                    <div style="font-weight: 600; color: #e2e8f0;">${displayName}${isForumMember}</div>
                                 </div>
                                 <div style="padding: 4px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; ${result.grupo === 'INDIVIDUAL' ? 'background: rgba(139, 92, 246, 0.2); color: #8b5cf6;' : 'background: rgba(59, 130, 246, 0.2); color: #3b82f6;'}">${teamDisplay}</div>
                                 <div style="font-family: 'JetBrains Mono', monospace; color: #3b82f6; font-weight: 600;">${result.puntaje} pts</div>
@@ -904,9 +1868,10 @@
                     let playersHTML = '';
                     players.slice(0, 10).forEach((player, index) => {
                         const displayName = player.pseudonimo || player.nombre;
+                        const isForumMember = player.esForoMiembro ? ' 🏛️' : '';
                         playersHTML += `
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 4px 0; background: rgba(30, 41, 59, 0.4); border-radius: 8px; font-size: 0.875rem;">
-                                <span>${index + 1}. ${displayName}</span>
+                                <span>${index + 1}. ${displayName}${isForumMember}</span>
                                 <span>${player.puntaje} pts - Nv.${player.nivel}</span>
                             </div>
                         `;
@@ -951,7 +1916,7 @@
             updateLastUpdate();
         }
         
-        // Funciones Firebase reales
+        // Funciones Firebase
         async function recordVisit() {
             try {
                 const today = new Date().toDateString();
@@ -1173,50 +2138,145 @@
             }
         }
         
-        function loadAdminData() {
-            document.getElementById('adminTable').innerHTML = `
-                <h4>📊 Resumen de Actividad</h4>
-                <p>Este es el panel de administración. Aquí aparecerían los datos reales cuando esté conectado a Firebase.</p>
-                <p>Partidas iniciadas: 58</p>
-                <p>Partidas completadas: 42</p>
-                <p>Tasa de finalización: 72%</p>
-            `;
-        }
-        
-        function exportAdminData() {
-            alert('Función de exportación - se implementa con datos reales');
-        }
-        
-        function clearAllData() {
-            if (confirm('¿Estás seguro de que quieres eliminar TODOS los datos?')) {
-                alert('Función de limpieza - se implementa con datos reales');
+        async function loadAdminData() {
+            try {
+                const resultsSnapshot = await database.ref('resultados').once('value');
+                const results = resultsSnapshot.val();
+                
+                const gameStartsSnapshot = await database.ref('gameStarts').once('value');
+                const gameStarts = gameStartsSnapshot.val();
+                
+                let html = '<h4>📊 Resumen de Actividad</h4>';
+                
+                if (results) {
+                    const resultsArray = Object.values(results);
+                    const gameStartsArray = gameStarts ? Object.values(gameStarts) : [];
+                    
+                    const completedGames = gameStartsArray.filter(g => g.completado).length;
+                    const completionRate = gameStartsArray.length > 0 ? 
+                        Math.round((completedGames / gameStartsArray.length) * 100) : 0;
+                    
+                    html += `
+                        <p>Partidas iniciadas: ${gameStartsArray.length}</p>
+                        <p>Partidas completadas: ${completedGames}</p>
+                        <p>Tasa de finalización: ${completionRate}%</p>
+                        <h4 style="margin-top: 20px;">📋 Últimos 20 resultados:</h4>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+                                <thead>
+                                    <tr style="background: rgba(59, 130, 246, 0.2);">
+                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Fecha</th>
+                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Nombre</th>
+                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Pseudónimo</th>
+                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Cédula</th>
+                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Grupo</th>
+                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Puntaje</th>
+                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Nivel</th>
+                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Intento</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    // Ordenar por timestamp descendente
+                    resultsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                    
+                    resultsArray.slice(0, 20).forEach(result => {
+                        const date = result.timestamp ? 
+                            new Date(result.timestamp).toLocaleString('es-UY') : 'N/A';
+                        
+                        html += `
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${date}</td>
+                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.nombre}</td>
+                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.pseudonimo}</td>
+                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.cedula}</td>
+                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.grupo}</td>
+                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.puntaje}</td>
+                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.nivel}</td>
+                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.intento || 1}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += '</tbody></table></div>';
+                } else {
+                    html += '<p>No hay datos disponibles aún.</p>';
+                }
+                
+                document.getElementById('adminTable').innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+                document.getElementById('adminTable').innerHTML = '<p>Error cargando datos administrativos.</p>';
             }
         }
         
-        function startGame() {
-            const name = document.getElementById('playerName').value.trim();
-            const nickname = document.getElementById('playerNickname').value.trim();
-            const id = document.getElementById('playerId').value.trim();
-            const team = document.getElementById('playerTeam').value;
-            
-            if (!name || !nickname || !id || !team) {
-                alert('Por favor, completá todos los campos');
+        async function exportAdminData() {
+            try {
+                const resultsSnapshot = await database.ref('resultados').once('value');
+                const results = resultsSnapshot.val();
+                
+                if (!results) {
+                    alert('No hay datos para exportar');
+                    return;
+                }
+                
+                const resultsArray = Object.values(results);
+                
+                // Crear CSV
+                let csv = 'Fecha,Nombre,Pseudonimo,Cedula,Grupo,Puntaje,Nivel,Intento,EsMiembroForo\n';
+                
+                resultsArray.forEach(result => {
+                    const date = result.timestamp ? 
+                        new Date(result.timestamp).toLocaleString('es-UY') : 'N/A';
+                    const esMiembro = result.esForoMiembro ? 'SI' : 'NO';
+                    
+                    csv += `"${date}","${result.nombre}","${result.pseudonimo}","${result.cedula}","${result.grupo}",${result.puntaje},${result.nivel},${result.intento || 1},"${esMiembro}"\n`;
+                });
+                
+                // Descargar archivo
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `cardiologia_game_export_${new Date().toISOString().split('T')[0]}.csv`;
+                link.click();
+                
+            } catch (error) {
+                console.error('Error exporting data:', error);
+                alert('Error al exportar datos');
+            }
+        }
+        
+        async function clearAllData() {
+            if (!confirm('¿Estás seguro de que quieres eliminar TODOS los datos?')) {
                 return;
             }
             
-            // Validar formato de cédula (solo números, sin dígito verificador)
-            if (!/^\d{6,8}$/.test(id)) {
-                alert('La cédula debe tener entre 6 y 8 dígitos, sin dígito verificador');
+            if (!confirm('Esta acción es IRREVERSIBLE. ¿Estás completamente seguro?')) {
                 return;
             }
             
-            // Validar pseudónimo (alfanumérico, sin espacios especiales)
-            if (!/^[a-zA-Z0-9_áéíóúüñÁÉÍÓÚÜÑ]{3,20}$/.test(nickname)) {
-                alert('El pseudónimo debe tener entre 3 y 20 caracteres (letras, números y _ solamente)');
+            const confirmText = prompt('Escribe "BORRAR TODO" para confirmar:');
+            if (confirmText !== 'BORRAR TODO') {
+                alert('Operación cancelada');
                 return;
             }
             
-            alert(`¡Bienvenido ${nickname}!\n\nModalidad: ${team === 'INDIVIDUAL' ? 'Individual' : 'Grupo ' + team}\n\nEl juego completo estará disponible pronto.\nPor ahora puedes ver las estadísticas en el Dashboard.`);
+            try {
+                await database.ref('resultados').remove();
+                await database.ref('jugadores').remove();
+                await database.ref('equipos').remove();
+                await database.ref('gameStarts').remove();
+                await database.ref('analytics/dailyVisits').remove();
+                await database.ref('analytics/totalVisits').set(0);
+                
+                alert('Todos los datos han sido eliminados');
+                location.reload();
+            } catch (error) {
+                console.error('Error clearing data:', error);
+                alert('Error al eliminar datos');
+            }
         }
         
         function handleMissingLogos() {
@@ -1253,7 +2313,8 @@
                     updateLastUpdate();
                 }, 60000); // Cada minuto
                 
-                console.log('✅ Juego de Cardiología - Conectado a Firebase Real');
+                console.log('✅ Juego de Cardiología - Sistema completo activo');
+                console.log('📊 Grupos del foro validados:', Object.keys(validForumMembers).length, 'cédulas');
                 
             } catch (error) {
                 console.error('Error en inicialización:', error);
