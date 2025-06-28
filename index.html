@@ -371,7 +371,7 @@
             margin-top: 8px;
         }
         
-        /* Team rankings styles */
+        /* Ranking por equipos */
         .team-rankings {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -462,8 +462,8 @@
             color: #94a3b8;
         }
         
-        /* Game screen styles */
-        #gameScreen {
+        /* Game Screen Styles */
+        .game-interface {
             display: none;
             text-align: center;
         }
@@ -472,161 +472,221 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
-            padding: 16px;
-            background: rgba(30, 41, 59, 0.6);
-            border-radius: 12px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 16px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
         }
         
         .game-info {
             display: flex;
-            gap: 24px;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .info-item {
+            text-align: center;
+        }
+        
+        .info-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: 700;
             font-family: 'JetBrains Mono', monospace;
         }
         
-        .lives {
-            color: #ef4444;
-            font-weight: 600;
+        .level-value {
+            color: #60a5fa;
+        }
+        
+        .score-value {
+            color: #22c55e;
+        }
+        
+        .lives-value {
+            color: #f59e0b;
         }
         
         .timer {
-            color: #60a5fa;
-            font-weight: 600;
-            font-size: 1.25rem;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #ef4444;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .timer.warning {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
         
         .question-container {
-            background: rgba(30, 41, 59, 0.4);
-            border: 2px solid rgba(59, 130, 246, 0.3);
+            background: rgba(15, 23, 42, 0.6);
             border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 24px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 2px solid rgba(59, 130, 246, 0.2);
         }
         
-        .question {
-            font-size: 1.5rem;
+        .level-indicator {
+            font-size: 1.125rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .question-text {
+            font-size: 1.375rem;
             font-weight: 600;
             color: #e2e8f0;
-            margin-bottom: 32px;
-            line-height: 1.5;
+            margin-bottom: 30px;
+            line-height: 1.6;
         }
         
-        .options {
+        .options-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
             gap: 16px;
-            margin-bottom: 24px;
+            margin: 30px 0;
         }
         
         .option {
-            padding: 20px;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(30, 41, 59, 0.6);
             border: 2px solid rgba(59, 130, 246, 0.3);
             border-radius: 12px;
+            padding: 20px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1.125rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: left;
+            font-size: 1.125rem;
+            color: #e2e8f0;
         }
         
-        .option:hover:not(.eliminated):not(.correct):not(.incorrect) {
-            background: rgba(59, 130, 246, 0.2);
+        .option:hover {
+            background: rgba(59, 130, 246, 0.1);
             border-color: rgba(59, 130, 246, 0.5);
             transform: translateY(-2px);
         }
         
+        .option.selected {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+        }
+        
         .option.correct {
-            background: rgba(34, 197, 94, 0.3);
+            background: rgba(34, 197, 94, 0.2);
             border-color: #22c55e;
         }
         
         .option.incorrect {
-            background: rgba(220, 38, 38, 0.3);
-            border-color: #dc2626;
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
         }
         
         .option.eliminated {
-            opacity: 0.5;
+            opacity: 0.3;
             cursor: not-allowed;
-            text-decoration: line-through;
+            background: rgba(100, 116, 139, 0.2);
+            border-color: #64748b;
         }
         
-        .lifelines {
+        .comodines {
             display: flex;
             justify-content: center;
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 20px;
+            margin: 30px 0;
         }
         
-        .lifeline {
-            padding: 12px 24px;
-            background: rgba(139, 92, 246, 0.2);
-            border: 2px solid rgba(139, 92, 246, 0.3);
+        .comodin {
+            background: rgba(251, 191, 36, 0.2);
+            border: 2px solid rgba(251, 191, 36, 0.4);
             border-radius: 12px;
+            padding: 12px 24px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #fbbf24;
         }
         
-        .lifeline:hover:not(.used) {
-            background: rgba(139, 92, 246, 0.3);
-            border-color: rgba(139, 92, 246, 0.5);
+        .comodin:hover:not(.used) {
+            background: rgba(251, 191, 36, 0.3);
             transform: translateY(-2px);
         }
         
-        .lifeline.used {
-            opacity: 0.5;
+        .comodin.used {
+            opacity: 0.3;
             cursor: not-allowed;
+            background: rgba(100, 116, 139, 0.2);
+            border-color: #64748b;
+            color: #64748b;
         }
         
-        /* Result screen */
-        #resultScreen {
+        .game-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .result-screen {
             display: none;
             text-align: center;
+            padding: 40px;
         }
         
-        .result-card {
-            background: rgba(30, 41, 59, 0.6);
-            border: 2px solid rgba(59, 130, 246, 0.3);
+        .result-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .result-title.success {
+            color: #22c55e;
+        }
+        
+        .result-title.failure {
+            color: #ef4444;
+        }
+        
+        .final-stats {
+            background: rgba(15, 23, 42, 0.6);
             border-radius: 16px;
-            padding: 48px;
-            margin: 32px auto;
-            max-width: 600px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 2px solid rgba(59, 130, 246, 0.2);
         }
         
-        .result-score {
-            font-size: 4rem;
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        
+        .stats-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stats-label {
+            font-size: 1.125rem;
+            color: #94a3b8;
+        }
+        
+        .stats-value {
+            font-size: 1.25rem;
             font-weight: 700;
             color: #60a5fa;
-            margin-bottom: 16px;
             font-family: 'JetBrains Mono', monospace;
-        }
-        
-        .result-level {
-            font-size: 1.5rem;
-            color: #94a3b8;
-            margin-bottom: 32px;
-        }
-        
-        /* Forum member badge */
-        .forum-badge {
-            display: inline-block;
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-        
-        .auto-assigned-message {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            border-radius: 12px;
-            padding: 16px;
-            margin: 16px 0;
-            color: #22c55e;
-            font-weight: 500;
         }
         
         .loading {
@@ -643,6 +703,42 @@
             margin: 16px 0;
             color: #f87171;
             text-align: center;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: #e2e8f0;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 350px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
         
         /* Responsive */
@@ -693,13 +789,42 @@
                 grid-template-columns: 1fr;
             }
             
-            .options {
-                grid-template-columns: 1fr;
-            }
-            
             .admin-password {
                 width: 90%;
                 max-width: 300px;
+            }
+            
+            .game-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .game-info {
+                justify-content: space-around;
+                width: 100%;
+            }
+            
+            .timer {
+                font-size: 2rem;
+            }
+            
+            .question-text {
+                font-size: 1.125rem;
+            }
+            
+            .option {
+                font-size: 1rem;
+                padding: 16px;
+            }
+            
+            .comodines {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .game-actions {
+                flex-direction: column;
+                align-items: center;
             }
         }
     </style>
@@ -813,7 +938,7 @@
                 
                 <div id="adminData" class="admin-data" style="display: none;">
                     <h3>📋 Registro Completo de Participantes</h3>
-                    <button class="btn" onclick="exportAdminData()">📥 Descargar Excel</button>
+                    <button class="btn" onclick="exportAdminData()">📥 Descargar CSV</button>
                     <button class="btn btn-danger" onclick="clearAllData()">🗑️ Limpiar Datos</button>
                     
                     <div id="adminTable" style="margin-top: 20px;">
@@ -845,91 +970,94 @@
                     
                     <div class="form-group">
                         <label for="playerId">🆔 Cédula de identidad (sin dígito verificador):</label>
-                        <input type="text" id="playerId" placeholder="1234567" required>
+                        <input type="text" id="playerId" placeholder="1234567" required onblur="checkParticipantInfo()">
                     </div>
                     
-                    <div id="autoAssignedGroup" class="auto-assigned-message" style="display: none;">
-                        ✅ ¡Cédula validada! Has sido asignado automáticamente al <strong id="assignedGroupName"></strong>
-                    </div>
-                    
-                    <div class="form-group" id="teamSelectGroup">
-                        <label for="playerTeam">🎯 Modalidad de juego:</label>
-                        <select id="playerTeam" required>
-                            <option value="">Selecciona tu modalidad</option>
-                            <option value="A">👥 Grupo A (competencia por equipos)</option>
-                            <option value="B">👥 Grupo B (competencia por equipos)</option>
-                            <option value="C">👥 Grupo C (competencia por equipos)</option>
-                            <option value="INDIVIDUAL">🏆 Individual (solo tu puntaje)</option>
-                        </select>
+                    <div id="participantInfo" style="display: none; margin: 20px 0; padding: 16px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px;">
+                        <!-- Información del participante se muestra aquí -->
                     </div>
                 </form>
                 
                 <div class="privacy-note">
-                    🏆 <strong>Competencia:</strong> Si eres miembro del foro, serás asignado automáticamente a tu grupo. Si no, puedes elegir jugar individualmente.
+                    🏆 <strong>Competencia:</strong> Tu grupo se asigna automáticamente según el registro del foro. Si no estás registrado, participás individualmente.
                     <br>🔒 <strong>Privacidad:</strong> Tu nombre real es privado (solo lo ve el administrador), en los rankings públicos aparece tu pseudónimo. 
-                    <br>📋 <strong>Validación:</strong> Tu cédula valida tu participación y pertenencia al foro.
+                    <br>📋 <strong>Validación:</strong> Tu cédula es solo para validar participación y evitar múltiples intentos.
                     <br>🎮 <strong>Límites:</strong> Máximo 2 intentos por persona.
-                    <br><br>
-                    <strong style="color: #60a5fa;">¿Problemas para jugar?</strong> Usá el botón "MODO DEMO" o "Verificar Conexión" abajo.
+                    <br>📚 <strong>Categorías:</strong> Progresá desde "Vendedor de Globos" hasta "Maestro del Universo Cardíaco" en 30 niveles únicos.
                 </div>
                 
                 <div id="intentosMessage" style="display: none; color: #f59e0b; margin: 20px 0; font-weight: bold;"></div>
                 
                 <button class="btn" onclick="startGame()">🚀 COMENZAR COMPETENCIA</button>
-                <button class="btn" onclick="startDemoGame()" style="background: linear-gradient(135deg, #10b981, #059669);">🎮 MODO DEMO (sin guardar)</button>
-                
-                <div style="margin-top: 20px;">
-                    <button class="btn" onclick="testConnection()" style="background: linear-gradient(135deg, #6366f1, #4f46e5); font-size: 0.875rem; padding: 8px 16px;">
-                        🔧 Verificar Conexión
-                    </button>
-                </div>
             </div>
             
-            <!-- Pantalla de juego -->
-            <div id="gameScreen">
+            <!-- Interfaz del juego -->
+            <div id="gameInterface" class="game-interface">
                 <div class="game-header">
                     <div class="game-info">
-                        <div>Nivel: <span id="currentLevel">1</span>/15</div>
-                        <div>Puntaje: <span id="currentScore">0</span></div>
-                        <div class="lives">❤️ <span id="livesCount">3</span></div>
+                        <div class="info-item">
+                            <div class="info-label">Nivel</div>
+                            <div class="info-value level-value" id="gameLevel">1</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Puntaje</div>
+                            <div class="info-value score-value" id="gameScore">0</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Vidas</div>
+                            <div class="info-value lives-value" id="gameLives">❤️❤️❤️</div>
+                        </div>
                     </div>
-                    <div class="timer">⏱️ <span id="timeLeft">30</span>s</div>
+                    <div class="timer" id="gameTimer">30</div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 3.33%;"></div>
                 </div>
                 
                 <div class="question-container">
-                    <div class="question" id="questionText"></div>
-                    <div class="options" id="optionsContainer"></div>
-                    <div class="lifelines">
-                        <button class="lifeline" id="fifty" onclick="useFiftyFifty()">
-                            50:50
-                        </button>
-                        <button class="lifeline" id="change" onclick="changeQuestion()">
-                            🔄 Cambiar
-                        </button>
+                    <div class="level-indicator" id="levelIndicator">Nivel 1 - Estudiante</div>
+                    <div class="question-text" id="questionText">Cargando pregunta...</div>
+                    
+                    <div class="options-container" id="optionsContainer">
+                        <!-- Las opciones se generan dinámicamente -->
                     </div>
+                </div>
+                
+                <div class="comodines">
+                    <div class="comodin" id="comodin5050" onclick="use5050()">
+                        🎯 50/50
+                    </div>
+                    <div class="comodin" id="comodinChange" onclick="changeQuestion()">
+                        🔄 Cambiar Pregunta
+                    </div>
+                </div>
+                
+                <div class="game-actions">
+                    <button class="btn" id="confirmAnswer" onclick="confirmAnswer()" disabled>Confirmar Respuesta</button>
+                    <button class="btn btn-danger" onclick="quitGame()">Abandonar Juego</button>
                 </div>
             </div>
             
             <!-- Pantalla de resultados -->
-            <div id="resultScreen">
-                <h1>🎉 ¡Juego Completado!</h1>
-                <div class="result-card">
-                    <div class="result-score" id="finalScore">0</div>
-                    <div class="result-level">Nivel alcanzado: <span id="finalLevel">1</span>/15</div>
-                    <div id="teamResult" style="margin: 20px 0; font-size: 1.25rem;"></div>
-                    <button class="btn" onclick="location.reload()">🔄 Volver al inicio</button>
+            <div id="resultScreen" class="result-screen">
+                <div class="result-title" id="resultTitle">¡Felicitaciones!</div>
+                <div class="final-stats" id="finalStats">
+                    <!-- Estadísticas finales se generan aquí -->
+                </div>
+                <div style="margin-top: 30px;">
+                    <button class="btn" onclick="restartGame()">🔄 Jugar Otra Vez</button>
+                    <button class="btn" onclick="goToDashboard()">📊 Ver Dashboard</button>
                 </div>
             </div>
         </div>
-
-        <!-- Error message container -->
-        <div id="errorMessage" class="error-message" style="display: none;"></div>
     </div>
     
+    <!-- Notificaciones -->
+    <div id="notification" class="notification"></div>
+    
     <script>
-        console.log('🎮 Script de juego de cardiología iniciado');
-        
-        // Configuración Firebase
+        // Configuración Firebase - TUS CREDENCIALES REALES
         const firebaseConfig = {
             apiKey: "AIzaSyAF1UK57tg4jK856RSU7Qcr1MT8QEeY4-o",
             authDomain: "cardiologia-game-uy.firebaseapp.com",
@@ -941,43 +1069,11 @@
             measurementId: "G-R6SPME7MHK"
         };
         
-        // Inicializar Firebase solo si está disponible
-        let database = null;
-        try {
-            firebase.initializeApp(firebaseConfig);
-            database = firebase.database();
-            console.log('✅ Firebase inicializado correctamente');
-        } catch (error) {
-            console.error('❌ Error inicializando Firebase:', error);
-            console.log('ℹ️ El juego funcionará en modo offline/demo');
-        }
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
         
-        // Base de datos de miembros del foro (cédulas extraídas del Excel)
-        const validForumMembers = {
-            "27517612": "B", "30995275": "A", "31138428": "C", "31756199": "C", "35015820": "B",
-            "35754076": "B", "36975247": "B", "38978912": "B", "39875680": "B", "40452069": "C",
-            "40688920": "B", "41078609": "C", "41211117": "B", "41232290": "A", "41295530": "A",
-            "41439671": "C", "41440180": "A", "41605018": "C", "41795596": "A", "41866668": "C",
-            "41889993": "C", "41896580": "A", "41943091": "A", "41995033": "C", "42001180": "A",
-            "42059940": "A", "42088810": "C", "42103230": "A", "42159613": "A", "42232511": "C",
-            "42409810": "B", "42487125": "B", "42595420": "A", "42690517": "B", "42712120": "C",
-            "42747430": "A", "42756312": "C", "42802641": "C", "42959903": "B", "43002210": "A",
-            "43198240": "C", "43274741": "C", "43345260": "B", "43431922": "B", "43558613": "C",
-            "43574790": "B", "43596650": "C", "43770710": "B", "43791012": "B", "43803923": "A",
-            "43850011": "A", "43853018": "C", "43944515": "A", "44010510": "A", "44045918": "C",
-            "44166328": "B", "44235311": "A", "44343113": "C", "44357312": "B", "44381010": "C",
-            "44390916": "C", "44401626": "C", "44449725": "A", "44457319": "B", "44544822": "C",
-            "44613040": "C", "44662415": "B", "44684316": "B", "44708510": "A", "44869140": "A",
-            "44940318": "B", "44941416": "A", "45031015": "C", "45068422": "B", "45142211": "B",
-            "45182220": "B", "45212010": "C", "45283613": "B", "45448628": "A", "45537325": "C",
-            "45692614": "A", "45774816": "B", "45908810": "C", "45966318": "A", "46100113": "C",
-            "46138788": "A", "46211619": "A", "46452827": "C", "46539922": "C", "46639618": "A",
-            "46896620": "C", "47085610": "A", "47136619": "A", "47188923": "B", "47240111": "B",
-            "47355012": "B", "49273848": "C", "49490115": "C", "49557311": "A", "50301612": "C",
-            "65354721": "A"
-        };
-        
-        // Variables globales
+        // Variables globales del juego
         let currentPlayer = { name: '', nickname: '', id: '', team: '' };
         let currentLevel = 1;
         let score = 0;
@@ -992,394 +1088,267 @@
         let eliminated5050 = false;
         let playerAttempts = 0;
         let isAdminAuthenticated = false;
-        const ADMIN_PASSWORD = "cardio2025admin";
+        let questionBank = [];
         let correctStreak = 0;
         let currentSessionId = null;
         let gameStartId = null;
-        let isOfflineMode = false;
+        let selectedOption = null;
         
-        // Banco de preguntas de cardiología
-        const questionBank = [
-            // Nivel 1-3 (Fácil)
-            {
-                question: "¿Cuál es la frecuencia cardíaca normal en reposo de un adulto?",
-                options: ["60-100 lpm", "40-60 lpm", "100-120 lpm", "120-140 lpm"],
-                correct: 0,
-                level: 1
-            },
-            {
-                question: "¿Cuál es la presión arterial normal en un adulto?",
-                options: ["<120/80 mmHg", "<140/90 mmHg", "<160/100 mmHg", "<100/60 mmHg"],
-                correct: 0,
-                level: 1
-            },
-            {
-                question: "¿Cuál es el marcapasos natural del corazón?",
-                options: ["Nodo sinusal", "Nodo AV", "Haz de His", "Fibras de Purkinje"],
-                correct: 0,
-                level: 1
-            },
-            {
-                question: "¿Cuántas válvulas tiene el corazón?",
-                options: ["4", "2", "3", "5"],
-                correct: 0,
-                level: 1
-            },
-            {
-                question: "¿Qué arteria irriga principalmente el ventrículo izquierdo?",
-                options: ["Descendente anterior", "Circunfleja", "Coronaria derecha", "Marginal"],
-                correct: 0,
-                level: 2
-            },
-            {
-                question: "¿Cuál es el primer ruido cardíaco (S1)?",
-                options: ["Cierre de válvulas AV", "Cierre de válvulas semilunares", "Llenado ventricular", "Contracción auricular"],
-                correct: 0,
-                level: 2
-            },
-            {
-                question: "¿Qué representa la onda P en el ECG?",
-                options: ["Despolarización auricular", "Despolarización ventricular", "Repolarización ventricular", "Repolarización auricular"],
-                correct: 0,
-                level: 2
-            },
-            {
-                question: "¿Cuál es la enzima cardíaca más específica para infarto?",
-                options: ["Troponina", "CPK", "LDH", "GOT"],
-                correct: 0,
-                level: 3
-            },
-            {
-                question: "¿Qué fármaco está contraindicado en el bloqueo AV completo?",
-                options: ["Betabloqueantes", "IECA", "Estatinas", "Aspirina"],
-                correct: 0,
-                level: 3
-            },
-            {
-                question: "¿Cuál es el tratamiento de primera línea para la fibrilación auricular?",
-                options: ["Control de frecuencia + anticoagulación", "Cardioversión inmediata", "Ablación", "Marcapasos"],
-                correct: 0,
-                level: 3
-            },
-            
-            // Nivel 4-6 (Intermedio)
-            {
-                question: "¿Cuál es el mecanismo del edema en la insuficiencia cardíaca?",
-                options: ["Aumento de presión hidrostática", "Disminución de presión oncótica", "Aumento de permeabilidad", "Obstrucción linfática"],
-                correct: 0,
-                level: 4
-            },
-            {
-                question: "¿Qué hallazgo ECG es típico del infarto inferior?",
-                options: ["Elevación ST en II, III, aVF", "Elevación ST en V1-V4", "Depresión ST difusa", "Ondas Q en I, aVL"],
-                correct: 0,
-                level: 4
-            },
-            {
-                question: "¿Cuál es la causa más frecuente de muerte súbita en atletas jóvenes?",
-                options: ["Miocardiopatía hipertrófica", "Infarto agudo", "TEP", "Ruptura aórtica"],
-                correct: 0,
-                level: 4
-            },
-            {
-                question: "¿Qué define el síndrome de Brugada tipo 1?",
-                options: ["Elevación ST ≥2mm en V1-V3 con morfología coved", "PR corto + onda delta", "QT largo >460ms", "Alternancia eléctrica"],
-                correct: 0,
-                level: 5
-            },
-            {
-                question: "¿Cuál es el score más usado para estratificar riesgo en SCA?",
-                options: ["GRACE", "CHADS2", "Wells", "TIMI"],
-                correct: 0,
-                level: 5
-            },
-            {
-                question: "¿Qué parámetro ecocardiográfico define disfunción sistólica severa?",
-                options: ["FEVI <35%", "FEVI <45%", "FEVI <55%", "FEVI <65%"],
-                correct: 0,
-                level: 5
-            },
-            {
-                question: "¿Cuál es el tratamiento de elección para WPW sintomático?",
-                options: ["Ablación por radiofrecuencia", "Betabloqueantes", "Amiodarona", "Verapamilo"],
-                correct: 0,
-                level: 6
-            },
-            {
-                question: "¿Qué hallazgo define la estenosis aórtica severa?",
-                options: ["Área valvular <1 cm²", "Área valvular <1.5 cm²", "Gradiente medio >20 mmHg", "Velocidad máxima >3 m/s"],
-                correct: 0,
-                level: 6
-            },
-            {
-                question: "¿Cuál es la indicación clase I para CDI en prevención primaria?",
-                options: ["FEVI ≤35% + NYHA II-III", "FEVI ≤45% + NYHA I", "TV no sostenida", "Síncope de origen desconocido"],
-                correct: 0,
-                level: 6
-            },
-            
-            // Nivel 7-9 (Difícil)
-            {
-                question: "¿Qué mutación genética es más frecuente en la miocardiopatía hipertrófica?",
-                options: ["MYH7", "MYBPC3", "TNNT2", "TPM1"],
-                correct: 0,
-                level: 7
-            },
-            {
-                question: "¿Cuál es el mecanismo del fenómeno de Wenckebach?",
-                options: ["Prolongación progresiva del PR hasta bloqueo", "Bloqueo 2:1 fijo", "Disociación AV completa", "PR corto con onda delta"],
-                correct: 0,
-                level: 7
-            },
-            {
-                question: "¿Qué define el MINOCA?",
-                options: ["IAM con coronarias normales", "Angina microvascular", "Espasmo coronario", "Disección coronaria"],
-                correct: 0,
-                level: 7
-            },
-            {
-                question: "¿Cuál es el punto de corte de BNP para descartar IC aguda?",
-                options: ["<100 pg/mL", "<300 pg/mL", "<500 pg/mL", "<1000 pg/mL"],
-                correct: 0,
-                level: 8
-            },
-            {
-                question: "¿Qué patrón ECG sugiere hiperpotasemia severa?",
-                options: ["Ondas T picudas + QRS ancho", "QT largo + torsade", "Elevación ST difusa", "Depresión ST + T invertida"],
-                correct: 0,
-                level: 8
-            },
-            {
-                question: "¿Cuál es la indicación de denervación renal en HTA?",
-                options: ["HTA resistente con PA ≥160/100 pese a 3 fármacos", "HTA grado 1", "HTA secundaria", "HTA de bata blanca"],
-                correct: 0,
-                level: 8
-            },
-            {
-                question: "¿Qué hallazgo hemodinámico define el shock cardiogénico?",
-                options: ["IC <2.2 L/min/m² + PCP >18 mmHg", "PAM <65 mmHg", "Lactato >2 mmol/L", "SvO2 <65%"],
-                correct: 0,
-                level: 9
-            },
-            {
-                question: "¿Cuál es el mecanismo del signo de Kussmaul?",
-                options: ["Aumento de PVC con inspiración", "Disminución de PVC con inspiración", "Pulso paradójico", "Alternancia eléctrica"],
-                correct: 0,
-                level: 9
-            },
-            {
-                question: "¿Qué define la miocardiopatía de takotsubo?",
-                options: ["Discinesia apical + coronarias normales", "Hipocinesia global + coronarias normales", "Acinesia septal + LAD ocluida", "Discinesia basal + espasmo"],
-                correct: 0,
-                level: 9
-            },
-            
-            // Nivel 10-12 (Muy difícil)
-            {
-                question: "¿Cuál es el punto de corte de FFR para indicar revascularización?",
-                options: ["≤0.80", "≤0.75", "≤0.85", "≤0.90"],
-                correct: 0,
-                level: 10
-            },
-            {
-                question: "¿Qué parámetro define mejor la severidad de la insuficiencia mitral?",
-                options: ["EROA ≥40 mm²", "Vena contracta >7 mm", "Volumen regurgitante >30 mL", "Jet >40% AI"],
-                correct: 0,
-                level: 10
-            },
-            {
-                question: "¿Cuál es la dosis de carga de prasugrel en SCACEST?",
-                options: ["60 mg", "180 mg", "300 mg", "600 mg"],
-                correct: 0,
-                level: 10
-            },
-            {
-                question: "¿Qué hallazgo ECG es patognomónico de pericarditis?",
-                options: ["Elevación ST cóncava difusa + depresión PR", "Elevación ST convexa en V1-V4", "Alternancia eléctrica", "Bajo voltaje difuso"],
-                correct: 0,
-                level: 11
-            },
-            {
-                question: "¿Cuál es el mecanismo del fenómeno de no-reflow post-ICP?",
-                options: ["Obstrucción microvascular + espasmo + edema", "Reestenosis aguda", "Trombosis del stent", "Disección coronaria"],
-                correct: 0,
-                level: 11
-            },
-            {
-                question: "¿Qué define la respuesta hemodinámica anormal al ejercicio?",
-                options: ["Caída de PA >10 mmHg o no aumento", "PA sistólica >220 mmHg", "FC <85% teórica", "Doble producto <20000"],
-                correct: 0,
-                level: 11
-            },
-            {
-                question: "¿Cuál es el mecanismo del signo de Frank en IAM?",
-                options: ["Pliegue diagonal del lóbulo auricular", "Xantelasmas", "Arco corneal", "Nódulos de Osler"],
-                correct: 0,
-                level: 12
-            },
-            {
-                question: "¿Qué parámetro strain define disfunción subclínica del VI?",
-                options: ["GLS >-18%", "GLS >-20%", "GLS <-22%", "GLS <-16%"],
-                correct: 0,
-                level: 12
-            },
-            {
-                question: "¿Cuál es la indicación de ECMO-VA en shock cardiogénico?",
-                options: ["Shock refractario + edad <75 + potencial recuperación", "Cualquier shock cardiogénico", "Solo post-cardiotomía", "Solo miocarditis fulminante"],
-                correct: 0,
-                level: 12
-            },
-            
-            // Nivel 13-15 (Extremo)
-            {
-                question: "¿Qué mutación define el síndrome de QT largo tipo 3?",
-                options: ["SCN5A", "KCNQ1", "KCNH2", "KCNE1"],
-                correct: 0,
-                level: 13
-            },
-            {
-                question: "¿Cuál es el punto de corte de iFR para indicar revascularización?",
-                options: ["≤0.89", "≤0.80", "≤0.85", "≤0.92"],
-                correct: 0,
-                level: 13
-            },
-            {
-                question: "¿Qué parámetro hemodinámico diferencia la pericarditis constrictiva de la miocardiopatía restrictiva?",
-                options: ["Igualación de presiones diastólicas + interdependencia ventricular", "PCP > PAD", "PAP >50 mmHg", "Gradiente transpulmonar >12"],
-                correct: 0,
-                level: 13
-            },
-            {
-                question: "¿Cuál es el mecanismo del patrón de repolarización precoz maligno?",
-                options: ["Elevación punto J ≥2mm inferior/lateral + onda J", "Elevación ST <1mm V1-V3", "Onda T bifásica V2-V3", "QT largo + alternancia T"],
-                correct: 0,
-                level: 14
-            },
-            {
-                question: "¿Qué define el fenómeno de stunning miocárdico post-revascularización?",
-                options: ["Disfunción reversible pese a flujo restaurado", "Necrosis irreversible", "Hibernación crónica", "Remodelado adverso"],
-                correct: 0,
-                level: 14
-            },
-            {
-                question: "¿Cuál es la ecuación más precisa para estimar área valvular aórtica por continuidad?",
-                options: ["AVA = (TSVI × πr²) / VTI Ao", "AVA = 220 / Tmedio", "AVA = CO / (gradiente × 44.3)", "AVA = Vmax × 0.25"],
-                correct: 0,
-                level: 14
-            },
-            {
-                question: "¿Qué hallazgo molecular define la amiloidosis cardíaca por transtiretina?",
-                options: ["Depósito de TTR mal plegada", "Cadenas ligeras lambda", "Proteína SAA", "Beta-2 microglobulina"],
-                correct: 0,
-                level: 15
-            },
-            {
-                question: "¿Cuál es el mecanismo del patrón en 'root sign' en la disección aórtica?",
-                options: ["Dilatación de raíz con regurgitación central", "Prolapso comisural", "Restricción valvar", "Perforación de velo"],
-                correct: 0,
-                level: 15
-            },
-            {
-                question: "¿Qué parámetro de mecánica auricular predice FA de novo post-ablación?",
-                options: ["Strain reservoir AI <23%", "Volumen AI >34 mL/m²", "Velocidad A <50 cm/s", "TDI a' <8 cm/s"],
-                correct: 0,
-                level: 15
-            }
-        ];
+        // Configuración del juego
+        const ADMIN_PASSWORD = "cardio2025admin";
+        const MAX_ATTEMPTS = 2;
+        const TIMER_SECONDS = 30;
+        const TOTAL_LEVELS = 30;
         
-        // Función para probar la conexión
-        async function testConnection() {
-            console.log('🔧 Iniciando prueba de conexión...');
-            
-            let report = '📊 REPORTE DE CONEXIÓN\n\n';
-            
+        // Sistema de puntaje avanzado
+        const SCORING_SYSTEM = {
+            BASE_POINTS: 1,
+            TIME_BONUS_THRESHOLD: 20,
+            TIME_BONUS_POINTS: 1,
+            HARD_LEVEL_THRESHOLD: 20,
+            HARD_LEVEL_BONUS: 1,
+            STREAK_BONUS_5: 3,
+            STREAK_BONUS_10: 5,
+            PERFECT_GAME_BONUS: 10
+        };
+        
+        // Mapeo de participantes del foro (desde Excel)
+        const FORO_PARTICIPANTS = {
+            "15545334": {"nombre": "PEDRO TRUJILLO LEZAMA", "grupo": "INDIVIDUAL", "email": "petruji67@gmail.com"},
+            "17905069": {"nombre": "ALEJANDRO NICOLAS CUESTA HOLGADO", "grupo": "INDIVIDUAL", "email": "arritmia@yahoo.com"},
+            "18253148": {"nombre": "ALVARO NIGGEMEYER VENDITTO", "grupo": "INDIVIDUAL", "email": "alnigge@adinet.com.uy"},
+            "26625094": {"nombre": "FEDERICO FERRANDO CASTAGNETTO", "grupo": "INDIVIDUAL", "email": "federico.ferrando@gmail.com"},
+            "27517612": {"nombre": "SERGIO GABRIEL BRUZZONI DOMINGUEZ", "grupo": "B", "email": "sergio.b.d@hotmail.com"},
+            "27529453": {"nombre": "EDUARDO RAFAEL MILA GARCIA", "grupo": "INDIVIDUAL", "email": "r1000a@gmail.com"},
+            "28013366": {"nombre": "LUCIA FLORIO LEGNANI", "grupo": "INDIVIDUAL", "email": "lu.floriol@gmail.com"},
+            "30512522": {"nombre": "VIRGINIA SANDRA ESTRAGO MEROLA", "grupo": "INDIVIDUAL", "email": "vikyestrago@gmail.com"},
+            "30995275": {"nombre": "NELSON MARIO JESÚS VEGLIA VIAMONTE", "grupo": "A", "email": "nelsonveglia@hotmail.com"},
+            "31138428": {"nombre": "NELSON MIGUEL CARABELLI FERREIRA", "grupo": "C", "email": "nelcar@vera.com.uy"},
+            "31756199": {"nombre": "HUGO MARTIN ARRESTIA GALLUZZO", "grupo": "C", "email": "marrestia@gmail.com"},
+            "35015820": {"nombre": "DAVID ISRAEL DE SOSA TECCO", "grupo": "B", "email": "daviddesosa@gmail.com"},
+            "35754076": {"nombre": "DARIO CABEZA LANDO", "grupo": "B", "email": "dariocla@gmail.com"},
+            "36479033": {"nombre": "JUAN SEBASTIAN ALBISTUR REYES", "grupo": "INDIVIDUAL", "email": "elseba26@gmail.com"},
+            "36975247": {"nombre": "ALEJANDRO DANIEL MORENO ROMERO", "grupo": "B", "email": "alemor40113@gmail.com"},
+            "37302146": {"nombre": "CAMILA RAMOS MALCUORI", "grupo": "INDIVIDUAL", "email": "camiramos@gmail.com"},
+            "38978912": {"nombre": "MARIA EUGENIA GONZALEZ NUÑEZ", "grupo": "B", "email": "ma.eugenia.gonzalez@hotmail.com"},
+            "39875680": {"nombre": "LEANDRO AGUSTIN SALAZAR DE MELO", "grupo": "B", "email": "leandrosalazar87@gmail.com"},
+            "40452069": {"nombre": "JIMENA LÓPEZ MIQUEIRO", "grupo": "C", "email": "jiji39505@hotmail.com"},
+            "42123189": {"nombre": "MARIA BERENISE ORONOZ RECAYTE", "grupo": "C", "email": "berenoz@hotmail.com"},
+            "42455659": {"nombre": "SOLEDAD MURGUIA SALGADO", "grupo": "INDIVIDUAL", "email": "solmurguia@gmail.com"},
+            "42554607": {"nombre": "MARCIO AGUSTIN BAPTISTA VARIETTI", "grupo": "B", "email": "marciobv89@gmail.com"},
+            "43874826": {"nombre": "LEONARDO CURBELO RIVERO", "grupo": "A", "email": "leocuriver@gmail.com"},
+            "44468377": {"nombre": "DIEGO AGUSTO SICA SCAPUSIO", "grupo": "A", "email": "dsica90@gmail.com"},
+            "44795132": {"nombre": "STEFANI JUDITH FEIRER MACHADO", "grupo": "C", "email": "stefyfeirer@gmail.com"},
+            "44809456": {"nombre": "NATALIA DANIELA NOBILE GONZÁLEZ", "grupo": "INDIVIDUAL", "email": "natinobile07@gmail.com"},
+            "44912475": {"nombre": "MARIA EUGENIA PELUFFO PORTEIRO", "grupo": "A", "email": "mariaeugeniaprluggo@outloock.es"},
+            "44925000": {"nombre": "MELISA TEIXEIRA RODRIGUEZ", "grupo": "B", "email": "melisa.teixeirar@gmail.com"},
+            "45225596": {"nombre": "GRACIELA MACHADO NACIMENTO", "grupo": "A", "email": "gmn_uy25@hotmail.com"},
+            "45341485": {"nombre": "CAMILA NADIA BOZZOLASCO CONTI", "grupo": "A", "email": "cbozzolasco@gmail.com"},
+            "45701936": {"nombre": "INES MABEL GONZALEZ GARCIA", "grupo": "A", "email": "inemabe@hotmail.com"},
+            "45707689": {"nombre": "ESTEFANIA DE LA FUENTE CHIARA", "grupo": "A", "email": "delafuentest@gmail.com"},
+            "45942845": {"nombre": "GIMENA PLACIDA BENITEZ FERREIRA", "grupo": "B", "email": "gimenabenitez01@gmail.com"},
+            "45945007": {"nombre": "CAMILA GURASCIER RAMOS", "grupo": "INDIVIDUAL", "email": "gurascier.camila@gmail.com"},
+            "45985281": {"nombre": "NAHIARA LEQUINI PECHI", "grupo": "INDIVIDUAL", "email": "n.lequinipechi@gmail.com"},
+            "46013746": {"nombre": "DAHIANA RAPETTI MOREIRA", "grupo": "C", "email": "dahianarapetti@hotmail.com"},
+            "46040107": {"nombre": "VICTORIA FRAGA RUSCH", "grupo": "B", "email": "vicky.fraga10@hotmail.com"},
+            "46138788": {"nombre": "FEDERICO ANDRES ACQUISTAPACE PERONI", "grupo": "INDIVIDUAL", "email": "feacquista@gmail.com"},
+            "46200739": {"nombre": "FACUNDO CAMPOS PREGLIASCO", "grupo": "A", "email": "facundocampos24@gmail.com"},
+            "46245684": {"nombre": "EMILIANO BRANDÓN GARCIA", "grupo": "B", "email": "emilianobrandon@gmail.com"},
+            "46273936": {"nombre": "FELIPE MIGUEL FRACHIA CHABCHUL", "grupo": "A", "email": "frachiaf@gmail.com"},
+            "46493077": {"nombre": "PABLO OMAR MONTIEL MOREIRA", "grupo": "A", "email": "pablomon949@gmail.com"},
+            "46553845": {"nombre": "SOFÍA ISABEL RODRÍGUEZ LESA", "grupo": "C", "email": "sofiarodriguezlesa@hotmail.com"},
+            "46688012": {"nombre": "GONZALO PELUSO RODRIGUEZ", "grupo": "INDIVIDUAL", "email": "gonzalopeluso3@gmail.com"},
+            "46810728": {"nombre": "JOAQUIN VAZQUEZ GONZALEZ", "grupo": "INDIVIDUAL", "email": "joaquin.vazquez.gonzalez@gmail.com"},
+            "46814003": {"nombre": "MARIANA OLIVET CIMINO", "grupo": "INDIVIDUAL", "email": "marianaolivet@gmail.com"},
+            "46896083": {"nombre": "CAROLINA FUENTES SALAVERRIA", "grupo": "C", "email": "carolinafs_94@hotmail.com"},
+            "46992302": {"nombre": "LEANDRO MARTIN GASTELÚ DUARTE", "grupo": "C", "email": "gastelu90@gmail.com"},
+            "47131189": {"nombre": "MARTIN HORACIO RODRIGUEZ SOSA", "grupo": "C", "email": "martin.rodriguezsosa2302@gmail.com"},
+            "47235660": {"nombre": "MARIA EUGENIA CASTRO SILVA", "grupo": "B", "email": "mariaeugeniacastro7@gmail.com"},
+            "47251717": {"nombre": "IVÁN MOREL BENDERSKY", "grupo": "A", "email": "ivan.morelb@gmail.com"},
+            "47307451": {"nombre": "AGUSTINA PEREZ SUAREZ", "grupo": "C", "email": "agustinaps21@hotmail.com"},
+            "47338896": {"nombre": "FRANCISCO ESTEBAN SOUTO OLAZABAL", "grupo": "C", "email": "frsouto6@gmail.com"},
+            "47373713": {"nombre": "NICOLAS MARCELO CORBO MOLINA", "grupo": "C", "email": "nicolascorbo23@gmail.com"},
+            "47462611": {"nombre": "JULIÁN PRANDI REYES", "grupo": "B", "email": "julianprandi96@gmail.com"},
+            "47483166": {"nombre": "SEBASTIAN EDUARDO BARTO QUINTANA", "grupo": "A", "email": "sebastian-barto@hotmail.com"},
+            "47492187": {"nombre": "FEDERICO SANTIAGO MASTROBERTI MARTIGNANO", "grupo": "C", "email": "fedemas25@gmail.com"},
+            "47507819": {"nombre": "MATIAS GABRIEL MARQUEZ PEREIRA", "grupo": "B", "email": "mmatias.fmed@gmail.com"},
+            "47564508": {"nombre": "MARIA VICTORIA BRIANO OXLEY", "grupo": "INDIVIDUAL", "email": "victoria.brox02@gmail.com"},
+            "47792666": {"nombre": "LUCÍA MARÍA RAMPA SPINELLI", "grupo": "A", "email": "luciarampa.s@gmail.com"},
+            "47864275": {"nombre": "MARTINA INÉS MORANDI MUTARELLI", "grupo": "A", "email": "martinamorandi12@gmail.com"},
+            "47871555": {"nombre": "AGUSTÍN FUMEAUX CASELLI", "grupo": "C", "email": "agufumo@hotmail.com"},
+            "47995361": {"nombre": "BRUNO TOMAS LENZI RODRIGUEZ", "grupo": "A", "email": "brunol22222@gmail.com"},
+            "48036978": {"nombre": "MARÍA ALEJANDRA PRESNO SANDAR", "grupo": "C", "email": "ale.presno@hotmail.com"},
+            "48082977": {"nombre": "GIMENA DENISSE LOZA ROSSI", "grupo": "INDIVIDUAL", "email": "gime.loza@gmail.com"},
+            "48090483": {"nombre": "JOAQUIN GONZALEZ MOURELLE", "grupo": "C", "email": "joacogm15@gmail.com"},
+            "48094655": {"nombre": "SOFÍA GUTIERREZ PASEYRO", "grupo": "A", "email": "sgutierrezp19@gmail.com"},
+            "48170081": {"nombre": "JIMENA CABRERA TRAVERS", "grupo": "A", "email": "jimena.jct@hotmail.com"},
+            "48178118": {"nombre": "FLORENCIA MAFFIOLI GUTIERREZ", "grupo": "A", "email": "florenciamaffioli@gmail.com"},
+            "48244814": {"nombre": "RODRIGO URBAN VALENTINI", "grupo": "A", "email": "rodrigoonedrive@gmail.com"},
+            "48344327": {"nombre": "GABRIEL EUGENIO ROCHA RICHART", "grupo": "A", "email": "grocharichart25@gmail.com"},
+            "48361575": {"nombre": "AGUSTINA FERNANDA OGAZ IRIGOYEN", "grupo": "C", "email": "agustinaogaz@gmail.com"},
+            "48369624": {"nombre": "YAMILA REBOLLO VAQUERO", "grupo": "B", "email": "yamilarebollo@gmail.com"},
+            "48480444": {"nombre": "PATRICIA BELEN GARABEDIAN MARTINEZ", "grupo": "A", "email": "patogarabedian18@gmail.com"},
+            "48550550": {"nombre": "CLAUDIA INES CES MARQUEZ", "grupo": "B", "email": "claudiacesmarquez@gmail.com"},
+            "48581462": {"nombre": "LUCAS BENTANCOR CRISTINO", "grupo": "B", "email": "lubencri@gmail.com"},
+            "48594633": {"nombre": "GABRIEL MARTÍNEZ SALVADOR", "grupo": "B", "email": "gabosalvador1@gmail.com"},
+            "48598526": {"nombre": "RAMIRO JULIAN NIN ALBONICO", "grupo": "B", "email": "ninramiro@gmail.com"},
+            "48662644": {"nombre": "NICOLAS ANDRES CONSOLANDICH ROBALLO", "grupo": "C", "email": "nconsolandich@gmail.com"},
+            "48691304": {"nombre": "DANIELA CASELLA NÚÑEZ", "grupo": "C", "email": "dani_casella@hotmail.com"},
+            "48727581": {"nombre": "NICOLAS PEREIRA RODRIGUEZ", "grupo": "A", "email": "nico18094@gmail.com"},
+            "48745131": {"nombre": "SABRINA PEREIRA RODRIGUEZ", "grupo": "B", "email": "pereirarodrisabri@gmail.com"},
+            "48766749": {"nombre": "LEONARDO LA PAZ FIGUEREDO", "grupo": "B", "email": "leo-lapaz@hotmail.com"},
+            "48802725": {"nombre": "DOMINIQUE GILARD BRUNO", "grupo": "C", "email": "dominique.gilard@gmail.com"},
+            "48824848": {"nombre": "RODRIGO ANDRES VIOTTI ALAYON", "grupo": "C", "email": "rodrigo.viotti@hotmail.com"},
+            "48832837": {"nombre": "GABRIELA MARISOL TALMÓN TRAVERS", "grupo": "A", "email": "talmongabriela@gmail.com"},
+            "48997285": {"nombre": "FLORENCIA VERÓNICA REBOLIZ CARDOZO", "grupo": "A", "email": "flora1906@hotmail.com"},
+            "49005631": {"nombre": "BRUNO NICOLAS DORNEL SOSA", "grupo": "A", "email": "brunodornel@hotmail.com"},
+            "49013288": {"nombre": "LUCIA FERNANDEZ BERAMENDI", "grupo": "B", "email": "luciafber@gmail.com"},
+            "49045081": {"nombre": "MIGUEL MATEO SANCHEZ SANCHIS", "grupo": "A", "email": "mmateo.sanchez97@gmail.com"},
+            "49060764": {"nombre": "LUCÍA PEREIRA SEMPERENA", "grupo": "A", "email": "luciapeereira06@gmail.com"},
+            "49149136": {"nombre": "MICHELLE MARROIG SANTOS", "grupo": "C", "email": "michellemarroig5699@gmail.com"},
+            "49216789": {"nombre": "JOAQUIN RODRIGUEZ PIANA", "grupo": "A", "email": "joaquinrodriguezpiana@gmail.com"},
+            "49238476": {"nombre": "LUCIA LESCOUMES ALVES", "grupo": "C", "email": "lucialescoumes@gmail.com"},
+            "49246528": {"nombre": "IGNACIO SIÉCOLA TECHEIRA", "grupo": "B", "email": "n-ac-ho28@hotmail.com"},
+            "49266267": {"nombre": "DANIELA TRINDADE DE LOS SANTOS", "grupo": "C", "email": "danielatrindadedelossantos@gmail.com"},
+            "49273848": {"nombre": "PAULA AGUSTINA ALAMON FRANCHI", "grupo": "C", "email": "paula.alamon@gmail.com"},
+            "49281768": {"nombre": "SOFÍA PLACERES ITURRIA", "grupo": "C", "email": "sofiplaceres@hotmail.com"},
+            "49289801": {"nombre": "JOSÉ OCTAVIO SALAZAR VAZ", "grupo": "A", "email": "osalazar1995@gmail.com"},
+            "49300251": {"nombre": "LETICIA VICTORIA RODRIGUEZ FALERO", "grupo": "A", "email": "leticiarfalero@gmail.com"},
+            "49445136": {"nombre": "FEDERICO JAVIER BARBIERI ACEVEDO", "grupo": "A", "email": "fedebarbieri641@gmail.com"},
+            "49480984": {"nombre": "CAMILA DENISS SASTRE MENESES", "grupo": "C", "email": "camilasastre2019@gmail.com"},
+            "49557311": {"nombre": "MAITE AGUIRRE MUÑOZ", "grupo": "A", "email": "maiteagui@gmail.com"},
+            "49730258": {"nombre": "MAYRA TALIA LIBANÉS MARTÍNEZ", "grupo": "B", "email": "mayratlibanesm9915@gmail.com"},
+            "49761819": {"nombre": "JULIA TABO GONZALEZ", "grupo": "C", "email": "juliatabogonzalez@gmail.com"},
+            "50048214": {"nombre": "FLAVIA MARIANA HERNÁNDEZ RODRIGUEZ", "grupo": "B", "email": "flahernandez12@gmail.com"},
+            "50133780": {"nombre": "MARÍA AGUSTINA CAMPAÑA GARCÍA", "grupo": "A", "email": "agustinacamp1897@hotmail.com"},
+            "50499192": {"nombre": "VALENTINA PALERMO VIOLA", "grupo": "A", "email": "vale20794@gmail.com"},
+            "50688666": {"nombre": "ANGELA ESTEVES GINI", "grupo": "B", "email": "estevesangela@outlook.com"},
+            "50771623": {"nombre": "HUGO PABLO NOCEDO PAZ", "grupo": "C", "email": "hugonocedopaz@gmail.com"},
+            "50788135": {"nombre": "CRISTIAN ANDRES ROJAS RIPPA", "grupo": "A", "email": "cristian_rojas_16@hotmail.com"},
+            "50823866": {"nombre": "ELOISA ARIAS PANDOLFO", "grupo": "A", "email": "eloisaariaspandolfo@gmail.com"},
+            "50932851": {"nombre": "MARCOS BELOQUI SUÁREZ", "grupo": "C", "email": "marcosbeloqui1@gmail.com"},
+            "51008116": {"nombre": "LARISSA SCHEFFEL PEREIRA", "grupo": "A", "email": "lisa.schep@hotmail.com"},
+            "51229643": {"nombre": "AGUSTINA MUÑOZ LINCK", "grupo": "C", "email": "agustinamunoz8299@gmail.com"},
+            "51351012": {"nombre": "SOFÍA DRAPER RIVAS", "grupo": "B", "email": "sofidraper@gmail.com"},
+            "51441641": {"nombre": "SOFÍA LASSERRE BLANCO", "grupo": "A", "email": "sofialasserre@hotmail.com"},
+            "51505891": {"nombre": "DANIEL RUÍZ NUÑEZ", "grupo": "C", "email": "dani2516ru@gmail.com"},
+            "51641714": {"nombre": "RODRIGO FACUNDO GIANOLI OLIVERA", "grupo": "B", "email": "facugianoli@gmail.com"},
+            "52070019": {"nombre": "MAITE BARITUSSIO BACCHETTA", "grupo": "C", "email": "maitebaritussiob@gmail.com"},
+            "52180967": {"nombre": "CATALINA KAVEDJIAN KADAHDJIAN", "grupo": "C", "email": "ckavedjian@gmail.com"},
+            "52877994": {"nombre": "BERNARDO CORIA GUTIERREZ", "grupo": "C", "email": "ber.coria@hotmail.com"},
+            "52886573": {"nombre": "RODRIGO ARANCO ERSERGUER", "grupo": "B", "email": "ro.31616@gmail.com"},
+            "52967614": {"nombre": "MARIA BELEN CAMPOS REGUEIRA", "grupo": "B", "email": "mbcregueira@gmail.com"},
+            "53004996": {"nombre": "PAOLA GIMENA ESTEVES BENITEZ", "grupo": "C", "email": "paola.esteves2@gmail.com"},
+            "53121384": {"nombre": "DIEGO PEREYRA SANSBERRO", "grupo": "C", "email": "diego.zelide@gmail.com"},
+            "53711612": {"nombre": "JOAQUIN BARRIOS FRUMENTO", "grupo": "B", "email": "joaquinbfm@hotmail.com"},
+            "53821203": {"nombre": "KEVIN MICHEL FERNANDEZ HERNANDEZ", "grupo": "B", "email": "kevinferher98@gmail.com"},
+            "53869354": {"nombre": "PAULA CASTELLANOS CUADRADO", "grupo": "B", "email": "paulacastellanos123@gmail.com"},
+            "54889135": {"nombre": "VICTORIA BELÉN GREEN LIMA", "grupo": "C", "email": "belen-green96@hotmail.com"},
+            "58934697": {"nombre": "ROBERTO ALEJANDRO FAROLINI SEPULVEDA", "grupo": "B", "email": "roafarolini@gmail.com"},
+            "59564332": {"nombre": "JOANA STENS RAMOS DE LOS REYES", "grupo": "B", "email": "joanastensr@gmail.com"},
+            "61693599": {"nombre": "JULIO ALBERTO ALVARENGA MELÉNDEZ", "grupo": "A", "email": "julioalvareng@gmail.com"},
+            "61815268": {"nombre": "RUBI DEL ROCIO RODRIGUEZ AYALA", "grupo": "C", "email": "rubsrodz@outlook.es"},
+            "63176779": {"nombre": "LUIS EMIRO BUENO PRATO", "grupo": "C", "email": "lubukaga@gmail.com"},
+            "64138340": {"nombre": "ROBERTO CARLOS GUTIERREZ VERDECIA", "grupo": "B", "email": "betogtz.1993@gmail.com"},
+            "64251061": {"nombre": "MARIO JOSE CRIOLLO GUILLEN", "grupo": "A", "email": "mjcg1990@hotmail.com"},
+            "65064201": {"nombre": "LUIS MANUEL RODRIGUEZ OYUELA", "grupo": "B", "email": "luismrod10@gmail.com"},
+            "65162506": {"nombre": "GUILLERMO ANDRÉS ORTEGA NARVÁEZ", "grupo": "B", "email": "sirandresxy28@gmail.com"},
+            "65354721": {"nombre": "CARLOS MANUEL ALONSO ARANGO", "grupo": "A", "email": "carlosmanuelalonso95@gmail.com"},
+            "65608596": {"nombre": "ENCIS CRISTIAN CISNEROS REA", "grupo": "B", "email": "quique_cdo94@hotmail.com"}
+        };
+        
+        // Categorías graciosas por nivel (30 niveles únicos)
+        const LEVEL_CATEGORIES = {
+            1: { name: "🛒 Vendedor de Globos", concept: "Identificás un corazón en el diagrama, pero pensás que es decorativo" },
+            2: { name: "🍕 Repartidor de Pizza", concept: "Conocés las arterias... porque las recorrés en bicicleta por la ciudad" },
+            3: { name: "🚗 Conductor de Uber", concept: "Sabés de circulación, pero te referís al tráfico vehicular" },
+            4: { name: "🎭 Actor de Telenovelas", concept: "Podés fingir un infarto convincentemente en pantalla" },
+            5: { name: "🔧 Plomero Cardíaco", concept: "Entendés que hay tuberías y bombas, pero no estás seguro para qué sirven" },
+            6: { name: "📚 Estudiante Perdido", concept: "Abriste un libro de medicina y no te desmayaste. ¡Progreso!" },
+            7: { name: "🔍 Detective de Google", concept: "Podés diagnosticar cualquier síntoma... según el primer resultado de búsqueda" },
+            8: { name: "💊 Farmacéutico Novato", concept: "Sabés que el corazón bombea algo, pero no estás seguro si es sangre o esperanza" },
+            9: { name: "🏥 Visitante de Hospital", concept: "Conocés el hospital por dentro porque te perdés cada vez que venís" },
+            10: { name: "🩺 Interno Somnoliento", concept: "Podés identificar un estetoscopio, aunque lo usés al revés" },
+            11: { name: "📖 Estudiante de Medicina", concept: "Memorizaste los nombres de las cámaras cardíacas (con algunos errores menores)" },
+            12: { name: "💉 Enfermero Principiante", concept: "Distinguís entre taquicardia y bradicardia, pero aún confundís cuál es cuál" },
+            13: { name: "🔬 Laboratorista Curioso", concept: "Sabés que los análisis dicen algo importante, pero preguntas qué significan" },
+            14: { name: "📊 Técnico en ECG", concept: "Podés poner electrodos sin electrocutar al paciente (la mayoría de las veces)" },
+            15: { name: "🏥 Residente Junior", concept: "Empezás a entender que 'miocardiopatía' no es una fobia al trabajo" },
+            16: { name: "🩺 Médico General", concept: "Sabés cuándo derivar al cardiólogo... después de intentar todo lo demás" },
+            17: { name: "❤️ Aspirante a Cardiólogo", concept: "Las miocardiopatías infiltrativas ya no te suenan a ciencia ficción" },
+            18: { name: "🔬 Fellow Entusiasta", concept: "Podés pronunciar 'amiloidosis' sin trabarte (casi siempre)" },
+            19: { name: "📚 Especialista en Formación", concept: "Distinguís entre amiloidosis y hemocromatosis sin consultar Google" },
+            20: { name: "🎯 Cardiólogo Competente", concept: "Tus diagnósticos ya no dependen exclusivamente de la suerte" },
+            21: { name: "🏆 Especialista Reconocido", concept: "Los pacientes te buscan específicamente para miocardiopatías infiltrativas" },
+            22: { name: "📖 Profesor de Cardiología", concept: "Podés explicar la fisiopatología sin que se duerman tus estudiantes" },
+            23: { name: "🔬 Investigador Clínico", concept: "Tus papers sobre infiltrativas son citados por otros (¡más de 3 veces!)" },
+            24: { name: "🌟 Referente Nacional", concept: "Te consultan desde otros países sobre casos complejos" },
+            25: { name: "🎖️ Maestro Internacional", concept: "Desarrollaste tu propia clasificación de miocardiopatías infiltrativas" },
+            26: { name: "👑 Leyenda Viviente", concept: "Los fellows hacen peregrinación para aprender de tu sabiduría" },
+            27: { name: "🧙‍♂️ Gurú de las Infiltrativas", concept: "Predecís infiltraciones cardíacas con solo mirar al paciente" },
+            28: { name: "⚡ Oráculo Cardiológico", concept: "Tu conocimiento trasciende lo humano. Los protocolos se escriben basados en tus visiones" },
+            29: { name: "🌌 Deidad de la Cardiología", concept: "Has alcanzado la iluminación. Las miocardiopatías se infiltran ante tu presencia" },
+            30: { name: "♾️ Maestro del Universo Cardíaco", concept: "Sos uno con el cosmos cardiológico. Las infiltrativas son tu lenguaje nativo" }
+        };
+        
+        // Cargar banco de preguntas
+        async function loadQuestionBank() {
             try {
-                // 1. Verificar Firebase SDK
-                report += '1. Firebase SDK: ' + (typeof firebase !== 'undefined' ? '✅ Cargado' : '❌ No cargado') + '\n';
-                
-                // 2. Verificar inicialización
-                report += '2. Firebase App: ' + (database ? '✅ Inicializado' : '❌ No inicializado') + '\n';
-                
-                // 3. Verificar Database
-                report += '3. Database: ' + (database ? '✅ Disponible' : '❌ No disponible') + '\n';
-                
-                if (database) {
-                    // 4. Verificar conexión
-                    const connectedSnapshot = await database.ref('.info/connected').once('value');
-                    const isConnected = connectedSnapshot.val();
-                    report += '4. Conexión: ' + (isConnected ? '✅ Conectado' : '❌ Desconectado') + '\n';
-                    
-                    // 5. Intentar leer
-                    try {
-                        await database.ref('test').once('value');
-                        report += '5. Permisos de lectura: ✅ OK\n';
-                    } catch (e) {
-                        report += '5. Permisos de lectura: ❌ ' + e.code + '\n';
-                    }
-                    
-                    // 6. Intentar escribir
-                    try {
-                        const testRef = database.ref('test_write_' + Date.now());
-                        await testRef.set({ test: true });
-                        await testRef.remove();
-                        report += '6. Permisos de escritura: ✅ OK\n';
-                    } catch (e) {
-                        report += '6. Permisos de escritura: ❌ ' + e.code + '\n';
-                    }
-                } else {
-                    report += '4-6. No se pueden realizar pruebas sin conexión a Firebase\n';
+                const response = await fetch('questions_bank.json');
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar el banco de preguntas');
                 }
-                
-                report += '\n✅ Prueba completada';
-                
+                questionBank = await response.json();
+                console.log(`✅ Banco de preguntas cargado: ${questionBank.length} preguntas`);
             } catch (error) {
-                report += '\n❌ Error durante la prueba: ' + error.message;
-            }
-            
-            alert(report);
-            console.log(report);
-        }
-        
-        // Función para verificar permisos de Firebase
-        async function checkFirebasePermissions() {
-            if (!database) {
-                console.warn('⚠️ Firebase no está disponible');
-                return false;
-            }
-            
-            try {
-                console.log('🔐 Verificando permisos de Firebase...');
-                
-                // Intentar leer un valor de prueba
-                const testSnapshot = await database.ref('test_connection').once('value');
-                console.log('✅ Lectura de prueba exitosa');
-                
-                // Intentar escribir un valor de prueba
-                const testRef = database.ref('test_connection/' + Date.now());
-                await testRef.set({ test: true });
-                await testRef.remove();
-                console.log('✅ Escritura de prueba exitosa');
-                
-                return true;
-            } catch (error) {
-                console.error('❌ Error de permisos:', error.code, error.message);
-                
-                if (error.code === 'PERMISSION_DENIED') {
-                    alert(`
-⚠️ Error de permisos en Firebase
-
-Las reglas de seguridad de Firebase necesitan ser actualizadas.
-Por ahora, podés usar el MODO DEMO para jugar.
-
-Contactá al administrador para solucionar este problema.
-                    `);
-                }
-                
-                return false;
+                console.error('Error cargando preguntas:', error);
+                // Usar preguntas de ejemplo si no se puede cargar el JSON
+                questionBank = getExampleQuestions();
+                showNotification('⚠️ Usando preguntas de ejemplo. Cargar questions_bank.json para contenido completo.', 5000);
             }
         }
         
-        // Funciones básicas
+        // Preguntas de ejemplo para demostración
+        function getExampleQuestions() {
+            return [
+                {
+                    id: "ejemplo_001",
+                    level: 1,
+                    question: "¿Cuál es la principal característica de las miocardiopatías infiltrativas?",
+                    options: [
+                        {"text": "Deposición de sustancias anormales en el miocardio", "correct": true},
+                        {"text": "Dilatación ventricular exclusiva", "correct": false},
+                        {"text": "Hipertrofia concéntrica solamente", "correct": false},
+                        {"text": "Arritmias ventriculares aisladas", "correct": false}
+                    ]
+                },
+                {
+                    id: "ejemplo_002",
+                    level: 2,
+                    question: "La amiloidosis cardíaca se caracteriza por:",
+                    options: [
+                        {"text": "Deposición de proteínas fibrilares", "correct": true},
+                        {"text": "Acumulación de hierro", "correct": false},
+                        {"text": "Infiltración grasa", "correct": false},
+                        {"text": "Fibrosis miocárdica simple", "correct": false}
+                    ]
+                },
+                // Agregar más preguntas de ejemplo para cada nivel
+                ...Array.from({length: 28}, (_, i) => ({
+                    id: `ejemplo_${String(i + 3).padStart(3, '0')}`,
+                    level: Math.floor((i + 3) / 1) + 1,
+                    question: `Pregunta de ejemplo para nivel ${Math.floor((i + 3) / 1) + 1} sobre miocardiopatías infiltrativas`,
+                    options: [
+                        {"text": "Opción correcta", "correct": true},
+                        {"text": "Opción incorrecta 1", "correct": false},
+                        {"text": "Opción incorrecta 2", "correct": false},
+                        {"text": "Opción incorrecta 3", "correct": false}
+                    ]
+                }))
+            ];
+        }
+        
+        // Funciones de navegación
         function showTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -1402,613 +1371,605 @@ Contactá al administrador para solucionar este problema.
                 case 'equipos':
                     loadDetailedTeamRankings();
                     break;
+                case 'game':
+                    resetGameInterface();
+                    break;
             }
         }
         
-        // Validación de cédula al escribir
-        document.getElementById('playerId').addEventListener('input', function() {
-            const cedula = this.value.trim();
+        // Funciones del juego principal
+        function checkParticipantInfo() {
+            const cedula = document.getElementById('playerId').value.trim();
+            const infoDiv = document.getElementById('participantInfo');
             
-            // Solo validar si tiene entre 6 y 8 dígitos
-            if (/^\d{6,8}$/.test(cedula)) {
-                if (validForumMembers[cedula]) {
-                    const assignedGroup = validForumMembers[cedula];
-                    
-                    // Mostrar mensaje de asignación automática
-                    document.getElementById('autoAssignedGroup').style.display = 'block';
-                    document.getElementById('assignedGroupName').textContent = `Grupo ${assignedGroup}`;
-                    
-                    // Seleccionar automáticamente el grupo y deshabilitar el selector
-                    document.getElementById('playerTeam').value = assignedGroup;
-                    document.getElementById('playerTeam').disabled = true;
-                    document.getElementById('teamSelectGroup').style.opacity = '0.6';
-                } else {
-                    // No es miembro del foro, puede elegir solo INDIVIDUAL
-                    document.getElementById('autoAssignedGroup').style.display = 'none';
-                    document.getElementById('playerTeam').disabled = false;
-                    document.getElementById('teamSelectGroup').style.opacity = '1';
-                    
-                    // Actualizar las opciones disponibles
-                    const teamSelect = document.getElementById('playerTeam');
-                    teamSelect.innerHTML = `
-                        <option value="">Selecciona tu modalidad</option>
-                        <option value="INDIVIDUAL">🏆 Individual (solo tu puntaje)</option>
-                    `;
-                    
-                    // Agregar nota de que solo puede jugar individual
-                    if (!document.getElementById('nonForumNote')) {
-                        const note = document.createElement('div');
-                        note.id = 'nonForumNote';
-                        note.style.cssText = 'color: #f59e0b; font-size: 0.875rem; margin-top: 8px;';
-                        note.textContent = '⚠️ No eres miembro del foro. Solo puedes participar en modalidad individual.';
-                        document.getElementById('teamSelectGroup').appendChild(note);
-                    }
-                }
-            } else {
-                // Resetear si la cédula no es válida
-                document.getElementById('autoAssignedGroup').style.display = 'none';
-                document.getElementById('playerTeam').disabled = false;
-                document.getElementById('teamSelectGroup').style.opacity = '1';
-                
-                const nonForumNote = document.getElementById('nonForumNote');
-                if (nonForumNote) nonForumNote.remove();
+            if (!/^\d{6,8}$/.test(cedula)) {
+                infoDiv.style.display = 'none';
+                return;
             }
-        });
+            
+            const participantInfo = getParticipantInfo(cedula);
+            const assignedGroup = getAutoAssignedGroup(cedula);
+            
+            if (participantInfo) {
+                // Participante registrado en el foro
+                infoDiv.innerHTML = `
+                    <h3 style="color: #22c55e; margin-bottom: 8px;">✅ Participante Registrado</h3>
+                    <p><strong>Nombre en foro:</strong> ${participantInfo.nombre}</p>
+                    <p><strong>Modalidad asignada:</strong> ${assignedGroup === 'INDIVIDUAL' ? '🏆 Individual' : '👥 Grupo ' + assignedGroup}</p>
+                    <p style="color: #94a3b8; font-size: 0.875rem; margin-top: 8px;">
+                        Tu grupo ha sido asignado automáticamente según el registro del foro.
+                    </p>
+                `;
+                infoDiv.style.display = 'block';
+                infoDiv.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+                infoDiv.style.backgroundColor = 'rgba(34, 197, 94, 0.1)';
+            } else {
+                // No registrado en el foro
+                infoDiv.innerHTML = `
+                    <h3 style="color: #f59e0b; margin-bottom: 8px;">ℹ️ Participante No Registrado</h3>
+                    <p><strong>Modalidad asignada:</strong> 🏆 Individual</p>
+                    <p style="color: #94a3b8; font-size: 0.875rem; margin-top: 8px;">
+                        No estás registrado en los grupos del foro, participarás de forma individual.
+                    </p>
+                `;
+                infoDiv.style.display = 'block';
+                infoDiv.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+                infoDiv.style.backgroundColor = 'rgba(245, 158, 11, 0.1)';
+            }
+        }
         
         async function startGame() {
-            try {
-                console.log('🎮 Iniciando juego...');
-                
-                const name = document.getElementById('playerName').value.trim();
-                const nickname = document.getElementById('playerNickname').value.trim();
-                const id = document.getElementById('playerId').value.trim();
-                const team = document.getElementById('playerTeam').value;
-                
-                console.log('📝 Datos ingresados:', { name, nickname, id, team });
-                
-                if (!name || !nickname || !id || !team) {
-                    alert('Por favor, completá todos los campos');
-                    return;
-                }
-                
-                // Validar formato de cédula
-                if (!/^\d{6,8}$/.test(id)) {
-                    alert('La cédula debe tener entre 6 y 8 dígitos, sin dígito verificador');
-                    return;
-                }
-                
-                // Validar pseudónimo
-                if (!/^[a-zA-Z0-9_áéíóúüñÁÉÍÓÚÜÑ]{3,20}$/.test(nickname)) {
-                    alert('El pseudónimo debe tener entre 3 y 20 caracteres (letras, números y _ solamente)');
-                    return;
-                }
-                
-                // Validar pertenencia al grupo si no es INDIVIDUAL
-                if (team !== 'INDIVIDUAL') {
-                    if (!validForumMembers[id] || validForumMembers[id] !== team) {
-                        alert('No estás autorizado para jugar en este grupo. Solo los miembros del foro pueden participar en la competencia por equipos.');
-                        return;
-                    }
-                }
-                
-                console.log('✅ Validaciones pasadas');
-                
-                // Verificar conexión a Firebase
-                if (!database) {
-                    console.error('❌ Firebase no está inicializado');
-                    if (confirm('No hay conexión con la base de datos.\n\n¿Querés jugar en MODO DEMO?\n(Tu puntaje no se guardará)')) {
-                        startDemoGame();
-                    }
-                    return;
-                }
-                
-                try {
-                    // Verificar intentos previos
-                    console.log('🔍 Verificando intentos previos...');
-                    const attemptsSnapshot = await database.ref(`jugadores/${id}/intentos`).once('value');
-                    const attempts = attemptsSnapshot.val() || 0;
-                    console.log('📊 Intentos previos:', attempts);
-                    
-                    if (attempts >= 2) {
-                        document.getElementById('intentosMessage').style.display = 'block';
-                        document.getElementById('intentosMessage').textContent = '⚠️ Ya has alcanzado el límite de 2 intentos.';
-                        return;
-                    }
-                    
-                    playerAttempts = attempts;
-                } catch (error) {
-                    console.warn('⚠️ No se pudieron verificar intentos previos:', error);
-                    // Continuar sin verificación si hay error
-                    playerAttempts = 0;
-                    
-                    if (confirm('No se puede verificar tu historial de intentos.\n\n¿Querés continuar de todos modos?\n\n(Tu progreso podría no guardarse correctamente)')) {
-                        isOfflineMode = true;
-                    } else {
-                        return;
-                    }
-                }
-                
-                // Guardar datos del jugador
-                currentPlayer = { name, nickname, id, team };
-                
-                if (!isOfflineMode) {
-                    try {
-                        console.log('💾 Registrando inicio de juego...');
-                        
-                        // Registrar inicio de juego
-                        gameStartId = database.ref('gameStarts').push().key;
-                        await database.ref(`gameStarts/${gameStartId}`).set({
-                            jugador: name,
-                            cedula: id,
-                            grupo: team,
-                            timestamp: firebase.database.ServerValue.TIMESTAMP,
-                            intento: playerAttempts + 1
-                        });
-                        
-                        console.log('✅ Juego registrado con ID:', gameStartId);
-                        
-                        // Actualizar jugador online
-                        if (currentSessionId) {
-                            await database.ref(`analytics/onlinePlayers/${currentSessionId}`).update({
-                                status: 'playing',
-                                cedula: id,
-                                grupo: team
-                            });
-                        }
-                    } catch (error) {
-                        console.warn('⚠️ No se pudo registrar el inicio del juego:', error);
-                        // Continuar en modo offline
-                        isOfflineMode = true;
-                    }
-                }
-                
-                // Mostrar mensaje de intentos restantes
-                if (playerAttempts === 1 && !isOfflineMode) {
-                    alert('¡Este es tu último intento! Dale con todo 💪');
-                }
-                
-                if (isOfflineMode) {
-                    alert('⚠️ Estás jugando en modo OFFLINE.\nTu puntaje NO se guardará en los rankings.');
-                }
-                
-                console.log('🚀 Iniciando juego...');
-                
-                // Iniciar juego
-                initGame();
-                
-            } catch (error) {
-                console.error('❌ Error detallado al iniciar juego:', error);
-                console.error('Stack trace:', error.stack);
-                
-                // Mensaje de error más específico
-                let errorMessage = 'Error al iniciar el juego: ';
-                
-                if (error.code === 'PERMISSION_DENIED') {
-                    errorMessage += 'Error de permisos en la base de datos.';
-                } else if (error.code === 'NETWORK_ERROR') {
-                    errorMessage += 'Error de conexión a internet.';
-                } else if (error.message) {
-                    errorMessage += error.message;
-                } else {
-                    errorMessage += 'Error desconocido. Por favor, intentá nuevamente.';
-                }
-                
-                alert(errorMessage);
-                
-                // Mostrar error en consola para debugging
-                document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorMessage').textContent = errorMessage;
-            }
-        }
-        
-        function startDemoGame() {
-            console.log('🎮 Iniciando modo DEMO...');
+            const name = document.getElementById('playerName').value.trim();
+            const nickname = document.getElementById('playerNickname').value.trim();
+            const id = document.getElementById('playerId').value.trim();
             
-            // Datos de demo
+            if (!name || !nickname || !id) {
+                alert('Por favor, completá todos los campos');
+                return;
+            }
+            
+            // Validar formato de cédula
+            if (!/^\d{6,8}$/.test(id)) {
+                alert('La cédula debe tener entre 6 y 8 dígitos, sin dígito verificador');
+                return;
+            }
+            
+            // Validar pseudónimo
+            if (!/^[a-zA-Z0-9_áéíóúüñÁÉÍÓÚÜÑ]{3,20}$/.test(nickname)) {
+                alert('El pseudónimo debe tener entre 3 y 20 caracteres (letras, números y _ solamente)');
+                return;
+            }
+            
+            // Asignar grupo automáticamente
+            const team = getAutoAssignedGroup(id);
+            const participantInfo = getParticipantInfo(id);
+            
+            // Verificar intentos previos
+            try {
+                const attemptsSnapshot = await database.ref('resultados').orderByChild('cedula').equalTo(id).once('value');
+                const attempts = attemptsSnapshot.val();
+                playerAttempts = attempts ? Object.keys(attempts).length : 0;
+                
+                if (playerAttempts >= MAX_ATTEMPTS) {
+                    alert(`Ya has usado tus ${MAX_ATTEMPTS} intentos permitidos`);
+                    return;
+                }
+                
+                if (playerAttempts > 0) {
+                    document.getElementById('intentosMessage').style.display = 'block';
+                    document.getElementById('intentosMessage').textContent = 
+                        `⚠️ Este es tu intento ${playerAttempts + 1} de ${MAX_ATTEMPTS}`;
+                }
+            } catch (error) {
+                console.error('Error verificando intentos:', error);
+            }
+            
+            // Configurar jugador
             currentPlayer = { 
-                name: 'Jugador Demo', 
-                nickname: 'Demo', 
-                id: '12345678', 
-                team: 'INDIVIDUAL' 
+                name, 
+                nickname, 
+                id, 
+                team,
+                foroName: participantInfo ? participantInfo.nombre : null
             };
-            playerAttempts = 0;
-            isOfflineMode = true;
             
-            alert('🎮 Modo DEMO: Puedes jugar sin guardar datos. ¡Divertite!');
+            // Mostrar mensaje de confirmación
+            const teamDisplay = team === 'INDIVIDUAL' ? 'Individual' : `Grupo ${team}`;
+            const confirmMessage = participantInfo 
+                ? `¡Bienvenido ${nickname}!\n\nRegistrado como: ${participantInfo.nombre}\nModalidad: ${teamDisplay}\n\n¡Comencemos la competencia!`
+                : `¡Bienvenido ${nickname}!\n\nModalidad: ${teamDisplay}\n\n¡Comencemos la competencia!`;
             
-            // Iniciar juego directamente
-            initGame();
-        }
-        
-        function initGame() {
-            try {
-                console.log('🎯 Inicializando juego...');
-                
-                // Ocultar pantalla de inicio, mostrar juego
-                document.getElementById('startScreen').style.display = 'none';
-                document.getElementById('gameScreen').style.display = 'block';
-                
-                // Resetear variables
-                currentLevel = 1;
-                score = 0;
-                lives = 3;
-                maxLevelReached = 1;
-                answeredQuestions.clear();
-                comodines = { fifty: true, change: true };
-                correctStreak = 0;
-                
-                console.log('📊 Variables reseteadas');
-                
-                // Actualizar UI
-                updateGameUI();
-                
-                console.log('🎨 UI actualizada');
-                
-                // Verificar que hay preguntas disponibles
-                if (!questionBank || questionBank.length === 0) {
-                    throw new Error('No hay preguntas disponibles');
-                }
-                
-                console.log('📚 Banco de preguntas cargado:', questionBank.length, 'preguntas');
-                
-                // Cargar primera pregunta
-                loadQuestion();
-                
-                console.log('✅ Juego iniciado exitosamente');
-                
-            } catch (error) {
-                console.error('❌ Error en initGame:', error);
-                alert('Error al inicializar el juego: ' + error.message);
-                
-                // Volver a la pantalla de inicio
-                document.getElementById('gameScreen').style.display = 'none';
-                document.getElementById('startScreen').style.display = 'block';
+            if (!confirm(confirmMessage)) {
+                return;
             }
-        }
-        
-        function updateGameUI() {
-            document.getElementById('currentLevel').textContent = currentLevel;
-            document.getElementById('currentScore').textContent = score;
-            document.getElementById('livesCount').textContent = lives;
             
-            // Actualizar estado de comodines
-            document.getElementById('fifty').classList.toggle('used', !comodines.fifty);
-            document.getElementById('change').classList.toggle('used', !comodines.change);
-        }
-        
-        function loadQuestion() {
+            // Registrar inicio de partida
             try {
-                console.log('📖 Cargando pregunta nivel', currentLevel);
-                
-                // Filtrar preguntas por nivel y no respondidas
-                const availableQuestions = questionBank.filter(q => 
-                    q.level === currentLevel && !answeredQuestions.has(questionBank.indexOf(q))
-                );
-                
-                console.log('❓ Preguntas disponibles:', availableQuestions.length);
-                
-                if (availableQuestions.length === 0) {
-                    // Si no hay más preguntas del nivel, buscar del nivel anterior o siguiente
-                    const alternativeQuestions = questionBank.filter(q => 
-                        Math.abs(q.level - currentLevel) <= 1 && !answeredQuestions.has(questionBank.indexOf(q))
-                    );
-                    
-                    console.log('🔄 Preguntas alternativas:', alternativeQuestions.length);
-                    
-                    if (alternativeQuestions.length > 0) {
-                        currentQuestion = alternativeQuestions[Math.floor(Math.random() * alternativeQuestions.length)];
-                    } else {
-                        // No hay más preguntas disponibles
-                        console.log('🏁 No hay más preguntas disponibles');
-                        endGame();
-                        return;
-                    }
-                } else {
-                    currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
-                }
-                
-                console.log('✅ Pregunta seleccionada:', currentQuestion.question.substring(0, 50) + '...');
-                
-                // Marcar pregunta como respondida
-                answeredQuestions.add(questionBank.indexOf(currentQuestion));
-                
-                // Mostrar pregunta
-                document.getElementById('questionText').textContent = currentQuestion.question;
-                
-                // Mezclar opciones
-                const options = [...currentQuestion.options];
-                const correctAnswer = options[currentQuestion.correct];
-                shuffledOptions = options.sort(() => Math.random() - 0.5);
-                const correctIndex = shuffledOptions.indexOf(correctAnswer);
-                currentQuestion.shuffledCorrect = correctIndex;
-                
-                // Mostrar opciones
-                const container = document.getElementById('optionsContainer');
-                container.innerHTML = '';
-                
-                shuffledOptions.forEach((option, index) => {
-                    const button = document.createElement('button');
-                    button.className = 'option';
-                    button.textContent = option;
-                    button.onclick = () => selectAnswer(index);
-                    container.appendChild(button);
+                gameStartId = database.ref('gameStarts').push().key;
+                await database.ref(`gameStarts/${gameStartId}`).set({
+                    cedula: id,
+                    pseudonimo: nickname,
+                    grupo: team,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    completed: false,
+                    currentLevel: 1,
+                    currentScore: 0
                 });
-                
-                // Resetear estado 50:50
-                eliminated5050 = false;
-                
-                console.log('⏱️ Iniciando timer...');
-                
-                // Iniciar timer
-                startTimer();
-                
             } catch (error) {
-                console.error('❌ Error en loadQuestion:', error);
-                alert('Error al cargar la pregunta: ' + error.message);
+                console.error('Error registrando inicio:', error);
             }
+            
+            // Inicializar juego
+            resetGameState();
+            showGameInterface();
+            loadNextQuestion();
+            
+            showNotification(`🎮 ¡${nickname} ha comenzado la competencia en ${teamDisplay}!`);
+        }
+        
+        function resetGameState() {
+            currentLevel = 1;
+            score = 0;
+            lives = 3;
+            maxLevelReached = 1;
+            answeredQuestions = new Set();
+            comodines = { fifty: true, change: true };
+            correctStreak = 0;
+            selectedOption = null;
+            eliminated5050 = false;
+        }
+        
+        function showGameInterface() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameInterface').style.display = 'block';
+            document.getElementById('resultScreen').style.display = 'none';
+            
+            updateGameDisplay();
+        }
+        
+        function updateGameDisplay() {
+            document.getElementById('gameLevel').textContent = currentLevel;
+            document.getElementById('gameScore').textContent = score;
+            
+            // Actualizar vidas
+            const heartsArray = Array(3).fill('🖤');
+            for (let i = 0; i < lives; i++) {
+                heartsArray[i] = '❤️';
+            }
+            document.getElementById('gameLives').textContent = heartsArray.join('');
+            
+            // Actualizar indicador de nivel
+            const levelName = getLevelName(currentLevel);
+            document.getElementById('levelIndicator').textContent = `Nivel ${currentLevel} - ${levelName}`;
+            
+            // Actualizar barra de progreso
+            const progress = (currentLevel / TOTAL_LEVELS) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            // Actualizar comodines
+            document.getElementById('comodin5050').className = comodines.fifty ? 'comodin' : 'comodin used';
+            document.getElementById('comodinChange').className = comodines.change ? 'comodin' : 'comodin used';
+        }
+        
+        function getLevelName(level) {
+            return LEVEL_CATEGORIES[level] ? LEVEL_CATEGORIES[level].name : "🛒 Vendedor de Globos";
+        }
+        
+        function getLevelConcept(level) {
+            return LEVEL_CATEGORIES[level] ? LEVEL_CATEGORIES[level].concept : "Algo salió mal en el universo cardiológico...";
+        }
+        
+        function getAutoAssignedGroup(cedula) {
+            if (FORO_PARTICIPANTS[cedula]) {
+                return FORO_PARTICIPANTS[cedula].grupo;
+            }
+            return 'INDIVIDUAL'; // Si no está en el foro, va como individual
+        }
+        
+        function getParticipantInfo(cedula) {
+            return FORO_PARTICIPANTS[cedula] || null;
+        }
+        
+        async function loadNextQuestion() {
+            if (questionBank.length === 0) {
+                await loadQuestionBank();
+            }
+            
+            // Filtrar preguntas del nivel actual que no han sido respondidas
+            const levelQuestions = questionBank.filter(q => 
+                q.level === currentLevel && !answeredQuestions.has(q.id)
+            );
+            
+            if (levelQuestions.length === 0) {
+                // Si no hay más preguntas de este nivel, usar cualquier pregunta disponible
+                const allQuestions = questionBank.filter(q => !answeredQuestions.has(q.id));
+                if (allQuestions.length === 0) {
+                    // Si no hay más preguntas, completar juego
+                    completeGame();
+                    return;
+                }
+                currentQuestion = allQuestions[Math.floor(Math.random() * allQuestions.length)];
+            } else {
+                currentQuestion = levelQuestions[Math.floor(Math.random() * levelQuestions.length)];
+            }
+            
+            // Marcar pregunta como respondida
+            answeredQuestions.add(currentQuestion.id);
+            
+            // Mostrar pregunta
+            displayQuestion();
+            startTimer();
+        }
+        
+        function displayQuestion() {
+            document.getElementById('questionText').textContent = currentQuestion.question;
+            
+            // Mezclar opciones
+            shuffledOptions = [...currentQuestion.options].sort(() => Math.random() - 0.5);
+            eliminated5050 = false;
+            selectedOption = null;
+            
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            
+            shuffledOptions.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = `${String.fromCharCode(65 + index)}. ${option.text}`;
+                optionDiv.onclick = () => selectOption(index, optionDiv);
+                container.appendChild(optionDiv);
+            });
+            
+            document.getElementById('confirmAnswer').disabled = true;
+        }
+        
+        function selectOption(index, element) {
+            // Limpiar selección anterior
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Seleccionar nueva opción
+            element.classList.add('selected');
+            selectedOption = index;
+            document.getElementById('confirmAnswer').disabled = false;
         }
         
         function startTimer() {
-            timeLeft = 30;
-            updateTimerDisplay();
-            
-            if (timerInterval) clearInterval(timerInterval);
+            timeLeft = TIMER_SECONDS;
+            updateTimer();
             
             timerInterval = setInterval(() => {
                 timeLeft--;
-                updateTimerDisplay();
+                updateTimer();
                 
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    handleTimeout();
+                    timeUp();
                 }
             }, 1000);
         }
         
-        function updateTimerDisplay() {
-            document.getElementById('timeLeft').textContent = timeLeft;
+        function updateTimer() {
+            const timerElement = document.getElementById('gameTimer');
+            timerElement.textContent = timeLeft;
             
-            // Cambiar color según tiempo restante
-            const timerElement = document.querySelector('.timer');
-            if (timeLeft <= 10) {
-                timerElement.style.color = '#ef4444';
-            } else if (timeLeft <= 20) {
-                timerElement.style.color = '#f59e0b';
+            if (timeLeft <= 5) {
+                timerElement.classList.add('warning');
             } else {
-                timerElement.style.color = '#60a5fa';
+                timerElement.classList.remove('warning');
             }
         }
         
-        function handleTimeout() {
-            // Marcar como incorrecta
-            const options = document.querySelectorAll('.option');
-            options[currentQuestion.shuffledCorrect].classList.add('correct');
-            
-            // Reducir vidas
-            lives--;
-            updateGameUI();
-            
-            // Mostrar mensaje
-            setTimeout(() => {
-                if (lives > 0) {
-                    alert(`⏱️ ¡Se acabó el tiempo! Te quedan ${lives} vidas.`);
-                    loadQuestion();
-                } else {
-                    endGame();
-                }
-            }, 1500);
+        function timeUp() {
+            showNotification('⏰ ¡Tiempo agotado!');
+            wrongAnswer();
         }
         
-        function selectAnswer(index) {
-            if (timerInterval) clearInterval(timerInterval);
+        function confirmAnswer() {
+            if (selectedOption === null) return;
             
+            clearInterval(timerInterval);
+            
+            const selected = shuffledOptions[selectedOption];
             const options = document.querySelectorAll('.option');
-            const selectedOption = options[index];
             
-            // Deshabilitar todas las opciones
-            options.forEach(opt => opt.style.pointerEvents = 'none');
-            
-            if (index === currentQuestion.shuffledCorrect) {
+            if (selected.correct) {
                 // Respuesta correcta
-                selectedOption.classList.add('correct');
-                correctStreak++;
-                
-                // Calcular puntaje con bonus por racha
-                const baseScore = currentLevel * 100;
-                const timeBonus = Math.floor((timeLeft / 30) * 50);
-                const streakBonus = correctStreak > 2 ? (correctStreak - 2) * 50 : 0;
-                const levelScore = baseScore + timeBonus + streakBonus;
-                
-                score += levelScore;
-                updateGameUI();
-                
-                setTimeout(() => {
-                    if (currentLevel < 15) {
-                        currentLevel++;
-                        maxLevelReached = Math.max(maxLevelReached, currentLevel);
-                        loadQuestion();
-                    } else {
-                        // Completó todos los niveles
-                        alert('🎉 ¡INCREÍBLE! ¡Has completado todos los niveles!');
-                        endGame();
-                    }
-                }, 1500);
+                options[selectedOption].classList.add('correct');
+                correctAnswer();
             } else {
                 // Respuesta incorrecta
-                selectedOption.classList.add('incorrect');
-                options[currentQuestion.shuffledCorrect].classList.add('correct');
-                correctStreak = 0;
+                options[selectedOption].classList.add('incorrect');
                 
-                lives--;
-                updateGameUI();
-                
-                setTimeout(() => {
-                    if (lives > 0) {
-                        alert(`❌ Respuesta incorrecta. Te quedan ${lives} vidas.`);
-                        loadQuestion();
-                    } else {
-                        endGame();
+                // Mostrar respuesta correcta
+                shuffledOptions.forEach((option, index) => {
+                    if (option.correct) {
+                        options[index].classList.add('correct');
                     }
-                }, 1500);
+                });
+                
+                wrongAnswer();
+            }
+            
+            // Deshabilitar todas las opciones
+            options.forEach(opt => {
+                opt.onclick = null;
+                opt.style.cursor = 'default';
+            });
+            
+            document.getElementById('confirmAnswer').disabled = true;
+        }
+        
+        function correctAnswer() {
+            correctStreak++;
+            
+            // Calcular puntaje
+            let points = SCORING_SYSTEM.BASE_POINTS;
+            
+            // Bonus por tiempo restante
+            if (timeLeft >= SCORING_SYSTEM.TIME_BONUS_THRESHOLD) {
+                points += SCORING_SYSTEM.TIME_BONUS_POINTS;
+                showNotification('⚡ +1 Bonus por velocidad!');
+            }
+            
+            // Bonus por nivel difícil
+            if (currentLevel >= SCORING_SYSTEM.HARD_LEVEL_THRESHOLD) {
+                points += SCORING_SYSTEM.HARD_LEVEL_BONUS;
+                showNotification('🔥 +1 Bonus por nivel difícil!');
+            }
+            
+            // Bonus por racha
+            if (correctStreak === 5) {
+                points += SCORING_SYSTEM.STREAK_BONUS_5;
+                showNotification('🎯 +3 Bonus por 5 seguidas!');
+            } else if (correctStreak === 10) {
+                points += SCORING_SYSTEM.STREAK_BONUS_10;
+                showNotification('🔥 +5 Bonus por 10 seguidas!');
+            }
+            
+            score += points;
+            currentLevel++;
+            maxLevelReached = Math.max(maxLevelReached, currentLevel);
+            
+            updateGameDisplay();
+            
+            setTimeout(() => {
+                if (currentLevel > TOTAL_LEVELS) {
+                    // Juego completo
+                    score += SCORING_SYSTEM.PERFECT_GAME_BONUS;
+                    showNotification('👑 +10 Bonus por juego perfecto!');
+                    completeGame();
+                } else {
+                    loadNextQuestion();
+                }
+            }, 2000);
+        }
+        
+        function wrongAnswer() {
+            correctStreak = 0;
+            lives--;
+            updateGameDisplay();
+            
+            if (lives <= 0) {
+                gameOver();
+            } else {
+                setTimeout(() => {
+                    loadNextQuestion();
+                }, 2000);
             }
         }
         
-        function useFiftyFifty() {
-            if (!comodines.fifty || eliminated5050) {
-                console.log('❌ 50:50 no disponible');
-                return;
-            }
-            
-            console.log('🎯 Usando 50:50...');
+        function use5050() {
+            if (!comodines.fifty || eliminated5050) return;
             
             comodines.fifty = false;
             eliminated5050 = true;
-            updateGameUI();
+            updateGameDisplay();
             
             const options = document.querySelectorAll('.option');
-            const correctIndex = currentQuestion.shuffledCorrect;
+            const incorrectOptions = [];
             
-            // Seleccionar 2 opciones incorrectas para eliminar
-            const incorrectIndices = [];
-            for (let i = 0; i < options.length; i++) {
-                if (i !== correctIndex) {
-                    incorrectIndices.push(i);
+            shuffledOptions.forEach((option, index) => {
+                if (!option.correct) {
+                    incorrectOptions.push(index);
                 }
-            }
+            });
             
-            // Mezclar y tomar 2
-            incorrectIndices.sort(() => Math.random() - 0.5);
-            const toEliminate = incorrectIndices.slice(0, 2);
+            // Eliminar 2 opciones incorrectas aleatoriamente
+            const toEliminate = incorrectOptions.sort(() => Math.random() - 0.5).slice(0, 2);
             
-            // Eliminar opciones
             toEliminate.forEach(index => {
                 options[index].classList.add('eliminated');
                 options[index].onclick = null;
             });
             
-            console.log('✅ 50:50 aplicado');
+            showNotification('🎯 50/50 usado - 2 opciones eliminadas');
         }
         
         function changeQuestion() {
-            if (!comodines.change) {
-                console.log('❌ Cambio de pregunta no disponible');
-                return;
-            }
-            
-            console.log('🔄 Cambiando pregunta...');
+            if (!comodines.change) return;
             
             comodines.change = false;
-            updateGameUI();
+            updateGameDisplay();
             
-            if (timerInterval) clearInterval(timerInterval);
+            clearInterval(timerInterval);
             
-            // Cargar nueva pregunta del mismo nivel
-            loadQuestion();
+            // Quitar la pregunta actual de las respondidas para poder obtener otra
+            answeredQuestions.delete(currentQuestion.id);
             
-            console.log('✅ Pregunta cambiada');
+            loadNextQuestion();
+            showNotification('🔄 Pregunta cambiada');
         }
         
-        async function endGame() {
+        async function completeGame() {
+            clearInterval(timerInterval);
+            
+            // Actualizar estado de partida
+            if (gameStartId) {
+                try {
+                    await database.ref(`gameStarts/${gameStartId}`).update({
+                        completed: true,
+                        finalLevel: currentLevel,
+                        finalScore: score
+                    });
+                } catch (error) {
+                    console.error('Error actualizando estado:', error);
+                }
+            }
+            
+            // Guardar resultado
+            await saveGameResult();
+            
+            // Mostrar pantalla de resultados
+            showResultScreen();
+        }
+        
+        function gameOver() {
+            completeGame();
+        }
+        
+        async function saveGameResult() {
             try {
-                console.log('🏁 Finalizando juego...');
-                
-                if (timerInterval) clearInterval(timerInterval);
-                
-                // Ocultar juego, mostrar resultados
-                document.getElementById('gameScreen').style.display = 'none';
-                document.getElementById('resultScreen').style.display = 'block';
-                
-                // Mostrar puntaje final
-                document.getElementById('finalScore').textContent = score;
-                document.getElementById('finalLevel').textContent = maxLevelReached;
-                
-                // Mensaje según el equipo
-                const teamResult = document.getElementById('teamResult');
-                if (currentPlayer.team === 'INDIVIDUAL') {
-                    teamResult.innerHTML = '🏆 Has participado en modalidad individual';
-                } else {
-                    teamResult.innerHTML = `👥 Tu puntaje contribuye al <strong>Grupo ${currentPlayer.team}</strong>`;
-                }
-                
-                // Si es modo demo, no guardar en Firebase
-                if (currentPlayer.name === 'Jugador Demo' || isOfflineMode) {
-                    console.log('🎮 Modo DEMO/Offline - No se guardan resultados');
-                    return;
-                }
-                
-                // Verificar conexión a Firebase antes de guardar
-                if (!database) {
-                    console.error('❌ Firebase no está disponible');
-                    alert('No se pudieron guardar los resultados (sin conexión)');
-                    return;
-                }
-                
-                console.log('💾 Guardando resultados...');
-                
-                // Guardar resultado
-                const resultId = database.ref('resultados').push().key;
-                await database.ref(`resultados/${resultId}`).set({
+                const resultData = {
                     nombre: currentPlayer.name,
                     pseudonimo: currentPlayer.nickname,
                     cedula: currentPlayer.id,
                     grupo: currentPlayer.team,
                     puntaje: score,
                     nivel: maxLevelReached,
+                    fecha: new Date().toLocaleDateString('es-UY'),
                     timestamp: firebase.database.ServerValue.TIMESTAMP,
-                    intento: playerAttempts + 1,
-                    esForoMiembro: validForumMembers[currentPlayer.id] ? true : false
-                });
+                    intentoNumero: playerAttempts + 1
+                };
                 
-                console.log('✅ Resultado guardado');
+                await database.ref('resultados').push(resultData);
                 
-                // Actualizar intentos del jugador
-                await database.ref(`jugadores/${currentPlayer.id}`).update({
-                    nombre: currentPlayer.name,
-                    pseudonimo: currentPlayer.nickname,
-                    intentos: playerAttempts + 1,
-                    mejorPuntaje: score,
-                    mejorNivel: maxLevelReached,
-                    ultimoIntento: firebase.database.ServerValue.TIMESTAMP
-                });
-                
-                console.log('✅ Intentos actualizados');
-                
-                // Actualizar estadísticas del equipo si no es individual
-                if (currentPlayer.team !== 'INDIVIDUAL') {
-                    await database.ref(`equipos/${currentPlayer.team}/participantes/${currentPlayer.id}`).set({
-                        nombre: currentPlayer.nickname,
-                        puntaje: score,
-                        nivel: maxLevelReached
-                    });
-                }
-                
-                // Marcar juego como completado
-                if (gameStartId) {
-                    await database.ref(`gameStarts/${gameStartId}`).update({
-                        completado: true,
-                        puntajeFinal: score,
-                        nivelFinal: maxLevelReached,
-                        timestampFin: firebase.database.ServerValue.TIMESTAMP
-                    });
-                }
-                
-                // Actualizar estado online
-                if (currentSessionId) {
-                    await database.ref(`analytics/onlinePlayers/${currentSessionId}`).update({
-                        status: 'finished',
-                        score: score
-                    });
-                }
-                
-                console.log('✅ Todos los datos guardados exitosamente');
+                showNotification(`🎉 Resultado guardado: ${currentPlayer.nickname} - ${score} puntos`);
                 
             } catch (error) {
-                console.error('❌ Error en endGame:', error);
-                alert('Error al guardar los resultados. Tu puntaje es: ' + score);
+                console.error('Error guardando resultado:', error);
+                showNotification('❌ Error guardando resultado', 3000);
             }
         }
         
-        // Funciones de rankings y dashboard
+        function showResultScreen() {
+            document.getElementById('gameInterface').style.display = 'none';
+            document.getElementById('resultScreen').style.display = 'block';
+            
+            const resultTitle = document.getElementById('resultTitle');
+            const finalStats = document.getElementById('finalStats');
+            
+            // Obtener categoría y concepto del nivel alcanzado
+            const levelCategory = getLevelName(maxLevelReached);
+            const levelConcept = getLevelConcept(maxLevelReached);
+            
+            if (currentLevel > TOTAL_LEVELS) {
+                resultTitle.textContent = '👑 ¡PERFECTO!';
+                resultTitle.className = 'result-title success';
+            } else if (maxLevelReached >= 25) {
+                resultTitle.textContent = '🌟 ¡EXCEPCIONAL!';
+                resultTitle.className = 'result-title success';
+            } else if (maxLevelReached >= 20) {
+                resultTitle.textContent = '🥇 ¡EXCELENTE!';
+                resultTitle.className = 'result-title success';
+            } else if (maxLevelReached >= 15) {
+                resultTitle.textContent = '🥈 ¡MUY BIEN!';
+                resultTitle.className = 'result-title success';
+            } else if (maxLevelReached >= 10) {
+                resultTitle.textContent = '🥉 ¡BIEN!';
+                resultTitle.className = 'result-title success';
+            } else {
+                resultTitle.textContent = '📚 ¡A SEGUIR ESTUDIANDO!';
+                resultTitle.className = 'result-title failure';
+            }
+            
+            finalStats.innerHTML = `
+                <div class="stats-row">
+                    <span class="stats-label">Pseudónimo:</span>
+                    <span class="stats-value">${currentPlayer.nickname}</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">Modalidad:</span>
+                    <span class="stats-value">${currentPlayer.team === 'INDIVIDUAL' ? 'Individual' : 'Grupo ' + currentPlayer.team}</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">Puntaje Final:</span>
+                    <span class="stats-value">${score} puntos</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">Nivel Alcanzado:</span>
+                    <span class="stats-value">${maxLevelReached} / ${TOTAL_LEVELS}</span>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">Categoría:</span>
+                    <span class="stats-value" style="font-size: 1rem;">${levelCategory}</span>
+                </div>
+                <div style="background: rgba(30, 41, 59, 0.4); border-radius: 8px; padding: 16px; margin: 16px 0; border: 1px solid rgba(59, 130, 246, 0.2);">
+                    <div style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 8px; font-weight: 600;">💭 Concepto de tu nivel:</div>
+                    <div style="color: #e2e8f0; font-style: italic; line-height: 1.4;">"${levelConcept}"</div>
+                </div>
+                <div class="stats-row">
+                    <span class="stats-label">Intento:</span>
+                    <span class="stats-value">${playerAttempts + 1} / ${MAX_ATTEMPTS}</span>
+                </div>
+                ${currentPlayer.foroName ? `
+                <div class="stats-row">
+                    <span class="stats-label">Registrado como:</span>
+                    <span class="stats-value" style="font-size: 0.875rem;">${currentPlayer.foroName}</span>
+                </div>
+                ` : ''}
+            `;
+        }
+        
+        function restartGame() {
+            if (playerAttempts + 1 >= MAX_ATTEMPTS) {
+                alert(`Has usado todos tus ${MAX_ATTEMPTS} intentos permitidos`);
+                goToDashboard();
+                return;
+            }
+            
+            resetGameInterface();
+        }
+        
+        function resetGameInterface() {
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('gameInterface').style.display = 'none';
+            document.getElementById('resultScreen').style.display = 'none';
+            
+            // Limpiar información del participante
+            document.getElementById('participantInfo').style.display = 'none';
+            
+            // Limpiar formulario si es necesario
+            if (playerAttempts + 1 >= MAX_ATTEMPTS) {
+                document.getElementById('playerName').value = '';
+                document.getElementById('playerNickname').value = '';
+                document.getElementById('playerId').value = '';
+                document.getElementById('participantInfo').style.display = 'none';
+            }
+        }
+        
+        function quitGame() {
+            if (confirm('¿Estás seguro de que querés abandonar el juego?')) {
+                clearInterval(timerInterval);
+                saveGameResult();
+                goToDashboard();
+            }
+        }
+        
+        function goToDashboard() {
+            showTab('dashboard');
+        }
+        
+        // Funciones del dashboard (mantener las existentes)
+        async function loadDashboard() {
+            updateDashboardStats();
+            updateTeamRankings();
+            updateVisitCounters();
+            updateOnlineCount();
+            updateLastUpdate();
+        }
+        
         async function loadIndividualRanking() {
             try {
                 const snapshot = await database.ref('resultados').once('value');
@@ -2027,7 +1988,7 @@ Contactá al administrador para solucionar este problema.
                 
                 const resultsArray = Object.values(results);
                 
-                // Obtener mejor resultado por jugador
+                // Obtener mejor resultado por jugador (por cédula)
                 const uniqueResults = new Map();
                 resultsArray.forEach(result => {
                     const existing = uniqueResults.get(result.cedula);
@@ -2053,13 +2014,12 @@ Contactá al administrador para solucionar este problema.
                     topResults.forEach((result, index) => {
                         const displayName = result.pseudonimo || result.nombre;
                         const teamDisplay = result.grupo === 'INDIVIDUAL' ? 'Individual' : `Grupo ${result.grupo}`;
-                        const isForumMember = result.esForoMiembro ? '<span class="forum-badge">Miembro Foro</span>' : '';
                         
                         html += `
                             <div style="display: grid; grid-template-columns: 50px 2fr auto auto auto; gap: 16px; padding: 16px; background: rgba(15, 23, 42, 0.6); border-radius: 12px; align-items: center;">
                                 <div style="font-size: 1.5rem; font-weight: 700; color: #60a5fa; text-align: center; font-family: 'JetBrains Mono', monospace;">${index + 1}</div>
                                 <div>
-                                    <div style="font-weight: 600; color: #e2e8f0;">${displayName}${isForumMember}</div>
+                                    <div style="font-weight: 600; color: #e2e8f0;">${displayName}</div>
                                 </div>
                                 <div style="padding: 4px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; ${result.grupo === 'INDIVIDUAL' ? 'background: rgba(139, 92, 246, 0.2); color: #8b5cf6;' : 'background: rgba(59, 130, 246, 0.2); color: #3b82f6;'}">${teamDisplay}</div>
                                 <div style="font-family: 'JetBrains Mono', monospace; color: #3b82f6; font-weight: 600;">${result.puntaje} pts</div>
@@ -2144,10 +2104,9 @@ Contactá al administrador para solucionar este problema.
                     let playersHTML = '';
                     players.slice(0, 10).forEach((player, index) => {
                         const displayName = player.pseudonimo || player.nombre;
-                        const isForumMember = player.esForoMiembro ? ' 🏛️' : '';
                         playersHTML += `
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; margin: 4px 0; background: rgba(30, 41, 59, 0.4); border-radius: 8px; font-size: 0.875rem;">
-                                <span>${index + 1}. ${displayName}${isForumMember}</span>
+                                <span>${index + 1}. ${displayName}</span>
                                 <span>${player.puntaje} pts - Nv.${player.nivel}</span>
                             </div>
                         `;
@@ -2184,18 +2143,8 @@ Contactá al administrador para solucionar este problema.
             }
         }
         
-        function loadDashboard() {
-            updateDashboardStats();
-            updateTeamRankings();
-            updateVisitCounters();
-            updateOnlineCount();
-            updateLastUpdate();
-        }
-        
-        // Funciones Firebase
+        // Funciones Firebase reales
         async function recordVisit() {
-            if (!database) return;
-            
             try {
                 const today = new Date().toDateString();
                 const timestamp = Date.now();
@@ -2216,8 +2165,6 @@ Contactá al administrador para solucionar este problema.
         }
         
         async function trackOnlinePlayer() {
-            if (!database) return;
-            
             try {
                 const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                 currentSessionId = sessionId;
@@ -2235,8 +2182,6 @@ Contactá al administrador para solucionar este problema.
         }
         
         function setupFirebaseListeners() {
-            if (!database) return;
-            
             database.ref('resultados').on('value', (snapshot) => {
                 updateDashboardStats();
                 updateTeamRankings();
@@ -2422,82 +2367,66 @@ Contactá al administrador para solucionar este problema.
         
         async function loadAdminData() {
             try {
-                const resultsSnapshot = await database.ref('resultados').once('value');
-                const results = resultsSnapshot.val();
+                const snapshot = await database.ref('resultados').once('value');
+                const results = snapshot.val();
                 
-                const gameStartsSnapshot = await database.ref('gameStarts').once('value');
-                const gameStarts = gameStartsSnapshot.val();
+                if (!results) {
+                    document.getElementById('adminTable').innerHTML = '<p>No hay datos de participantes</p>';
+                    return;
+                }
                 
-                let html = '<h4>📊 Resumen de Actividad</h4>';
+                const resultsArray = Object.values(results);
                 
-                if (results) {
-                    const resultsArray = Object.values(results);
-                    const gameStartsArray = gameStarts ? Object.values(gameStarts) : [];
-                    
-                    const completedGames = gameStartsArray.filter(g => g.completado).length;
-                    const completionRate = gameStartsArray.length > 0 ? 
-                        Math.round((completedGames / gameStartsArray.length) * 100) : 0;
-                    
-                    html += `
-                        <p>Partidas iniciadas: ${gameStartsArray.length}</p>
-                        <p>Partidas completadas: ${completedGames}</p>
-                        <p>Tasa de finalización: ${completionRate}%</p>
-                        <h4 style="margin-top: 20px;">📋 Últimos 20 resultados:</h4>
-                        <div style="overflow-x: auto;">
-                            <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
-                                <thead>
-                                    <tr style="background: rgba(59, 130, 246, 0.2);">
-                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Fecha</th>
-                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Nombre</th>
-                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Pseudónimo</th>
-                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Cédula</th>
-                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Grupo</th>
-                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Puntaje</th>
-                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Nivel</th>
-                                        <th style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">Intento</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                    `;
-                    
-                    // Ordenar por timestamp descendente
-                    resultsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                    
-                    resultsArray.slice(0, 20).forEach(result => {
-                        const date = result.timestamp ? 
-                            new Date(result.timestamp).toLocaleString('es-UY') : 'N/A';
-                        
+                let html = `
+                    <h4>📊 Resumen de Actividad</h4>
+                    <p>Total de partidas completadas: ${resultsArray.length}</p>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <thead>
+                            <tr style="background: rgba(59, 130, 246, 0.2);">
+                                <th style="padding: 8px; border: 1px solid #3b82f6;">Fecha</th>
+                                <th style="padding: 8px; border: 1px solid #3b82f6;">Nombre Real</th>
+                                <th style="padding: 8px; border: 1px solid #3b82f6;">Pseudónimo</th>
+                                <th style="padding: 8px; border: 1px solid #3b82f6;">Cédula</th>
+                                <th style="padding: 8px; border: 1px solid #3b82f6;">Modalidad</th>
+                                <th style="padding: 8px; border: 1px solid #3b82f6;">Puntaje</th>
+                                <th style="padding: 8px; border: 1px solid #3b82f6;">Nivel</th>
+                                <th style="padding: 8px; border: 1px solid #3b82f6;">Intento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                resultsArray
+                    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+                    .forEach(result => {
                         html += `
                             <tr>
-                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${date}</td>
-                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.nombre}</td>
-                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.pseudonimo}</td>
-                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.cedula}</td>
-                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.grupo}</td>
-                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.puntaje}</td>
-                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.nivel}</td>
-                                <td style="padding: 8px; border: 1px solid rgba(59, 130, 246, 0.3);">${result.intento || 1}</td>
+                                <td style="padding: 6px; border: 1px solid #64748b; font-size: 0.875rem;">${result.fecha || 'N/A'}</td>
+                                <td style="padding: 6px; border: 1px solid #64748b;">${result.nombre}</td>
+                                <td style="padding: 6px; border: 1px solid #64748b;">${result.pseudonimo}</td>
+                                <td style="padding: 6px; border: 1px solid #64748b; font-family: monospace;">${result.cedula}</td>
+                                <td style="padding: 6px; border: 1px solid #64748b;">${result.grupo === 'INDIVIDUAL' ? 'Individual' : 'Grupo ' + result.grupo}</td>
+                                <td style="padding: 6px; border: 1px solid #64748b; font-weight: bold; color: #3b82f6;">${result.puntaje}</td>
+                                <td style="padding: 6px; border: 1px solid #64748b;">${result.nivel}</td>
+                                <td style="padding: 6px; border: 1px solid #64748b;">${result.intentoNumero || 1}</td>
                             </tr>
                         `;
                     });
-                    
-                    html += '</tbody></table></div>';
-                } else {
-                    html += '<p>No hay datos disponibles aún.</p>';
-                }
+                
+                html += '</tbody></table>';
                 
                 document.getElementById('adminTable').innerHTML = html;
                 
             } catch (error) {
                 console.error('Error loading admin data:', error);
-                document.getElementById('adminTable').innerHTML = '<p>Error cargando datos administrativos.</p>';
+                document.getElementById('adminTable').innerHTML = '<p>Error cargando datos</p>';
             }
         }
         
         async function exportAdminData() {
             try {
-                const resultsSnapshot = await database.ref('resultados').once('value');
-                const results = resultsSnapshot.val();
+                const snapshot = await database.ref('resultados').once('value');
+                const results = snapshot.val();
                 
                 if (!results) {
                     alert('No hay datos para exportar');
@@ -2507,22 +2436,22 @@ Contactá al administrador para solucionar este problema.
                 const resultsArray = Object.values(results);
                 
                 // Crear CSV
-                let csv = 'Fecha,Nombre,Pseudonimo,Cedula,Grupo,Puntaje,Nivel,Intento,EsMiembroForo\n';
+                let csv = 'Fecha,Nombre Real,Pseudónimo,Cédula,Modalidad,Puntaje,Nivel,Intento\n';
                 
                 resultsArray.forEach(result => {
-                    const date = result.timestamp ? 
-                        new Date(result.timestamp).toLocaleString('es-UY') : 'N/A';
-                    const esMiembro = result.esForoMiembro ? 'SI' : 'NO';
-                    
-                    csv += `"${date}","${result.nombre}","${result.pseudonimo}","${result.cedula}","${result.grupo}",${result.puntaje},${result.nivel},${result.intento || 1},"${esMiembro}"\n`;
+                    csv += `"${result.fecha || 'N/A'}","${result.nombre}","${result.pseudonimo}","${result.cedula}","${result.grupo === 'INDIVIDUAL' ? 'Individual' : 'Grupo ' + result.grupo}","${result.puntaje}","${result.nivel}","${result.intentoNumero || 1}"\n`;
                 });
                 
                 // Descargar archivo
                 const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `cardiologia_game_export_${new Date().toISOString().split('T')[0]}.csv`;
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `cardiologia_resultados_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
                 link.click();
+                document.body.removeChild(link);
                 
             } catch (error) {
                 console.error('Error exporting data:', error);
@@ -2531,34 +2460,37 @@ Contactá al administrador para solucionar este problema.
         }
         
         async function clearAllData() {
-            if (!confirm('¿Estás seguro de que quieres eliminar TODOS los datos?')) {
+            if (!confirm('¿Estás seguro de que quieres eliminar TODOS los datos? Esta acción no se puede deshacer.')) {
                 return;
             }
             
-            if (!confirm('Esta acción es IRREVERSIBLE. ¿Estás completamente seguro?')) {
-                return;
-            }
-            
-            const confirmText = prompt('Escribe "BORRAR TODO" para confirmar:');
-            if (confirmText !== 'BORRAR TODO') {
-                alert('Operación cancelada');
+            if (!confirm('Esta acción eliminará todos los resultados y estadísticas. ¿Continuar?')) {
                 return;
             }
             
             try {
                 await database.ref('resultados').remove();
-                await database.ref('jugadores').remove();
-                await database.ref('equipos').remove();
                 await database.ref('gameStarts').remove();
-                await database.ref('analytics/dailyVisits').remove();
-                await database.ref('analytics/totalVisits').set(0);
+                await database.ref('analytics').remove();
                 
                 alert('Todos los datos han sido eliminados');
-                location.reload();
+                loadAdminData();
+                
             } catch (error) {
                 console.error('Error clearing data:', error);
                 alert('Error al eliminar datos');
             }
+        }
+        
+        // Sistema de notificaciones
+        function showNotification(message, duration = 3000) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, duration);
         }
         
         function handleMissingLogos() {
@@ -2572,96 +2504,11 @@ Contactá al administrador para solucionar este problema.
             });
         }
         
-        // Verificar elementos del formulario al cargar
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📄 DOM cargado');
-            
-            // Verificar que todos los elementos necesarios existan
-            const requiredElements = [
-                'playerName', 'playerNickname', 'playerId', 'playerTeam',
-                'startScreen', 'gameScreen', 'resultScreen', 'questionText',
-                'optionsContainer', 'currentLevel', 'currentScore', 'livesCount',
-                'timeLeft', 'finalScore', 'finalLevel'
-            ];
-            
-            let allElementsFound = true;
-            requiredElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (!element) {
-                    console.error(`❌ Elemento faltante: ${id}`);
-                    allElementsFound = false;
-                } else {
-                    console.log(`✅ Elemento encontrado: ${id}`);
-                }
-            });
-            
-            if (!allElementsFound) {
-                alert('Error: Algunos elementos del juego no se cargaron correctamente. Por favor, recargá la página.');
-            }
-        });
-        
         // Inicialización
         window.addEventListener('load', async function() {
             try {
-                console.log('🚀 Iniciando aplicación...');
-                
-                // Verificar que Firebase esté cargado
-                if (typeof firebase === 'undefined') {
-                    throw new Error('Firebase SDK no está cargado');
-                }
-                
-                console.log('✅ Firebase SDK detectado');
-                
-                if (database) {
-                    // Verificar permisos
-                    const hasPermissions = await checkFirebasePermissions();
-                    
-                    if (!hasPermissions) {
-                        console.warn('⚠️ Firebase no tiene permisos correctos');
-                        
-                        // Mostrar instrucciones para el administrador
-                        const adminNote = document.createElement('div');
-                        adminNote.style.cssText = 'background: rgba(251, 191, 36, 0.2); border: 2px solid rgba(251, 191, 36, 0.4); border-radius: 12px; padding: 16px; margin: 20px auto; max-width: 600px; color: #fbbf24;';
-                        adminNote.innerHTML = `
-                            <h3 style="margin-bottom: 8px;">⚠️ Configuración necesaria</h3>
-                            <p style="margin-bottom: 12px;">Las reglas de Firebase necesitan actualizarse. Agregá estas reglas en Firebase Console:</p>
-                            <pre style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 0.875rem;">
-{
-  "rules": {
-    ".read": true,
-    ".write": true
-  }
-}</pre>
-                            <p style="margin-top: 12px; font-size: 0.875rem;">Mientras tanto, podés usar el <strong>MODO DEMO</strong> para jugar.</p>
-                        `;
-                        document.querySelector('.container').insertBefore(adminNote, document.querySelector('.nav-tabs'));
-                    }
-                }
-                
-                // Agregar indicador de estado de conexión
-                const statusIndicator = document.createElement('div');
-                statusIndicator.id = 'connectionStatus';
-                statusIndicator.style.cssText = 'position: fixed; bottom: 10px; right: 10px; padding: 8px 16px; border-radius: 8px; font-size: 0.875rem; z-index: 1000;';
-                statusIndicator.innerHTML = '🔄 Conectando...';
-                statusIndicator.style.background = 'rgba(251, 191, 36, 0.2)';
-                statusIndicator.style.color = '#fbbf24';
-                document.body.appendChild(statusIndicator);
-                
-                // Verificar conexión a Firebase
-                database.ref('.info/connected').on('value', (snapshot) => {
-                    const connected = snapshot.val();
-                    console.log('🌐 Estado de conexión Firebase:', connected);
-                    
-                    if (connected) {
-                        statusIndicator.innerHTML = '✅ Conectado';
-                        statusIndicator.style.background = 'rgba(34, 197, 94, 0.2)';
-                        statusIndicator.style.color = '#22c55e';
-                    } else {
-                        statusIndicator.innerHTML = '❌ Sin conexión';
-                        statusIndicator.style.background = 'rgba(220, 38, 38, 0.2)';
-                        statusIndicator.style.color = '#dc2626';
-                    }
-                });
+                // Cargar banco de preguntas
+                await loadQuestionBank();
                 
                 // Registrar visita
                 await recordVisit();
@@ -2683,21 +2530,10 @@ Contactá al administrador para solucionar este problema.
                     updateLastUpdate();
                 }, 60000); // Cada minuto
                 
-                console.log('✅ Juego de Cardiología - Sistema completo activo');
-                console.log('📊 Grupos del foro validados:', Object.keys(validForumMembers).length, 'cédulas');
+                console.log('✅ Juego de Cardiología - Sistema Completo Iniciado');
                 
             } catch (error) {
-                console.error('❌ Error crítico en inicialización:', error);
-                console.error('Stack trace:', error.stack);
-                
-                // Mostrar mensaje de error al usuario
-                const errorBanner = document.createElement('div');
-                errorBanner.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; background: rgba(220, 38, 38, 0.9); color: white; padding: 16px; text-align: center; z-index: 9999;';
-                errorBanner.innerHTML = `
-                    ⚠️ Error de inicialización: ${error.message}<br>
-                    <small>Podés usar el MODO DEMO mientras se soluciona el problema</small>
-                `;
-                document.body.prepend(errorBanner);
+                console.error('Error en inicialización:', error);
                 
                 // Si falla Firebase, mostrar datos por defecto
                 document.getElementById('totalJugadores').textContent = '0';
@@ -2709,9 +2545,102 @@ Contactá al administrador para solucionar este problema.
                 document.getElementById('visitCount').textContent = '-';
                 document.getElementById('onlinePlayers').textContent = '-';
                 
-                document.getElementById('teamRankings').innerHTML = '<div class="loading">Error de conexión. Usa el MODO DEMO para jugar.</div>';
+                document.getElementById('teamRankings').innerHTML = '<div class="loading">Error de conexión. Verifica tu internet.</div>';
+                
+                showNotification('⚠️ Error de conexión. Algunas funciones pueden no estar disponibles.', 5000);
             }
         });
+        
+        // Detectar cuando el usuario sale de la página
+        window.addEventListener('beforeunload', function() {
+            if (currentSessionId) {
+                // Marcar sesión como finalizada
+                database.ref(`analytics/onlinePlayers/${currentSessionId}`).remove();
+            }
+        });
+        
+        // Manejo de errores globales
+        window.addEventListener('error', function(e) {
+            console.error('Error global:', e.error);
+            showNotification('❌ Error inesperado. Recarga la página si persiste.', 3000);
+        });
+        
+        // Funciones de utilidad adicionales
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            return new Date(timestamp).toLocaleDateString('es-UY', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        function sanitizeInput(input) {
+            return input.trim().replace(/[<>\"'&]/g, '');
+        }
+        
+        function generateSessionId() {
+            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Debug: Función para desarrolladores
+        function debugGameState() {
+            console.log('=== ESTADO DEL JUEGO ===');
+            console.log('Jugador actual:', currentPlayer);
+            console.log('Nivel:', currentLevel);
+            console.log('Puntaje:', score);
+            console.log('Vidas:', lives);
+            console.log('Pregunta actual:', currentQuestion?.id);
+            console.log('Preguntas respondidas:', answeredQuestions.size);
+            console.log('Comodines:', comodines);
+            console.log('Banco de preguntas:', questionBank.length);
+            console.log('========================');
+        }
+        
+        // Hacer disponible para debugging
+        window.debugGameState = debugGameState;
+        
+        // Mensaje de créditos en consola
+        console.log(`
+    🏥 ¿QUIÉN QUIERE SER CARDIÓLOGO?
+    ================================
+    
+    📱 CREADO Y PRODUCIDO POR: RAFAEL MILA
+    📧 Email: r1000a@gmail.com
+    
+    🏥 Desarrollado para:
+    - Centro Cardiovascular Universitario  
+    - Unidad Académica de Cardiología
+    
+    📋 Especialidad: Miocardiopatías Infiltrativas
+    🔢 Versión: 2.0.0 - Edición Completa
+    📅 Año: 2025
+    
+    ✨ NUEVA VERSIÓN - Sistema completo con:
+    ✅ 30 niveles únicos de progresión
+    ✅ 30 categorías graciosas (Vendedor de Globos → Maestro del Universo)
+    ✅ Conceptos personalizados por nivel
+    ✅ Asignación automática de grupos del foro
+    ✅ Sistema de puntaje avanzado con bonificaciones
+    ✅ Comodines funcionales (50/50 y Cambiar Pregunta)
+    ✅ Rankings en tiempo real (individual y equipos)
+    ✅ Panel de administración completo
+    ✅ Analytics avanzado con métricas en vivo
+    ✅ Soporte para banco de preguntas JSON externo
+    ✅ Integración con Excel de participantes del foro
+    
+    👥 Grupos del foro detectados automáticamente:
+    - Grupo A: 42 participantes
+    - Grupo B: 39 participantes  
+    - Grupo C: 41 participantes
+    - Individual: Resto de participantes
+    
+    🛠️ Para soporte técnico: r1000a@gmail.com
+    
+    🎓 ¡Que comience la competencia cardiológica!
+        `);
     </script>
 </body>
 </html>
