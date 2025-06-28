@@ -988,7 +988,13 @@
                 
                 <div id="intentosMessage" style="display: none; color: #f59e0b; margin: 20px 0; font-weight: bold;"></div>
                 
-                <button class="btn" onclick="startGame()">🚀 COMENZAR COMPETENCIA</button>
+                <button class="btn" id="startGameBtn" onclick="startGame()">🚀 COMENZAR COMPETENCIA</button>
+                
+                <div id="questionsStatus" style="margin-top: 20px; padding: 12px; border-radius: 8px; text-align: center; font-size: 0.875rem;">
+                    <div id="questionsLoading" style="color: #f59e0b;">📚 Cargando banco de preguntas...</div>
+                    <div id="questionsError" style="display: none; color: #ef4444;">❌ Error cargando preguntas. Verifica questions_bank.json</div>
+                    <div id="questionsSuccess" style="display: none; color: #22c55e;">✅ Banco de preguntas cargado correctamente</div>
+                </div>
             </div>
             
             <!-- Interfaz del juego -->
@@ -1293,59 +1299,68 @@
         
         // Cargar banco de preguntas
         async function loadQuestionBank() {
+            const loadingDiv = document.getElementById('questionsLoading');
+            const errorDiv = document.getElementById('questionsError');
+            const successDiv = document.getElementById('questionsSuccess');
+            const startBtn = document.getElementById('startGameBtn');
+            
             try {
+                // Mostrar estado de carga
+                if (loadingDiv) loadingDiv.style.display = 'block';
+                if (errorDiv) errorDiv.style.display = 'none';
+                if (successDiv) successDiv.style.display = 'none';
+                if (startBtn) startBtn.disabled = true;
+                
                 const response = await fetch('questions_bank.json');
                 if (!response.ok) {
-                    throw new Error('No se pudo cargar el banco de preguntas');
+                    throw new Error(`Error HTTP: ${response.status} - No se pudo cargar questions_bank.json`);
                 }
-                questionBank = await response.json();
+                
+                const data = await response.json();
+                
+                if (!Array.isArray(data) || data.length === 0) {
+                    throw new Error('El archivo questions_bank.json está vacío o no es un array válido');
+                }
+                
+                questionBank = data;
                 console.log(`✅ Banco de preguntas cargado: ${questionBank.length} preguntas`);
+                
+                // Validar estructura de preguntas
+                const invalidQuestions = questionBank.filter(q => 
+                    !q.id || !q.level || !q.question || !q.options || 
+                    !Array.isArray(q.options) || q.options.length !== 4 ||
+                    !q.options.some(opt => opt.correct === true)
+                );
+                
+                if (invalidQuestions.length > 0) {
+                    console.warn(`⚠️ ${invalidQuestions.length} preguntas con formato inválido encontradas`);
+                }
+                
+                // Mostrar éxito
+                if (loadingDiv) loadingDiv.style.display = 'none';
+                if (successDiv) {
+                    successDiv.style.display = 'block';
+                    successDiv.textContent = `✅ ${questionBank.length} preguntas cargadas correctamente`;
+                }
+                if (startBtn) startBtn.disabled = false;
+                
             } catch (error) {
-                console.error('Error cargando preguntas:', error);
-                // Usar preguntas de ejemplo si no se puede cargar el JSON
-                questionBank = getExampleQuestions();
-                showNotification('⚠️ Usando preguntas de ejemplo. Cargar questions_bank.json para contenido completo.', 5000);
+                console.error('❌ Error cargando banco de preguntas:', error);
+                
+                // Mostrar error
+                if (loadingDiv) loadingDiv.style.display = 'none';
+                if (errorDiv) {
+                    errorDiv.style.display = 'block';
+                    errorDiv.textContent = `❌ ${error.message}`;
+                }
+                if (startBtn) {
+                    startBtn.disabled = true;
+                    startBtn.textContent = '❌ No se pueden cargar preguntas';
+                }
+                
+                questionBank = [];
+                throw error;
             }
-        }
-        
-        // Preguntas de ejemplo para demostración
-        function getExampleQuestions() {
-            return [
-                {
-                    id: "ejemplo_001",
-                    level: 1,
-                    question: "¿Cuál es la principal característica de las miocardiopatías infiltrativas?",
-                    options: [
-                        {"text": "Deposición de sustancias anormales en el miocardio", "correct": true},
-                        {"text": "Dilatación ventricular exclusiva", "correct": false},
-                        {"text": "Hipertrofia concéntrica solamente", "correct": false},
-                        {"text": "Arritmias ventriculares aisladas", "correct": false}
-                    ]
-                },
-                {
-                    id: "ejemplo_002",
-                    level: 2,
-                    question: "La amiloidosis cardíaca se caracteriza por:",
-                    options: [
-                        {"text": "Deposición de proteínas fibrilares", "correct": true},
-                        {"text": "Acumulación de hierro", "correct": false},
-                        {"text": "Infiltración grasa", "correct": false},
-                        {"text": "Fibrosis miocárdica simple", "correct": false}
-                    ]
-                },
-                // Agregar más preguntas de ejemplo para cada nivel
-                ...Array.from({length: 28}, (_, i) => ({
-                    id: `ejemplo_${String(i + 3).padStart(3, '0')}`,
-                    level: Math.floor((i + 3) / 1) + 1,
-                    question: `Pregunta de ejemplo para nivel ${Math.floor((i + 3) / 1) + 1} sobre miocardiopatías infiltrativas`,
-                    options: [
-                        {"text": "Opción correcta", "correct": true},
-                        {"text": "Opción incorrecta 1", "correct": false},
-                        {"text": "Opción incorrecta 2", "correct": false},
-                        {"text": "Opción incorrecta 3", "correct": false}
-                    ]
-                }))
-            ];
         }
         
         // Funciones de navegación
@@ -1473,6 +1488,12 @@
                 foroName: participantInfo ? participantInfo.nombre : null
             };
             
+            // Verificar que las preguntas estén cargadas antes de iniciar
+            if (questionBank.length === 0) {
+                alert('❌ Error: No se pueden cargar las preguntas. Verifica que el archivo questions_bank.json existe y es válido.');
+                return;
+            }
+            
             // Mostrar mensaje de confirmación
             const teamDisplay = team === 'INDIVIDUAL' ? 'Individual' : `Grupo ${team}`;
             const confirmMessage = participantInfo 
@@ -1571,8 +1592,11 @@
         }
         
         async function loadNextQuestion() {
+            // Verificar que el banco de preguntas esté cargado
             if (questionBank.length === 0) {
-                await loadQuestionBank();
+                showNotification('❌ Error: No hay preguntas disponibles. Verifica questions_bank.json', 5000);
+                gameOver();
+                return;
             }
             
             // Filtrar preguntas del nivel actual que no han sido respondidas
@@ -1581,14 +1605,29 @@
             );
             
             if (levelQuestions.length === 0) {
-                // Si no hay más preguntas de este nivel, usar cualquier pregunta disponible
-                const allQuestions = questionBank.filter(q => !answeredQuestions.has(q.id));
-                if (allQuestions.length === 0) {
-                    // Si no hay más preguntas, completar juego
+                // Si no hay más preguntas de este nivel, buscar en niveles cercanos
+                const nearbyLevels = [currentLevel - 1, currentLevel + 1, currentLevel - 2, currentLevel + 2]
+                    .filter(level => level >= 1 && level <= TOTAL_LEVELS);
+                
+                let foundQuestion = null;
+                for (const level of nearbyLevels) {
+                    const availableQuestions = questionBank.filter(q => 
+                        q.level === level && !answeredQuestions.has(q.id)
+                    );
+                    if (availableQuestions.length > 0) {
+                        foundQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+                        break;
+                    }
+                }
+                
+                if (!foundQuestion) {
+                    // Si no hay más preguntas disponibles en absoluto
+                    showNotification('🎉 ¡Has agotado todas las preguntas disponibles!', 3000);
                     completeGame();
                     return;
                 }
-                currentQuestion = allQuestions[Math.floor(Math.random() * allQuestions.length)];
+                
+                currentQuestion = foundQuestion;
             } else {
                 currentQuestion = levelQuestions[Math.floor(Math.random() * levelQuestions.length)];
             }
@@ -1704,42 +1743,51 @@
         function correctAnswer() {
             correctStreak++;
             
-            // Calcular puntaje
-            let points = SCORING_SYSTEM.BASE_POINTS;
+            // Sistema de puntaje según README de Rafael Mila
+            let points = SCORING_SYSTEM.BASE_POINTS; // +1 punto base
+            let bonusMessages = [];
             
-            // Bonus por tiempo restante
+            // +1 punto bonus por respuesta rápida (≥20 segundos restantes)
             if (timeLeft >= SCORING_SYSTEM.TIME_BONUS_THRESHOLD) {
                 points += SCORING_SYSTEM.TIME_BONUS_POINTS;
-                showNotification('⚡ +1 Bonus por velocidad!');
+                bonusMessages.push('⚡ +1 Bonus por velocidad!');
             }
             
-            // Bonus por nivel difícil
+            // +1 punto bonus por niveles difíciles (20-30)
             if (currentLevel >= SCORING_SYSTEM.HARD_LEVEL_THRESHOLD) {
                 points += SCORING_SYSTEM.HARD_LEVEL_BONUS;
-                showNotification('🔥 +1 Bonus por nivel difícil!');
+                bonusMessages.push('🔥 +1 Bonus por nivel difícil!');
             }
             
-            // Bonus por racha
+            // Bonus por rachas
             if (correctStreak === 5) {
                 points += SCORING_SYSTEM.STREAK_BONUS_5;
-                showNotification('🎯 +3 Bonus por 5 seguidas!');
+                bonusMessages.push('🎯 +3 Bonus por 5 seguidas!');
             } else if (correctStreak === 10) {
                 points += SCORING_SYSTEM.STREAK_BONUS_10;
-                showNotification('🔥 +5 Bonus por 10 seguidas!');
+                bonusMessages.push('🔥 +5 Bonus por 10 seguidas!');
             }
             
+            // Aplicar puntaje
             score += points;
             currentLevel++;
             maxLevelReached = Math.max(maxLevelReached, currentLevel);
+            
+            // Mostrar mensajes de bonus
+            if (bonusMessages.length > 0) {
+                bonusMessages.forEach((message, index) => {
+                    setTimeout(() => showNotification(message), index * 800);
+                });
+            }
             
             updateGameDisplay();
             
             setTimeout(() => {
                 if (currentLevel > TOTAL_LEVELS) {
-                    // Juego completo
+                    // +10 puntos bonus por completar los 30 niveles
                     score += SCORING_SYSTEM.PERFECT_GAME_BONUS;
-                    showNotification('👑 +10 Bonus por juego perfecto!');
-                    completeGame();
+                    showNotification('👑 +10 Bonus por completar todos los niveles!');
+                    setTimeout(() => completeGame(), 1500);
                 } else {
                     loadNextQuestion();
                 }
@@ -2507,7 +2555,9 @@
         // Inicialización
         window.addEventListener('load', async function() {
             try {
-                // Cargar banco de preguntas
+                console.log('🏥 Iniciando ¿Quién quiere ser cardiólogo? v2.0.0');
+                
+                // Cargar banco de preguntas PRIMERO
                 await loadQuestionBank();
                 
                 // Registrar visita
@@ -2530,24 +2580,58 @@
                     updateLastUpdate();
                 }, 60000); // Cada minuto
                 
-                console.log('✅ Juego de Cardiología - Sistema Completo Iniciado');
+                console.log('✅ Sistema completo iniciado correctamente');
                 
             } catch (error) {
-                console.error('Error en inicialización:', error);
+                console.error('❌ Error crítico en inicialización:', error);
                 
-                // Si falla Firebase, mostrar datos por defecto
-                document.getElementById('totalJugadores').textContent = '0';
-                document.getElementById('totalPartidas').textContent = '0';
-                document.getElementById('promedioScore').textContent = '0';
-                document.getElementById('nivelMaximo').textContent = '0';
-                document.getElementById('jugadoresHoy').textContent = '0';
-                document.getElementById('visitasHoy').textContent = '0';
-                document.getElementById('visitCount').textContent = '-';
-                document.getElementById('onlinePlayers').textContent = '-';
+                // Si falla la carga de preguntas, mostrar error específico
+                if (error.message.includes('questions_bank.json')) {
+                    console.log('📝 Para crear questions_bank.json, usa este formato:');
+                    console.log(`[
+  {
+    "id": "infiltrativas_001",
+    "level": 1,
+    "question": "¿Cuál es la principal característica de las miocardiopatías infiltrativas?",
+    "options": [
+      {"text": "Deposición de sustancias anormales en el miocardio", "correct": true},
+      {"text": "Dilatación ventricular exclusiva", "correct": false},
+      {"text": "Hipertrofia concéntrica solamente", "correct": false},
+      {"text": "Arritmias ventriculares aisladas", "correct": false}
+    ]
+  }
+]`);
+                }
                 
-                document.getElementById('teamRankings').innerHTML = '<div class="loading">Error de conexión. Verifica tu internet.</div>';
+                // Continuar con Firebase aunque fallen las preguntas
+                try {
+                    await recordVisit();
+                    await trackOnlinePlayer();
+                    setupFirebaseListeners();
+                    loadDashboard();
+                    handleMissingLogos();
+                    
+                    setInterval(() => {
+                        updateLastUpdate();
+                    }, 60000);
+                    
+                } catch (firebaseError) {
+                    console.error('❌ Error adicional con Firebase:', firebaseError);
+                    
+                    // Mostrar datos por defecto si todo falla
+                    document.getElementById('totalJugadores').textContent = '0';
+                    document.getElementById('totalPartidas').textContent = '0';
+                    document.getElementById('promedioScore').textContent = '0';
+                    document.getElementById('nivelMaximo').textContent = '0';
+                    document.getElementById('jugadoresHoy').textContent = '0';
+                    document.getElementById('visitasHoy').textContent = '0';
+                    document.getElementById('visitCount').textContent = '-';
+                    document.getElementById('onlinePlayers').textContent = '-';
+                    
+                    document.getElementById('teamRankings').innerHTML = '<div class="loading">Error de conexión. Verifica tu internet.</div>';
+                }
                 
-                showNotification('⚠️ Error de conexión. Algunas funciones pueden no estar disponibles.', 5000);
+                showNotification('⚠️ Error de inicialización. Algunas funciones pueden no estar disponibles.', 8000);
             }
         });
         
@@ -2615,30 +2699,33 @@
     - Unidad Académica de Cardiología
     
     📋 Especialidad: Miocardiopatías Infiltrativas
-    🔢 Versión: 2.0.0 - Edición Completa
+    🔢 Versión: 2.0.0 - Seguimiento fiel del README original
     📅 Año: 2025
     
-    ✨ NUEVA VERSIÓN - Sistema completo con:
-    ✅ 30 niveles únicos de progresión
+    ✨ VERSIÓN CORREGIDA - Siguiendo especificaciones originales:
+    ✅ Carga SOLO desde questions_bank.json (sin preguntas hardcodeadas)
+    ✅ Sistema de puntaje según README (+1 base, +1 velocidad, +1 difícil, +3/+5 rachas, +10 perfecto)
     ✅ 30 categorías graciosas (Vendedor de Globos → Maestro del Universo)
-    ✅ Conceptos personalizados por nivel
-    ✅ Asignación automática de grupos del foro
-    ✅ Sistema de puntaje avanzado con bonificaciones
+    ✅ Conceptos personalizados por nivel alcanzado
+    ✅ Asignación automática de grupos del foro (${Object.keys(FORO_PARTICIPANTS).length} participantes registrados)
     ✅ Comodines funcionales (50/50 y Cambiar Pregunta)
     ✅ Rankings en tiempo real (individual y equipos)
     ✅ Panel de administración completo
     ✅ Analytics avanzado con métricas en vivo
-    ✅ Soporte para banco de preguntas JSON externo
-    ✅ Integración con Excel de participantes del foro
+    ✅ Validación robusta de datos y manejo de errores
     
-    👥 Grupos del foro detectados automáticamente:
-    - Grupo A: 42 participantes
-    - Grupo B: 39 participantes  
-    - Grupo C: 41 participantes
-    - Individual: Resto de participantes
+    👥 Distribución del foro:
+    - Grupo A: 42 participantes registrados
+    - Grupo B: 39 participantes registrados
+    - Grupo C: 41 participantes registrados
+    - Individual: 19 registrados + no registrados
+    
+    📋 IMPORTANTE: 
+    - Requiere archivo questions_bank.json válido para funcionar
+    - Sistema de puntaje restaurado según documentación original
+    - Comportamiento idéntico a versiones anteriores funcionales
     
     🛠️ Para soporte técnico: r1000a@gmail.com
-    
     🎓 ¡Que comience la competencia cardiológica!
         `);
     </script>
