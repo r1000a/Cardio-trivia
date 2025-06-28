@@ -869,11 +869,20 @@
                     <br>🔒 <strong>Privacidad:</strong> Tu nombre real es privado (solo lo ve el administrador), en los rankings públicos aparece tu pseudónimo. 
                     <br>📋 <strong>Validación:</strong> Tu cédula valida tu participación y pertenencia al foro.
                     <br>🎮 <strong>Límites:</strong> Máximo 2 intentos por persona.
+                    <br><br>
+                    <strong style="color: #60a5fa;">¿Problemas para jugar?</strong> Usá el botón "MODO DEMO" o "Verificar Conexión" abajo.
                 </div>
                 
                 <div id="intentosMessage" style="display: none; color: #f59e0b; margin: 20px 0; font-weight: bold;"></div>
                 
                 <button class="btn" onclick="startGame()">🚀 COMENZAR COMPETENCIA</button>
+                <button class="btn" onclick="startDemoGame()" style="background: linear-gradient(135deg, #10b981, #059669);">🎮 MODO DEMO (sin guardar)</button>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="testConnection()" style="background: linear-gradient(135deg, #6366f1, #4f46e5); font-size: 0.875rem; padding: 8px 16px;">
+                        🔧 Verificar Conexión
+                    </button>
+                </div>
             </div>
             
             <!-- Pantalla de juego -->
@@ -918,6 +927,8 @@
     </div>
     
     <script>
+        console.log('🎮 Script de juego de cardiología iniciado');
+        
         // Configuración Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAF1UK57tg4jK856RSU7Qcr1MT8QEeY4-o",
@@ -930,9 +941,16 @@
             measurementId: "G-R6SPME7MHK"
         };
         
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        // Inicializar Firebase solo si está disponible
+        let database = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            console.log('✅ Firebase inicializado correctamente');
+        } catch (error) {
+            console.error('❌ Error inicializando Firebase:', error);
+            console.log('ℹ️ El juego funcionará en modo offline/demo');
+        }
         
         // Base de datos de miembros del foro (cédulas extraídas del Excel)
         const validForumMembers = {
@@ -978,6 +996,7 @@
         let correctStreak = 0;
         let currentSessionId = null;
         let gameStartId = null;
+        let isOfflineMode = false;
         
         // Banco de preguntas de cardiología
         const questionBank = [
@@ -1268,6 +1287,98 @@
             }
         ];
         
+        // Función para probar la conexión
+        async function testConnection() {
+            console.log('🔧 Iniciando prueba de conexión...');
+            
+            let report = '📊 REPORTE DE CONEXIÓN\n\n';
+            
+            try {
+                // 1. Verificar Firebase SDK
+                report += '1. Firebase SDK: ' + (typeof firebase !== 'undefined' ? '✅ Cargado' : '❌ No cargado') + '\n';
+                
+                // 2. Verificar inicialización
+                report += '2. Firebase App: ' + (database ? '✅ Inicializado' : '❌ No inicializado') + '\n';
+                
+                // 3. Verificar Database
+                report += '3. Database: ' + (database ? '✅ Disponible' : '❌ No disponible') + '\n';
+                
+                if (database) {
+                    // 4. Verificar conexión
+                    const connectedSnapshot = await database.ref('.info/connected').once('value');
+                    const isConnected = connectedSnapshot.val();
+                    report += '4. Conexión: ' + (isConnected ? '✅ Conectado' : '❌ Desconectado') + '\n';
+                    
+                    // 5. Intentar leer
+                    try {
+                        await database.ref('test').once('value');
+                        report += '5. Permisos de lectura: ✅ OK\n';
+                    } catch (e) {
+                        report += '5. Permisos de lectura: ❌ ' + e.code + '\n';
+                    }
+                    
+                    // 6. Intentar escribir
+                    try {
+                        const testRef = database.ref('test_write_' + Date.now());
+                        await testRef.set({ test: true });
+                        await testRef.remove();
+                        report += '6. Permisos de escritura: ✅ OK\n';
+                    } catch (e) {
+                        report += '6. Permisos de escritura: ❌ ' + e.code + '\n';
+                    }
+                } else {
+                    report += '4-6. No se pueden realizar pruebas sin conexión a Firebase\n';
+                }
+                
+                report += '\n✅ Prueba completada';
+                
+            } catch (error) {
+                report += '\n❌ Error durante la prueba: ' + error.message;
+            }
+            
+            alert(report);
+            console.log(report);
+        }
+        
+        // Función para verificar permisos de Firebase
+        async function checkFirebasePermissions() {
+            if (!database) {
+                console.warn('⚠️ Firebase no está disponible');
+                return false;
+            }
+            
+            try {
+                console.log('🔐 Verificando permisos de Firebase...');
+                
+                // Intentar leer un valor de prueba
+                const testSnapshot = await database.ref('test_connection').once('value');
+                console.log('✅ Lectura de prueba exitosa');
+                
+                // Intentar escribir un valor de prueba
+                const testRef = database.ref('test_connection/' + Date.now());
+                await testRef.set({ test: true });
+                await testRef.remove();
+                console.log('✅ Escritura de prueba exitosa');
+                
+                return true;
+            } catch (error) {
+                console.error('❌ Error de permisos:', error.code, error.message);
+                
+                if (error.code === 'PERMISSION_DENIED') {
+                    alert(`
+⚠️ Error de permisos en Firebase
+
+Las reglas de seguridad de Firebase necesitan ser actualizadas.
+Por ahora, podés usar el MODO DEMO para jugar.
+
+Contactá al administrador para solucionar este problema.
+                    `);
+                }
+                
+                return false;
+            }
+        }
+        
         // Funciones básicas
         function showTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -1345,103 +1456,214 @@
         });
         
         async function startGame() {
-            const name = document.getElementById('playerName').value.trim();
-            const nickname = document.getElementById('playerNickname').value.trim();
-            const id = document.getElementById('playerId').value.trim();
-            const team = document.getElementById('playerTeam').value;
-            
-            if (!name || !nickname || !id || !team) {
-                alert('Por favor, completá todos los campos');
-                return;
-            }
-            
-            // Validar formato de cédula
-            if (!/^\d{6,8}$/.test(id)) {
-                alert('La cédula debe tener entre 6 y 8 dígitos, sin dígito verificador');
-                return;
-            }
-            
-            // Validar pseudónimo
-            if (!/^[a-zA-Z0-9_áéíóúüñÁÉÍÓÚÜÑ]{3,20}$/.test(nickname)) {
-                alert('El pseudónimo debe tener entre 3 y 20 caracteres (letras, números y _ solamente)');
-                return;
-            }
-            
-            // Validar pertenencia al grupo si no es INDIVIDUAL
-            if (team !== 'INDIVIDUAL') {
-                if (!validForumMembers[id] || validForumMembers[id] !== team) {
-                    alert('No estás autorizado para jugar en este grupo. Solo los miembros del foro pueden participar en la competencia por equipos.');
+            try {
+                console.log('🎮 Iniciando juego...');
+                
+                const name = document.getElementById('playerName').value.trim();
+                const nickname = document.getElementById('playerNickname').value.trim();
+                const id = document.getElementById('playerId').value.trim();
+                const team = document.getElementById('playerTeam').value;
+                
+                console.log('📝 Datos ingresados:', { name, nickname, id, team });
+                
+                if (!name || !nickname || !id || !team) {
+                    alert('Por favor, completá todos los campos');
                     return;
                 }
-            }
-            
-            try {
-                // Verificar intentos previos
-                const attemptsSnapshot = await database.ref(`jugadores/${id}/intentos`).once('value');
-                const attempts = attemptsSnapshot.val() || 0;
                 
-                if (attempts >= 2) {
-                    document.getElementById('intentosMessage').style.display = 'block';
-                    document.getElementById('intentosMessage').textContent = '⚠️ Ya has alcanzado el límite de 2 intentos.';
+                // Validar formato de cédula
+                if (!/^\d{6,8}$/.test(id)) {
+                    alert('La cédula debe tener entre 6 y 8 dígitos, sin dígito verificador');
                     return;
+                }
+                
+                // Validar pseudónimo
+                if (!/^[a-zA-Z0-9_áéíóúüñÁÉÍÓÚÜÑ]{3,20}$/.test(nickname)) {
+                    alert('El pseudónimo debe tener entre 3 y 20 caracteres (letras, números y _ solamente)');
+                    return;
+                }
+                
+                // Validar pertenencia al grupo si no es INDIVIDUAL
+                if (team !== 'INDIVIDUAL') {
+                    if (!validForumMembers[id] || validForumMembers[id] !== team) {
+                        alert('No estás autorizado para jugar en este grupo. Solo los miembros del foro pueden participar en la competencia por equipos.');
+                        return;
+                    }
+                }
+                
+                console.log('✅ Validaciones pasadas');
+                
+                // Verificar conexión a Firebase
+                if (!database) {
+                    console.error('❌ Firebase no está inicializado');
+                    if (confirm('No hay conexión con la base de datos.\n\n¿Querés jugar en MODO DEMO?\n(Tu puntaje no se guardará)')) {
+                        startDemoGame();
+                    }
+                    return;
+                }
+                
+                try {
+                    // Verificar intentos previos
+                    console.log('🔍 Verificando intentos previos...');
+                    const attemptsSnapshot = await database.ref(`jugadores/${id}/intentos`).once('value');
+                    const attempts = attemptsSnapshot.val() || 0;
+                    console.log('📊 Intentos previos:', attempts);
+                    
+                    if (attempts >= 2) {
+                        document.getElementById('intentosMessage').style.display = 'block';
+                        document.getElementById('intentosMessage').textContent = '⚠️ Ya has alcanzado el límite de 2 intentos.';
+                        return;
+                    }
+                    
+                    playerAttempts = attempts;
+                } catch (error) {
+                    console.warn('⚠️ No se pudieron verificar intentos previos:', error);
+                    // Continuar sin verificación si hay error
+                    playerAttempts = 0;
+                    
+                    if (confirm('No se puede verificar tu historial de intentos.\n\n¿Querés continuar de todos modos?\n\n(Tu progreso podría no guardarse correctamente)')) {
+                        isOfflineMode = true;
+                    } else {
+                        return;
+                    }
                 }
                 
                 // Guardar datos del jugador
                 currentPlayer = { name, nickname, id, team };
-                playerAttempts = attempts;
                 
-                // Registrar inicio de juego
-                gameStartId = database.ref('gameStarts').push().key;
-                await database.ref(`gameStarts/${gameStartId}`).set({
-                    jugador: name,
-                    cedula: id,
-                    grupo: team,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP,
-                    intento: attempts + 1
-                });
-                
-                // Actualizar jugador online
-                if (currentSessionId) {
-                    await database.ref(`analytics/onlinePlayers/${currentSessionId}`).update({
-                        status: 'playing',
-                        cedula: id,
-                        grupo: team
-                    });
+                if (!isOfflineMode) {
+                    try {
+                        console.log('💾 Registrando inicio de juego...');
+                        
+                        // Registrar inicio de juego
+                        gameStartId = database.ref('gameStarts').push().key;
+                        await database.ref(`gameStarts/${gameStartId}`).set({
+                            jugador: name,
+                            cedula: id,
+                            grupo: team,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP,
+                            intento: playerAttempts + 1
+                        });
+                        
+                        console.log('✅ Juego registrado con ID:', gameStartId);
+                        
+                        // Actualizar jugador online
+                        if (currentSessionId) {
+                            await database.ref(`analytics/onlinePlayers/${currentSessionId}`).update({
+                                status: 'playing',
+                                cedula: id,
+                                grupo: team
+                            });
+                        }
+                    } catch (error) {
+                        console.warn('⚠️ No se pudo registrar el inicio del juego:', error);
+                        // Continuar en modo offline
+                        isOfflineMode = true;
+                    }
                 }
                 
                 // Mostrar mensaje de intentos restantes
-                if (attempts === 1) {
+                if (playerAttempts === 1 && !isOfflineMode) {
                     alert('¡Este es tu último intento! Dale con todo 💪');
                 }
+                
+                if (isOfflineMode) {
+                    alert('⚠️ Estás jugando en modo OFFLINE.\nTu puntaje NO se guardará en los rankings.');
+                }
+                
+                console.log('🚀 Iniciando juego...');
                 
                 // Iniciar juego
                 initGame();
                 
             } catch (error) {
-                console.error('Error starting game:', error);
-                alert('Error al iniciar el juego. Por favor, intentá nuevamente.');
+                console.error('❌ Error detallado al iniciar juego:', error);
+                console.error('Stack trace:', error.stack);
+                
+                // Mensaje de error más específico
+                let errorMessage = 'Error al iniciar el juego: ';
+                
+                if (error.code === 'PERMISSION_DENIED') {
+                    errorMessage += 'Error de permisos en la base de datos.';
+                } else if (error.code === 'NETWORK_ERROR') {
+                    errorMessage += 'Error de conexión a internet.';
+                } else if (error.message) {
+                    errorMessage += error.message;
+                } else {
+                    errorMessage += 'Error desconocido. Por favor, intentá nuevamente.';
+                }
+                
+                alert(errorMessage);
+                
+                // Mostrar error en consola para debugging
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').textContent = errorMessage;
             }
         }
         
+        function startDemoGame() {
+            console.log('🎮 Iniciando modo DEMO...');
+            
+            // Datos de demo
+            currentPlayer = { 
+                name: 'Jugador Demo', 
+                nickname: 'Demo', 
+                id: '12345678', 
+                team: 'INDIVIDUAL' 
+            };
+            playerAttempts = 0;
+            isOfflineMode = true;
+            
+            alert('🎮 Modo DEMO: Puedes jugar sin guardar datos. ¡Divertite!');
+            
+            // Iniciar juego directamente
+            initGame();
+        }
+        
         function initGame() {
-            // Ocultar pantalla de inicio, mostrar juego
-            document.getElementById('startScreen').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'block';
-            
-            // Resetear variables
-            currentLevel = 1;
-            score = 0;
-            lives = 3;
-            maxLevelReached = 1;
-            answeredQuestions.clear();
-            comodines = { fifty: true, change: true };
-            correctStreak = 0;
-            
-            // Actualizar UI
-            updateGameUI();
-            
-            // Cargar primera pregunta
-            loadQuestion();
+            try {
+                console.log('🎯 Inicializando juego...');
+                
+                // Ocultar pantalla de inicio, mostrar juego
+                document.getElementById('startScreen').style.display = 'none';
+                document.getElementById('gameScreen').style.display = 'block';
+                
+                // Resetear variables
+                currentLevel = 1;
+                score = 0;
+                lives = 3;
+                maxLevelReached = 1;
+                answeredQuestions.clear();
+                comodines = { fifty: true, change: true };
+                correctStreak = 0;
+                
+                console.log('📊 Variables reseteadas');
+                
+                // Actualizar UI
+                updateGameUI();
+                
+                console.log('🎨 UI actualizada');
+                
+                // Verificar que hay preguntas disponibles
+                if (!questionBank || questionBank.length === 0) {
+                    throw new Error('No hay preguntas disponibles');
+                }
+                
+                console.log('📚 Banco de preguntas cargado:', questionBank.length, 'preguntas');
+                
+                // Cargar primera pregunta
+                loadQuestion();
+                
+                console.log('✅ Juego iniciado exitosamente');
+                
+            } catch (error) {
+                console.error('❌ Error en initGame:', error);
+                alert('Error al inicializar el juego: ' + error.message);
+                
+                // Volver a la pantalla de inicio
+                document.getElementById('gameScreen').style.display = 'none';
+                document.getElementById('startScreen').style.display = 'block';
+            }
         }
         
         function updateGameUI() {
@@ -1455,58 +1677,75 @@
         }
         
         function loadQuestion() {
-            // Filtrar preguntas por nivel y no respondidas
-            const availableQuestions = questionBank.filter(q => 
-                q.level === currentLevel && !answeredQuestions.has(questionBank.indexOf(q))
-            );
-            
-            if (availableQuestions.length === 0) {
-                // Si no hay más preguntas del nivel, buscar del nivel anterior o siguiente
-                const alternativeQuestions = questionBank.filter(q => 
-                    Math.abs(q.level - currentLevel) <= 1 && !answeredQuestions.has(questionBank.indexOf(q))
+            try {
+                console.log('📖 Cargando pregunta nivel', currentLevel);
+                
+                // Filtrar preguntas por nivel y no respondidas
+                const availableQuestions = questionBank.filter(q => 
+                    q.level === currentLevel && !answeredQuestions.has(questionBank.indexOf(q))
                 );
                 
-                if (alternativeQuestions.length > 0) {
-                    currentQuestion = alternativeQuestions[Math.floor(Math.random() * alternativeQuestions.length)];
+                console.log('❓ Preguntas disponibles:', availableQuestions.length);
+                
+                if (availableQuestions.length === 0) {
+                    // Si no hay más preguntas del nivel, buscar del nivel anterior o siguiente
+                    const alternativeQuestions = questionBank.filter(q => 
+                        Math.abs(q.level - currentLevel) <= 1 && !answeredQuestions.has(questionBank.indexOf(q))
+                    );
+                    
+                    console.log('🔄 Preguntas alternativas:', alternativeQuestions.length);
+                    
+                    if (alternativeQuestions.length > 0) {
+                        currentQuestion = alternativeQuestions[Math.floor(Math.random() * alternativeQuestions.length)];
+                    } else {
+                        // No hay más preguntas disponibles
+                        console.log('🏁 No hay más preguntas disponibles');
+                        endGame();
+                        return;
+                    }
                 } else {
-                    // No hay más preguntas disponibles
-                    endGame();
-                    return;
+                    currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
                 }
-            } else {
-                currentQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+                
+                console.log('✅ Pregunta seleccionada:', currentQuestion.question.substring(0, 50) + '...');
+                
+                // Marcar pregunta como respondida
+                answeredQuestions.add(questionBank.indexOf(currentQuestion));
+                
+                // Mostrar pregunta
+                document.getElementById('questionText').textContent = currentQuestion.question;
+                
+                // Mezclar opciones
+                const options = [...currentQuestion.options];
+                const correctAnswer = options[currentQuestion.correct];
+                shuffledOptions = options.sort(() => Math.random() - 0.5);
+                const correctIndex = shuffledOptions.indexOf(correctAnswer);
+                currentQuestion.shuffledCorrect = correctIndex;
+                
+                // Mostrar opciones
+                const container = document.getElementById('optionsContainer');
+                container.innerHTML = '';
+                
+                shuffledOptions.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'option';
+                    button.textContent = option;
+                    button.onclick = () => selectAnswer(index);
+                    container.appendChild(button);
+                });
+                
+                // Resetear estado 50:50
+                eliminated5050 = false;
+                
+                console.log('⏱️ Iniciando timer...');
+                
+                // Iniciar timer
+                startTimer();
+                
+            } catch (error) {
+                console.error('❌ Error en loadQuestion:', error);
+                alert('Error al cargar la pregunta: ' + error.message);
             }
-            
-            // Marcar pregunta como respondida
-            answeredQuestions.add(questionBank.indexOf(currentQuestion));
-            
-            // Mostrar pregunta
-            document.getElementById('questionText').textContent = currentQuestion.question;
-            
-            // Mezclar opciones
-            const options = [...currentQuestion.options];
-            const correctAnswer = options[currentQuestion.correct];
-            shuffledOptions = options.sort(() => Math.random() - 0.5);
-            const correctIndex = shuffledOptions.indexOf(correctAnswer);
-            currentQuestion.shuffledCorrect = correctIndex;
-            
-            // Mostrar opciones
-            const container = document.getElementById('optionsContainer');
-            container.innerHTML = '';
-            
-            shuffledOptions.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = 'option';
-                button.textContent = option;
-                button.onclick = () => selectAnswer(index);
-                container.appendChild(button);
-            });
-            
-            // Resetear estado 50:50
-            eliminated5050 = false;
-            
-            // Iniciar timer
-            startTimer();
         }
         
         function startTimer() {
@@ -1615,7 +1854,12 @@
         }
         
         function useFiftyFifty() {
-            if (!comodines.fifty || eliminated5050) return;
+            if (!comodines.fifty || eliminated5050) {
+                console.log('❌ 50:50 no disponible');
+                return;
+            }
+            
+            console.log('🎯 Usando 50:50...');
             
             comodines.fifty = false;
             eliminated5050 = true;
@@ -1641,10 +1885,17 @@
                 options[index].classList.add('eliminated');
                 options[index].onclick = null;
             });
+            
+            console.log('✅ 50:50 aplicado');
         }
         
         function changeQuestion() {
-            if (!comodines.change) return;
+            if (!comodines.change) {
+                console.log('❌ Cambio de pregunta no disponible');
+                return;
+            }
+            
+            console.log('🔄 Cambiando pregunta...');
             
             comodines.change = false;
             updateGameUI();
@@ -1653,28 +1904,47 @@
             
             // Cargar nueva pregunta del mismo nivel
             loadQuestion();
+            
+            console.log('✅ Pregunta cambiada');
         }
         
         async function endGame() {
-            if (timerInterval) clearInterval(timerInterval);
-            
-            // Ocultar juego, mostrar resultados
-            document.getElementById('gameScreen').style.display = 'none';
-            document.getElementById('resultScreen').style.display = 'block';
-            
-            // Mostrar puntaje final
-            document.getElementById('finalScore').textContent = score;
-            document.getElementById('finalLevel').textContent = maxLevelReached;
-            
-            // Mensaje según el equipo
-            const teamResult = document.getElementById('teamResult');
-            if (currentPlayer.team === 'INDIVIDUAL') {
-                teamResult.innerHTML = '🏆 Has participado en modalidad individual';
-            } else {
-                teamResult.innerHTML = `👥 Tu puntaje contribuye al <strong>Grupo ${currentPlayer.team}</strong>`;
-            }
-            
             try {
+                console.log('🏁 Finalizando juego...');
+                
+                if (timerInterval) clearInterval(timerInterval);
+                
+                // Ocultar juego, mostrar resultados
+                document.getElementById('gameScreen').style.display = 'none';
+                document.getElementById('resultScreen').style.display = 'block';
+                
+                // Mostrar puntaje final
+                document.getElementById('finalScore').textContent = score;
+                document.getElementById('finalLevel').textContent = maxLevelReached;
+                
+                // Mensaje según el equipo
+                const teamResult = document.getElementById('teamResult');
+                if (currentPlayer.team === 'INDIVIDUAL') {
+                    teamResult.innerHTML = '🏆 Has participado en modalidad individual';
+                } else {
+                    teamResult.innerHTML = `👥 Tu puntaje contribuye al <strong>Grupo ${currentPlayer.team}</strong>`;
+                }
+                
+                // Si es modo demo, no guardar en Firebase
+                if (currentPlayer.name === 'Jugador Demo' || isOfflineMode) {
+                    console.log('🎮 Modo DEMO/Offline - No se guardan resultados');
+                    return;
+                }
+                
+                // Verificar conexión a Firebase antes de guardar
+                if (!database) {
+                    console.error('❌ Firebase no está disponible');
+                    alert('No se pudieron guardar los resultados (sin conexión)');
+                    return;
+                }
+                
+                console.log('💾 Guardando resultados...');
+                
                 // Guardar resultado
                 const resultId = database.ref('resultados').push().key;
                 await database.ref(`resultados/${resultId}`).set({
@@ -1689,6 +1959,8 @@
                     esForoMiembro: validForumMembers[currentPlayer.id] ? true : false
                 });
                 
+                console.log('✅ Resultado guardado');
+                
                 // Actualizar intentos del jugador
                 await database.ref(`jugadores/${currentPlayer.id}`).update({
                     nombre: currentPlayer.name,
@@ -1698,6 +1970,8 @@
                     mejorNivel: maxLevelReached,
                     ultimoIntento: firebase.database.ServerValue.TIMESTAMP
                 });
+                
+                console.log('✅ Intentos actualizados');
                 
                 // Actualizar estadísticas del equipo si no es individual
                 if (currentPlayer.team !== 'INDIVIDUAL') {
@@ -1726,8 +2000,10 @@
                     });
                 }
                 
+                console.log('✅ Todos los datos guardados exitosamente');
+                
             } catch (error) {
-                console.error('Error saving results:', error);
+                console.error('❌ Error en endGame:', error);
                 alert('Error al guardar los resultados. Tu puntaje es: ' + score);
             }
         }
@@ -1918,6 +2194,8 @@
         
         // Funciones Firebase
         async function recordVisit() {
+            if (!database) return;
+            
             try {
                 const today = new Date().toDateString();
                 const timestamp = Date.now();
@@ -1938,6 +2216,8 @@
         }
         
         async function trackOnlinePlayer() {
+            if (!database) return;
+            
             try {
                 const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                 currentSessionId = sessionId;
@@ -1955,6 +2235,8 @@
         }
         
         function setupFirebaseListeners() {
+            if (!database) return;
+            
             database.ref('resultados').on('value', (snapshot) => {
                 updateDashboardStats();
                 updateTeamRankings();
@@ -2290,9 +2572,97 @@
             });
         }
         
+        // Verificar elementos del formulario al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 DOM cargado');
+            
+            // Verificar que todos los elementos necesarios existan
+            const requiredElements = [
+                'playerName', 'playerNickname', 'playerId', 'playerTeam',
+                'startScreen', 'gameScreen', 'resultScreen', 'questionText',
+                'optionsContainer', 'currentLevel', 'currentScore', 'livesCount',
+                'timeLeft', 'finalScore', 'finalLevel'
+            ];
+            
+            let allElementsFound = true;
+            requiredElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) {
+                    console.error(`❌ Elemento faltante: ${id}`);
+                    allElementsFound = false;
+                } else {
+                    console.log(`✅ Elemento encontrado: ${id}`);
+                }
+            });
+            
+            if (!allElementsFound) {
+                alert('Error: Algunos elementos del juego no se cargaron correctamente. Por favor, recargá la página.');
+            }
+        });
+        
         // Inicialización
         window.addEventListener('load', async function() {
             try {
+                console.log('🚀 Iniciando aplicación...');
+                
+                // Verificar que Firebase esté cargado
+                if (typeof firebase === 'undefined') {
+                    throw new Error('Firebase SDK no está cargado');
+                }
+                
+                console.log('✅ Firebase SDK detectado');
+                
+                if (database) {
+                    // Verificar permisos
+                    const hasPermissions = await checkFirebasePermissions();
+                    
+                    if (!hasPermissions) {
+                        console.warn('⚠️ Firebase no tiene permisos correctos');
+                        
+                        // Mostrar instrucciones para el administrador
+                        const adminNote = document.createElement('div');
+                        adminNote.style.cssText = 'background: rgba(251, 191, 36, 0.2); border: 2px solid rgba(251, 191, 36, 0.4); border-radius: 12px; padding: 16px; margin: 20px auto; max-width: 600px; color: #fbbf24;';
+                        adminNote.innerHTML = `
+                            <h3 style="margin-bottom: 8px;">⚠️ Configuración necesaria</h3>
+                            <p style="margin-bottom: 12px;">Las reglas de Firebase necesitan actualizarse. Agregá estas reglas en Firebase Console:</p>
+                            <pre style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 0.875rem;">
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}</pre>
+                            <p style="margin-top: 12px; font-size: 0.875rem;">Mientras tanto, podés usar el <strong>MODO DEMO</strong> para jugar.</p>
+                        `;
+                        document.querySelector('.container').insertBefore(adminNote, document.querySelector('.nav-tabs'));
+                    }
+                }
+                
+                // Agregar indicador de estado de conexión
+                const statusIndicator = document.createElement('div');
+                statusIndicator.id = 'connectionStatus';
+                statusIndicator.style.cssText = 'position: fixed; bottom: 10px; right: 10px; padding: 8px 16px; border-radius: 8px; font-size: 0.875rem; z-index: 1000;';
+                statusIndicator.innerHTML = '🔄 Conectando...';
+                statusIndicator.style.background = 'rgba(251, 191, 36, 0.2)';
+                statusIndicator.style.color = '#fbbf24';
+                document.body.appendChild(statusIndicator);
+                
+                // Verificar conexión a Firebase
+                database.ref('.info/connected').on('value', (snapshot) => {
+                    const connected = snapshot.val();
+                    console.log('🌐 Estado de conexión Firebase:', connected);
+                    
+                    if (connected) {
+                        statusIndicator.innerHTML = '✅ Conectado';
+                        statusIndicator.style.background = 'rgba(34, 197, 94, 0.2)';
+                        statusIndicator.style.color = '#22c55e';
+                    } else {
+                        statusIndicator.innerHTML = '❌ Sin conexión';
+                        statusIndicator.style.background = 'rgba(220, 38, 38, 0.2)';
+                        statusIndicator.style.color = '#dc2626';
+                    }
+                });
+                
                 // Registrar visita
                 await recordVisit();
                 
@@ -2317,7 +2687,17 @@
                 console.log('📊 Grupos del foro validados:', Object.keys(validForumMembers).length, 'cédulas');
                 
             } catch (error) {
-                console.error('Error en inicialización:', error);
+                console.error('❌ Error crítico en inicialización:', error);
+                console.error('Stack trace:', error.stack);
+                
+                // Mostrar mensaje de error al usuario
+                const errorBanner = document.createElement('div');
+                errorBanner.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; background: rgba(220, 38, 38, 0.9); color: white; padding: 16px; text-align: center; z-index: 9999;';
+                errorBanner.innerHTML = `
+                    ⚠️ Error de inicialización: ${error.message}<br>
+                    <small>Podés usar el MODO DEMO mientras se soluciona el problema</small>
+                `;
+                document.body.prepend(errorBanner);
                 
                 // Si falla Firebase, mostrar datos por defecto
                 document.getElementById('totalJugadores').textContent = '0';
@@ -2329,7 +2709,7 @@
                 document.getElementById('visitCount').textContent = '-';
                 document.getElementById('onlinePlayers').textContent = '-';
                 
-                document.getElementById('teamRankings').innerHTML = '<div class="loading">Error de conexión. Verifica tu internet.</div>';
+                document.getElementById('teamRankings').innerHTML = '<div class="loading">Error de conexión. Usa el MODO DEMO para jugar.</div>';
             }
         });
     </script>
