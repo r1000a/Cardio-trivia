@@ -943,11 +943,31 @@
                 
                 <div id="adminData" class="admin-data" style="display: none;">
                     <h3>📋 Registro Completo de Participantes</h3>
+                    
                     <div style="margin-bottom: 20px;">
                         <button class="btn" onclick="exportAdminData()">📥 Descargar CSV</button>
-                        <button class="btn btn-danger" onclick="clearAllData()">🗑️ Limpiar Datos</button>
-                        <button class="btn" onclick="testFirebaseConnection()" style="background: linear-gradient(135deg, #059669, #047857);">🔍 Probar Firebase</button>
-                        <button class="btn" onclick="testDeletionPermissions()" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">🗑️ Test Eliminación</button>
+                        <button class="btn btn-danger" onclick="clearAllDataSafe()">🗑️ Limpiar Datos</button>
+                        <button class="btn" onclick="resetAllAttempts()" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🔄 Reset Intentos</button>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px; padding: 16px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+                        <h4 style="color: #3b82f6; margin-bottom: 12px;">🔧 Herramientas de Diagnóstico</h4>
+                        <button class="btn" onclick="diagnoseFirebase()" style="background: linear-gradient(135deg, #059669, #047857); margin: 4px;">🔍 Diagnóstico Completo</button>
+                        <button class="btn" onclick="testFirebaseConnection()" style="background: linear-gradient(135deg, #0ea5e9, #0284c7); margin: 4px;">⚡ Test Rápido</button>
+                        <button class="btn" onclick="refreshDashboard()" style="background: linear-gradient(135deg, #7c3aed, #6d28d9); margin: 4px;">🔄 Refrescar Dashboard</button>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px; padding: 16px; background: rgba(245, 158, 11, 0.1); border-radius: 8px;">
+                        <h4 style="color: #f59e0b; margin-bottom: 8px;">ℹ️ Información del Sistema</h4>
+                        <p style="margin: 4px 0; font-size: 0.875rem; color: #94a3b8;">
+                            <strong>🔄 Reset Intentos:</strong> Permite que todos los jugadores vuelvan a participar sin eliminar puntajes históricos.
+                        </p>
+                        <p style="margin: 4px 0; font-size: 0.875rem; color: #94a3b8;">
+                            <strong>👥 Puntaje por Equipos:</strong> Suma algebraica del mejor intento de cada participante del grupo.
+                        </p>
+                        <p style="margin: 4px 0; font-size: 0.875rem; color: #94a3b8;">
+                            <strong>🎮 Límite de Intentos:</strong> 2 intentos por persona (se resetea con el botón correspondiente).
+                        </p>
                     </div>
                     
                     <div id="adminTable" style="margin-top: 20px;">
@@ -1088,7 +1108,7 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
-        // Variables globales del juego
+        // Variables globales mejoradas para evitar duplicados
         let currentPlayer = { name: '', nickname: '', id: '', team: '' };
         let currentLevel = 1;
         let score = 0;
@@ -1108,6 +1128,8 @@
         let currentSessionId = null;
         let gameStartId = null;
         let selectedOption = null;
+        let gameInProgress = false; // Nueva variable para evitar múltiples inicios
+        let resultAlreadySaved = false; // Nueva variable para evitar guardado duplicado
         
         // Configuración del juego
         const ADMIN_PASSWORD = "cardio2025admin";
@@ -1444,6 +1466,12 @@
         }
         
         async function startGame() {
+            // Prevenir múltiples inicios simultáneos
+            if (gameInProgress) {
+                console.log('⚠️ Juego ya en progreso, ignorando intento de inicio');
+                return;
+            }
+
             const name = document.getElementById('playerName').value.trim();
             const nickname = document.getElementById('playerNickname').value.trim();
             const id = document.getElementById('playerId').value.trim();
@@ -1469,14 +1497,20 @@
             const team = getAutoAssignedGroup(id);
             const participantInfo = getParticipantInfo(id);
             
-            // Verificar intentos previos
+            // Marcar juego en progreso
+            gameInProgress = true;
+            resultAlreadySaved = false;
+            
             try {
-                const attemptsSnapshot = await database.ref('resultados').orderByChild('cedula').equalTo(id).once('value');
-                const attempts = attemptsSnapshot.val();
-                playerAttempts = attempts ? Object.keys(attempts).length : 0;
+                // Verificar intentos previos usando la nueva función que considera resets
+                console.log(`🔍 Verificando intentos para cédula: ${id}`);
+                playerAttempts = await checkAttemptsWithReset(id);
+                
+                console.log(`📊 Intentos actuales: ${playerAttempts} de ${MAX_ATTEMPTS} permitidos`);
                 
                 if (playerAttempts >= MAX_ATTEMPTS) {
-                    alert(`Ya has usado tus ${MAX_ATTEMPTS} intentos permitidos`);
+                    gameInProgress = false;
+                    alert(`Ya has usado tus ${MAX_ATTEMPTS} intentos permitidos.\n\nSi crees que esto es un error, contacta al administrador.\n\nNota: Los intentos se resetean periódicamente.`);
                     return;
                 }
                 
@@ -1485,8 +1519,12 @@
                     document.getElementById('intentosMessage').textContent = 
                         `⚠️ Este es tu intento ${playerAttempts + 1} de ${MAX_ATTEMPTS}`;
                 }
+                
             } catch (error) {
                 console.error('Error verificando intentos:', error);
+                gameInProgress = false;
+                alert('Error al verificar intentos previos. Intenta nuevamente.');
+                return;
             }
             
             // Configurar jugador
@@ -1500,6 +1538,7 @@
             
             // Verificar que las preguntas estén cargadas antes de iniciar
             if (questionBank.length === 0) {
+                gameInProgress = false;
                 alert('❌ Error: No se pueden cargar las preguntas. Verifica que el archivo questions_bank.json existe y es válido.');
                 return;
             }
@@ -1507,15 +1546,16 @@
             // Mostrar mensaje de confirmación
             const teamDisplay = team === 'INDIVIDUAL' ? 'Individual' : `Grupo ${team}`;
             const confirmMessage = participantInfo 
-                ? `¡Bienvenido ${nickname}!\n\nRegistrado como: ${participantInfo.nombre}\nModalidad: ${teamDisplay}\n\n¡Comencemos la competencia!`
-                : `¡Bienvenido ${nickname}!\n\nModalidad: ${teamDisplay}\n\n¡Comencemos la competencia!`;
+                ? `¡Bienvenido ${nickname}!\n\nRegistrado como: ${participantInfo.nombre}\nModalidad: ${teamDisplay}\n\nIntento ${playerAttempts + 1} de ${MAX_ATTEMPTS}\n\n¡Comencemos la competencia!`
+                : `¡Bienvenido ${nickname}!\n\nModalidad: ${teamDisplay}\n\nIntento ${playerAttempts + 1} de ${MAX_ATTEMPTS}\n\n¡Comencemos la competencia!`;
             
             if (!confirm(confirmMessage)) {
+                gameInProgress = false;
                 return;
             }
             
-            // Registrar inicio de partida
             try {
+                // Registrar inicio de partida con ID único
                 gameStartId = database.ref('gameStarts').push().key;
                 await database.ref(`gameStarts/${gameStartId}`).set({
                     cedula: id,
@@ -1524,10 +1564,17 @@
                     timestamp: firebase.database.ServerValue.TIMESTAMP,
                     completed: false,
                     currentLevel: 1,
-                    currentScore: 0
+                    currentScore: 0,
+                    sessionId: currentSessionId
                 });
+                
+                console.log(`✅ Partida registrada con ID: ${gameStartId}`);
+                
             } catch (error) {
                 console.error('Error registrando inicio:', error);
+                gameInProgress = false;
+                alert('Error al iniciar la partida. Intenta nuevamente.');
+                return;
             }
             
             // Inicializar juego
@@ -1893,7 +1940,106 @@
             completeGame();
         }
         
+        // Función para resetear todos los intentos y permitir que todos jueguen de nuevo
+        async function resetAllAttempts() {
+            if (!confirm('¿RESETEAR TODOS LOS INTENTOS?\n\nEsto permitirá que TODOS los jugadores vuelvan a jugar desde cero.\n\n⚠️ NO elimina los puntajes actuales, solo resetea el contador de intentos.\n\n¿Continuar?')) {
+                return;
+            }
+            
+            if (!confirm('CONFIRMACIÓN FINAL:\n\n¿Resetear el sistema de intentos para TODOS los participantes?\n\nTodos podrán volver a jugar 2 intentos más.')) {
+                return;
+            }
+            
+            const confirmation = prompt('Escribe "RESET" para confirmar:');
+            if (confirmation !== 'RESET') {
+                alert('Reset cancelado.');
+                return;
+            }
+            
+            try {
+                console.log('🔄 Iniciando reset de intentos...');
+                showNotification('🔄 Reseteando sistema de intentos...', 3000);
+                
+                // Obtener todos los resultados actuales
+                const snapshot = await database.ref('resultados').once('value');
+                const results = snapshot.val();
+                
+                if (results) {
+                    const resultsArray = Object.values(results);
+                    const uniquePlayers = new Set();
+                    
+                    // Marcar todos los resultados existentes como "históricos"
+                    const updates = {};
+                    Object.keys(results).forEach(key => {
+                        updates[`resultados/${key}/esHistorico`] = true;
+                        updates[`resultados/${key}/resetDate`] = new Date().toISOString();
+                        uniquePlayers.add(results[key].cedula);
+                    });
+                    
+                    await database.ref().update(updates);
+                    
+                    console.log(`✅ Marcados ${Object.keys(updates).length/2} resultados como históricos`);
+                    console.log(`✅ ${uniquePlayers.size} jugadores pueden volver a participar`);
+                    
+                    // Crear entrada en el log de resets
+                    await database.ref('admin/resets').push({
+                        timestamp: firebase.database.ServerValue.TIMESTAMP,
+                        date: new Date().toLocaleDateString('es-UY'),
+                        playersAffected: uniquePlayers.size,
+                        resultsMarked: Object.keys(updates).length/2,
+                        type: 'attempt_reset'
+                    });
+                    
+                    alert(`✅ RESET COMPLETADO\n\n${uniquePlayers.size} jugadores pueden volver a participar.\n\nLos puntajes anteriores se mantienen como históricos.`);
+                    
+                } else {
+                    alert('No hay datos para resetear.');
+                }
+                
+                // Actualizar dashboard
+                setTimeout(() => {
+                    loadDashboard();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('❌ Error en reset:', error);
+                alert(`❌ Error en reset: ${error.message}`);
+            }
+        }
+        
+        // Función para verificar intentos considerando resets
+        async function checkAttemptsWithReset(cedula) {
+            try {
+                const snapshot = await database.ref('resultados')
+                    .orderByChild('cedula')
+                    .equalTo(cedula)
+                    .once('value');
+                
+                const results = snapshot.val();
+                if (!results) return 0;
+                
+                // Contar solo resultados que NO son históricos
+                const currentAttempts = Object.values(results)
+                    .filter(result => !result.esHistorico)
+                    .length;
+                
+                return currentAttempts;
+                
+            } catch (error) {
+                console.error('Error verificando intentos:', error);
+                return 0;
+            }
+        }
+        
         async function saveGameResult() {
+            // Prevenir guardado duplicado
+            if (resultAlreadySaved) {
+                console.log('⚠️ Resultado ya guardado, evitando duplicado');
+                return;
+            }
+            
+            resultAlreadySaved = true;
+            
             try {
                 const resultData = {
                     nombre: currentPlayer.name,
@@ -1905,11 +2051,15 @@
                     fecha: new Date().toLocaleDateString('es-UY'),
                     timestamp: firebase.database.ServerValue.TIMESTAMP,
                     intentoNumero: playerAttempts + 1,
-                    foroName: currentPlayer.foroName || null
+                    foroName: currentPlayer.foroName || null,
+                    gameStartId: gameStartId, // Vincular con el inicio de partida
+                    sessionId: currentSessionId
                 };
                 
+                console.log('💾 Guardando resultado:', resultData);
+                
                 const resultRef = await database.ref('resultados').push(resultData);
-                console.log('✅ Resultado guardado:', resultRef.key, resultData);
+                console.log('✅ Resultado guardado con ID:', resultRef.key);
                 
                 showNotification(`🎉 Resultado guardado: ${currentPlayer.nickname} - ${score} puntos`);
                 
@@ -1921,6 +2071,7 @@
                 
             } catch (error) {
                 console.error('❌ Error guardando resultado:', error);
+                resultAlreadySaved = false; // Permitir reintento
                 showNotification('❌ Error guardando resultado. Verifica la conexión.', 3000);
             }
         }
@@ -1996,10 +2147,14 @@
         
         function restartGame() {
             if (playerAttempts + 1 >= MAX_ATTEMPTS) {
-                alert(`Has usado todos tus ${MAX_ATTEMPTS} intentos permitidos`);
+                alert(`Has usado todos tus ${MAX_ATTEMPTS} intentos permitidos.\n\nSi necesitas más intentos, contacta al administrador.`);
                 goToDashboard();
                 return;
             }
+            
+            // Resetear estado de progreso
+            gameInProgress = false;
+            resultAlreadySaved = false;
             
             resetGameInterface();
         }
@@ -2011,8 +2166,13 @@
             
             // Limpiar información del participante
             document.getElementById('participantInfo').style.display = 'none';
+            document.getElementById('intentosMessage').style.display = 'none';
             
-            // Limpiar formulario si es necesario
+            // Resetear estado del juego
+            gameInProgress = false;
+            resultAlreadySaved = false;
+            
+            // Limpiar formulario solo si ya no puede jugar más
             if (playerAttempts + 1 >= MAX_ATTEMPTS) {
                 document.getElementById('playerName').value = '';
                 document.getElementById('playerNickname').value = '';
@@ -2350,7 +2510,7 @@
         
         async function updateTeamRankings() {
             try {
-                console.log('👥 Actualizando rankings de equipos...');
+                console.log('👥 Actualizando rankings de equipos (suma algebraica simplificada)...');
                 
                 const snapshot = await database.ref('resultados').once('value');
                 const results = snapshot.val();
@@ -2366,57 +2526,77 @@
                 const resultsArray = Object.values(results);
                 console.log(`👥 Procesando ${resultsArray.length} resultados para equipos`);
                 
-                // Agrupar por equipo y obtener mejor resultado por jugador
+                // Obtener MEJOR resultado por jugador (por cédula)
+                const bestResultsByPlayer = new Map();
+                resultsArray.forEach(result => {
+                    const cedula = result.cedula;
+                    const existing = bestResultsByPlayer.get(cedula);
+                    if (!existing || result.puntaje > existing.puntaje) {
+                        bestResultsByPlayer.set(cedula, result);
+                    }
+                });
+                
+                // Agrupar por equipo los MEJORES resultados
                 const teamPlayers = {
-                    A: new Map(),
-                    B: new Map(),
-                    C: new Map(),
-                    INDIVIDUAL: new Map()
+                    A: [],
+                    B: [],
+                    C: [],
+                    INDIVIDUAL: []
                 };
                 
-                resultsArray.forEach(result => {
+                bestResultsByPlayer.forEach(result => {
                     const team = result.grupo;
                     if (teamPlayers[team]) {
-                        const existing = teamPlayers[team].get(result.cedula);
-                        if (!existing || result.puntaje > existing.puntaje) {
-                            teamPlayers[team].set(result.cedula, result);
-                        }
+                        teamPlayers[team].push(result);
                     } else {
                         console.warn(`⚠️ Grupo desconocido encontrado: ${team}`);
                     }
                 });
                 
-                // Calcular estadísticas por equipo
+                // Calcular estadísticas SIMPLIFICADAS por equipo
                 const teamStats = {};
                 Object.keys(teamPlayers).forEach(team => {
-                    const players = Array.from(teamPlayers[team].values());
+                    const players = teamPlayers[team];
+                    
+                    // SUMA ALGEBRAICA SIMPLE del mejor intento de cada participante
+                    const totalScore = players.reduce((sum, player) => sum + player.puntaje, 0);
+                    
                     teamStats[team] = {
                         players: players.length,
+                        totalScore: totalScore, // Suma total de puntos del equipo
                         avgScore: players.length > 0 ? 
-                            Math.round((players.reduce((sum, p) => sum + p.puntaje, 0) / players.length) * 10) / 10 : 0,
+                            Math.round((totalScore / players.length) * 10) / 10 : 0,
                         maxLevel: players.length > 0 ? 
                             Math.max(...players.map(p => p.nivel)) : 0
                     };
-                    console.log(`📊 Equipo ${team}: ${teamStats[team].players} jugadores, promedio ${teamStats[team].avgScore}`);
+                    
+                    console.log(`📊 Equipo ${team}: ${teamStats[team].players} jugadores, total ${teamStats[team].totalScore} pts, promedio ${teamStats[team].avgScore}`);
                 });
+                
+                // Ordenar equipos por puntaje total (suma algebraica)
+                const teamRanking = Object.entries(teamStats)
+                    .filter(([team, stats]) => team !== 'INDIVIDUAL') // Separar individual
+                    .sort(([,a], [,b]) => b.totalScore - a.totalScore);
                 
                 // Generar HTML
                 container.innerHTML = '';
                 
-                ['A', 'B', 'C', 'INDIVIDUAL'].forEach(teamName => {
-                    const stats = teamStats[teamName];
+                // Mostrar ranking de equipos primero
+                teamRanking.forEach(([teamName, stats], index) => {
                     const teamSection = document.createElement('div');
                     teamSection.className = `team-section team-${teamName.toLowerCase()}`;
                     
-                    const displayName = teamName === 'INDIVIDUAL' ? 'INDIVIDUAL' : `GRUPO ${teamName}`;
+                    const position = index + 1;
+                    const medal = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : `${position}°`;
                     
                     teamSection.innerHTML = `
                         <div class="team-header">
-                            <div class="team-name">${displayName}</div>
+                            <div class="team-name">${medal} GRUPO ${teamName}</div>
                             <div class="team-stats">
                                 <span>👥 ${stats.players}</span>
-                                <span>🏆 ${stats.avgScore} pts</span>
-                                <span>📈 Nv.${stats.maxLevel}</span>
+                                <span>🏆 ${stats.totalScore} pts total</span>
+                                <span>📊 ${stats.avgScore} promedio</span>
+                                <span>📈 Nv.${stats.maxLevel} máximo</span>
                             </div>
                         </div>
                     `;
@@ -2424,7 +2604,28 @@
                     container.appendChild(teamSection);
                 });
                 
-                console.log('✅ Rankings de equipos actualizados');
+                // Mostrar individual al final
+                const individualStats = teamStats['INDIVIDUAL'];
+                if (individualStats && individualStats.players > 0) {
+                    const teamSection = document.createElement('div');
+                    teamSection.className = 'team-section team-individual';
+                    
+                    teamSection.innerHTML = `
+                        <div class="team-header">
+                            <div class="team-name">INDIVIDUAL</div>
+                            <div class="team-stats">
+                                <span>👥 ${individualStats.players}</span>
+                                <span>🏆 ${individualStats.totalScore} pts total</span>
+                                <span>📊 ${individualStats.avgScore} promedio</span>
+                                <span>📈 Nv.${individualStats.maxLevel} máximo</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(teamSection);
+                }
+                
+                console.log('✅ Rankings de equipos actualizados con suma algebraica');
                 
             } catch (error) {
                 console.error('❌ Error actualizando rankings de equipos:', error);
@@ -2584,64 +2785,8 @@
         }
         
         async function clearAllData() {
-            if (!confirm('¿Estás seguro de que quieres eliminar TODOS los datos?\n\nEsta acción eliminará:\n- Todos los resultados de partidas\n- Todas las partidas iniciadas\n- Todos los datos de analytics\n\nEsta acción NO se puede deshacer.')) {
-                return;
-            }
-            
-            if (!confirm('CONFIRMACIÓN FINAL: ¿Realmente quieres eliminar todos los datos?\n\nEscribe "ELIMINAR" en la siguiente ventana para confirmar.')) {
-                return;
-            }
-            
-            const confirmation = prompt('Escribe exactamente "ELIMINAR" para confirmar la eliminación:');
-            if (confirmation !== 'ELIMINAR') {
-                alert('Eliminación cancelada. Texto de confirmación incorrecto.');
-                return;
-            }
-            
-            try {
-                console.log('🗑️ Iniciando eliminación completa de datos...');
-                showNotification('🗑️ Eliminando todos los datos...', 3000);
-                
-                // Eliminar resultados
-                console.log('🗑️ Eliminando resultados...');
-                await database.ref('resultados').remove();
-                
-                // Eliminar partidas iniciadas
-                console.log('🗑️ Eliminando partidas iniciadas...');
-                await database.ref('gameStarts').remove();
-                
-                // Eliminar analytics (pero mantener estructura básica)
-                console.log('🗑️ Eliminando analytics...');
-                await database.ref('analytics/visits').remove();
-                await database.ref('analytics/onlinePlayers').remove();
-                await database.ref('analytics/dailyVisits').remove();
-                
-                // Resetear contadores
-                await database.ref('analytics/totalVisits').set(0);
-                
-                console.log('✅ Eliminación completada exitosamente');
-                alert('✅ Todos los datos han sido eliminados correctamente');
-                
-                // Recargar datos del admin
-                loadAdminData();
-                
-                // Actualizar dashboard
-                setTimeout(() => {
-                    loadDashboard();
-                }, 1000);
-                
-            } catch (error) {
-                console.error('❌ Error eliminando datos:', error);
-                console.error('Detalles del error:', error.message);
-                
-                if (error.message.includes('Permission denied')) {
-                    alert('❌ Error: Permisos insuficientes en Firebase.\n\nVerifica que las reglas de Firebase permitan eliminación (.delete: true)');
-                } else if (error.message.includes('Network')) {
-                    alert('❌ Error de conexión a Firebase.\n\nVerifica tu conexión a internet e intenta nuevamente.');
-                } else {
-                    alert(`❌ Error eliminando datos: ${error.message}\n\nRevisa la consola para más detalles.`);
-                }
-            }
+            // Redirigir a la función más segura
+            return await clearAllDataSafe();
         }
         
         // Sistema de notificaciones
@@ -2853,34 +2998,150 @@
             }
         }
         
-        // Nueva función específica para probar eliminación
-        async function testDeletionPermissions() {
-            console.log('🗑️ === PRUEBA ESPECÍFICA DE ELIMINACIÓN ===');
+        // Función de diagnóstico completo de Firebase
+        async function diagnoseFirebase() {
+            console.log('🔍 === DIAGNÓSTICO COMPLETO DE FIREBASE ===');
             
             try {
-                // Crear dato de prueba
-                const testRef = await database.ref('test/deletion').set({
-                    test: true,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                // 1. Verificar configuración
+                console.log('1️⃣ Verificando configuración...');
+                console.log('📋 Database URL:', firebaseConfig.databaseURL);
+                console.log('📋 Project ID:', firebaseConfig.projectId);
+                
+                // 2. Verificar conexión básica
+                console.log('2️⃣ Probando conexión básica...');
+                const connectionTest = await database.ref('.info/connected').once('value');
+                const isConnected = connectionTest.val();
+                console.log('🔗 Conectado a Firebase:', isConnected ? '✅ SÍ' : '❌ NO');
+                
+                if (!isConnected) {
+                    throw new Error('No hay conexión a Firebase');
+                }
+                
+                // 3. Probar lectura
+                console.log('3️⃣ Probando lectura...');
+                const readTest = await database.ref('test').once('value');
+                console.log('📖 Lectura:', '✅ OK');
+                
+                // 4. Probar escritura
+                console.log('4️⃣ Probando escritura...');
+                await database.ref('test/write').set({ timestamp: Date.now() });
+                console.log('✏️ Escritura:', '✅ OK');
+                
+                // 5. Probar eliminación
+                console.log('5️⃣ Probando eliminación...');
+                await database.ref('test/write').remove();
+                console.log('🗑️ Eliminación:', '✅ OK');
+                
+                // 6. Probar operaciones masivas
+                console.log('6️⃣ Probando eliminación masiva...');
+                await database.ref('test').set({
+                    item1: { test: true },
+                    item2: { test: true },
+                    item3: { test: true }
                 });
-                console.log('✅ Creación de test exitosa');
-                
-                // Intentar eliminar
-                await database.ref('test/deletion').remove();
-                console.log('✅ Eliminación de test exitosa');
-                
-                // Limpiar el nodo test completo
                 await database.ref('test').remove();
-                console.log('✅ Limpieza completa exitosa');
+                console.log('🗑️ Eliminación masiva:', '✅ OK');
                 
-                console.log('🎉 === PERMISOS DE ELIMINACIÓN FUNCIONANDO ===');
-                showNotification('✅ Permisos de eliminación OK', 2000);
+                console.log('🎉 === DIAGNÓSTICO EXITOSO - FIREBASE FUNCIONA CORRECTAMENTE ===');
+                showNotification('✅ Firebase funciona perfectamente', 3000);
                 return true;
                 
             } catch (error) {
-                console.error('❌ Error en prueba de eliminación:', error);
-                showNotification('❌ Error de eliminación: ' + error.message, 5000);
+                console.error('❌ === ERROR EN DIAGNÓSTICO ===');
+                console.error('🚨 Error:', error.message);
+                console.error('🚨 Código:', error.code);
+                console.error('🚨 Detalles:', error);
+                
+                // Diagnóstico específico del error
+                if (error.message.includes('Permission denied')) {
+                    console.error('🔧 PROBLEMA: Reglas de Firebase muy restrictivas');
+                    console.error('🔧 SOLUCIÓN: Usar reglas permisivas temporalmente');
+                    console.error('🔧 REGLAS RECOMENDADAS:');
+                    console.error(`{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}`);
+                } else if (error.message.includes('Network')) {
+                    console.error('🔧 PROBLEMA: Error de conexión');
+                    console.error('🔧 SOLUCIÓN: Verificar internet y estado de Firebase');
+                } else if (error.message.includes('not found')) {
+                    console.error('🔧 PROBLEMA: Base de datos no encontrada');
+                    console.error('🔧 SOLUCIÓN: Verificar URL de database en firebaseConfig');
+                } else {
+                    console.error('🔧 PROBLEMA: Error desconocido');
+                    console.error('🔧 SOLUCIÓN: Verificar credenciales completas');
+                }
+                
+                showNotification('❌ Error Firebase: ' + error.message, 5000);
                 return false;
+            }
+        }
+        
+        // Función simplificada para limpiar datos con mejor debugging
+        async function clearAllDataSafe() {
+            console.log('🗑️ === ELIMINACIÓN SEGURA DE DATOS ===');
+            
+            // Confirmaciones múltiples
+            if (!confirm('¿Eliminar TODOS los datos?\n\n⚠️ ESTA ACCIÓN NO SE PUEDE DESHACER')) {
+                console.log('❌ Eliminación cancelada por el usuario');
+                return;
+            }
+            
+            const confirmation = prompt('Escribe "ELIMINAR" para confirmar:');
+            if (confirmation !== 'ELIMINAR') {
+                console.log('❌ Eliminación cancelada: confirmación incorrecta');
+                return;
+            }
+            
+            try {
+                showNotification('🗑️ Eliminando datos...', 2000);
+                
+                // Método 1: Intentar eliminación directa
+                console.log('🗑️ Método 1: Eliminación directa...');
+                await database.ref('resultados').remove();
+                console.log('✅ Resultados eliminados');
+                
+                await database.ref('gameStarts').remove();
+                console.log('✅ Game starts eliminados');
+                
+                await database.ref('analytics').remove();
+                console.log('✅ Analytics eliminados');
+                
+                console.log('🎉 === ELIMINACIÓN EXITOSA ===');
+                alert('✅ Todos los datos eliminados correctamente');
+                
+                // Recargar interfaz
+                loadAdminData();
+                setTimeout(() => loadDashboard(), 1000);
+                
+            } catch (error) {
+                console.error('❌ Error en eliminación:', error);
+                
+                if (error.message.includes('Permission denied')) {
+                    alert(`❌ ERROR DE PERMISOS
+
+Firebase no permite eliminar datos.
+
+SOLUCIÓN INMEDIATA:
+1. Ve a Firebase Console
+2. Database > Rules  
+3. Reemplaza con:
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+4. Click "Publish"
+5. Intenta de nuevo`);
+                } else {
+                    alert(`❌ Error: ${error.message}
+
+Revisa la consola para más detalles.`);
+                }
             }
         }
         
@@ -2901,7 +3162,10 @@
         // Hacer disponible para debugging
         window.debugGameState = debugGameState;
         window.testFirebaseConnection = testFirebaseConnection;
-        window.testDeletionPermissions = testDeletionPermissions;
+        window.diagnoseFirebase = diagnoseFirebase;
+        window.clearAllDataSafe = clearAllDataSafe;
+        window.resetAllAttempts = resetAllAttempts;
+        window.checkAttemptsWithReset = checkAttemptsWithReset;
         window.refreshDashboard = refreshDashboard;
         
         // Mensaje de créditos en consola
@@ -2917,20 +3181,26 @@
     - Unidad Académica de Cardiología
     
     📋 Especialidad: Miocardiopatías Infiltrativas
-    🔢 Versión: 2.0.0 - Seguimiento fiel del README original
+    🔢 Versión: 2.0.1 - BUGS CORREGIDOS
     📅 Año: 2025
     
-    ✨ VERSIÓN CORREGIDA - Siguiendo especificaciones originales:
-    ✅ Carga SOLO desde questions_bank.json (sin preguntas hardcodeadas)
-    ✅ Sistema de puntaje según README (+1 base, +1 velocidad, +1 difícil, +3/+5 rachas, +10 perfecto)
+    🐛 PROBLEMAS SOLUCIONADOS:
+    ✅ Corregido bug de múltiples intentos (reporte de Federico)
+    ✅ Sistema de puntaje por equipos simplificado (suma algebraica)
+    ✅ Prevención de guardado duplicado de resultados
+    ✅ Función de reset de intentos para todos los jugadores
+    ✅ Mejor manejo de estado del juego
+    ✅ Validaciones robustas contra errores de concurrencia
+    
+    🏆 CARACTERÍSTICAS ACTUALES:
     ✅ 30 categorías graciosas (Vendedor de Globos → Maestro del Universo)
     ✅ Conceptos personalizados por nivel alcanzado
     ✅ Asignación automática de grupos del foro (${Object.keys(FORO_PARTICIPANTS).length} participantes registrados)
+    ✅ Sistema de puntaje según README original
     ✅ Comodines funcionales (50/50 y Cambiar Pregunta)
-    ✅ Rankings en tiempo real (individual y equipos)
-    ✅ Panel de administración completo
-    ✅ Analytics avanzado con métricas en vivo
-    ✅ Validación robusta de datos y manejo de errores
+    ✅ Rankings en tiempo real con suma algebraica por equipos
+    ✅ Panel de administración con herramientas de diagnóstico
+    ✅ Sistema de reset de intentos
     
     👥 Distribución del foro:
     - Grupo A: 42 participantes registrados
@@ -2938,13 +3208,13 @@
     - Grupo C: 41 participantes registrados
     - Individual: 19 registrados + no registrados
     
-    📋 IMPORTANTE: 
-    - Requiere archivo questions_bank.json válido para funcionar
-    - Sistema de puntaje restaurado según documentación original
-    - Comportamiento idéntico a versiones anteriores funcionales
+    🔧 HERRAMIENTAS ADMIN:
+    - Reset de intentos sin eliminar puntajes históricos
+    - Diagnóstico completo de Firebase
+    - Cálculo simplificado de puntajes por equipos
     
     🛠️ Para soporte técnico: r1000a@gmail.com
-    🎓 ¡Que comience la competencia cardiológica!
+    🎓 ¡Competencia cardiológica lista y estable!
         `);
     </script>
 </body>
